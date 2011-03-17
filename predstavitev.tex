@@ -1,29 +1,82 @@
-\documentclass{article}
-\usepackage{times}
-\usepackage[utf8]{inputenc}
-\usepackage{graphicx}
-\usepackage{listings}
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[utf8x]{inputenc}
+\usepackage{ucs}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{fullpage}
 \usepackage[slovene]{babel}
-\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{multirow}
+\usepackage{tabularx}
+\usepackage{ifpdf}
+\usepackage{listings}
+
+\pagestyle{empty}
+
+\author{Miha Zidar (63060317)}
+\title{OS1: Peta domača naloga}
+
+
 \begin{document}
-\lstset{frame=single,numbers=left,language=C,breaklines=true,basicstyle={\ttfamily \scriptsize}}
-% Article top matter
-\title{Seminarska naloga Navidezna fakulteta}
-\author{Anže Pečar\\
-        Aleksandra Bersan\\
-        Miha Zidar\\\\
-	    Fakulteta za računalništvo in informatiko,\\
-		Tržaška cesta 25,\\
-		1000 ljubljana\\}		
-\date{\today}
-\maketitle
-\pagebreak
+
+\begin{titlepage}
+\begin{center}
+
+% Upper part of the page
+\includegraphics{Screenshot.png}\\[5.0cm]    
+\textsc{\Large Seminarska naloga}\\[1.5cm]
+
+% Title
+\hrule \ \\[0.2cm]
+{ \huge \bfseries Navidezna Fakulteta}\\[0.5cm]
+\hrule \ \\[2.5cm]
+
+% Author and supervisor
+\begin{minipage}{0.4\textwidth}
+\begin{flushleft} \large
+\emph{Avtorji:}\\
+Anže \textsc{Pečar}\\
+Aleksandra \textsc{Bersan}\\
+Miha \textsc{Zidar}\\
+\end{flushleft}
+\end{minipage}
+\begin{minipage}{0.4\textwidth}
+\begin{flushright} \large
+\emph{Mentor:} \\
+doc. dr. Matija \textsc{Marolt}\\
+\end{flushright}
+\end{minipage}
+\vfill
+
+% Bottom of the page
+{\large \today}
+
+\end{center}
+\end{titlepage}
+
+%\tableofcontents
+%\newpage 
+
 \section{Predstavitev}
-Vsi vemo, da ima naša fakulteta zelo nelogično razporejene prostore in pogosto se zgodi, da obiskovalec ne najde prave predavalnice. Da bi obiskovalcem in brucom olajšali življenje,
-smo se odločili narediti 3-D model fakultete.
+Vsi vemo, da ima naša fakulteta zelo nelogično razporejene prostore in pogosto se zgodi, da obiskovalec ne najde prave predavalnice. Da bi obiskovalcem in brucom olajšali življenje, smo se odločili narediti 3D model fakultete.
 \section{Tehnologija}
-Ker želimo, da bi bila naša aplikacija čim lažje dostopna, bomo uporabili odprtokodno knjižnico WebGL. Tekom razvoja bomo naredili model, ki bo deloval na Firefoxu4.
+Ker želimo, da bi bila naša aplikacija čim lažje dostopna, bomo uporabili odprtokodno knjižnico WebGL. Ker WebGL standard še ni popolnoma podprt na vseh brskalnikih, smo se odloćili da bomo razvili našo aplikacijo tako da bo delovala na brskalniku Firefox 4.
 \section{Cilji}
-Narediti želimo podroben model fakultete po katerem se bodo obiskovalci lahko sprehajali in raziskovali. Prav tako se bo lahko izračunala najkrajša pot do 
-predavalnice, ki jo iščejo. Model pa bo tudi vseboval podatke o moči signala brezžičnega omrežja EDUROAM v posameznih delih fakultete. 
+Pri nalogi smo si postavili nekaj okvirnih ciljev, katere bomo s časom prilagajali, glede na zahtevnost realizacije.
+\begin{itemize}
+	\item Narediti želimo dober reprezentativen 3D model fakultete po katerem se bodo obiskovalci lahko sprehajali in raziskovali. V temu modelu bo možno nastaviti oznake posameznih predavalnic, laboratorijev in kabinetov.
+	\item Narediti možnost prikaza najkrajše poti, do iskanega kabineta ali učilnice.
+	\item Uporabniku omogočiti da označi svojo lokacijo, da ga lahko drugi uporabniki lažje najdejo.
+	\item Model bo tudi omogočil prikat moči signala brezžičnega omrežja Eduroam glede na oddaljenost od usmerjevalnikov.
+\end{itemize}
+Seminarska naloga pa ima še veliko možnosti izboljšav in raznih lepotnih popravkov, ki jih bomo implementirali, če bo dovolj časa.
+\begin{itemize}
+	\item možnost generiranja tekstur z lepimi zelenimi znaki "Matrix mode".
+	\item premikanje po prostoru kjer v obliki kotaleče žoge, ki bi se lahko zabijala in odbijala od drugih žog "roller bal", z možnostjo spremljanja kamere ki se vrti z žogo ali pa kot tretji opazovalec za lažjo orientacijo.
+	\item nato pa imamo še eno možno izboljšavo "movie hacker mode", kjer bi lahko uporabnik gledal celoteno fakulteto, kot zeleno mrežo narejeno iz verteksov, in rdeče pike ostalih uporabnikov. to mrežo bi lahko poljubno vrteli in se tudi premikali skozi stene.
+\end{itemize}
+En izmed glavnih ciljev, pa je da bi se vsi novi obiskovalci dosti lažje znajdli na naši fakulteti. Ker pa se fakulteta iz leta v leto spreminja, bomo zadevo naredili tako da jo bo mogoče uporabiti z različnimi 3D modeli. Poskrbeli pa bomo še za dobro dokumentacijo, če bojo kasnejše generacije hotele nadaljevati in nadgrajevati ta projekt.
 \end{document}  %End of document.
+

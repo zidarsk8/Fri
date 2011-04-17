@@ -162,15 +162,20 @@ var BlenderObject = {
    {vertices : [1, 3, 4], normal: 0}
   ],
   getTriangleFaces : function(){
-    var ro = {vec:[],fac:[]}; //return object
+    var ro = {vec:[],fac:[], tex:[]}; //return object
     var vecCounter = 0;
     for (var f in this.faces){
       var curentFace = this.faces[f];
       if (curentFace.vertices.length == 3){
         for (var i=0 ; i<3 ; i++){
+          //add distinct vertex vector for each face
           ro.vec[vecCounter*3]= this.vertices[curentFace.vertices[i]-1].x;
           ro.vec[vecCounter*3+1]= this.vertices[curentFace.vertices[i]-1].y;
           ro.vec[vecCounter*3+2]= this.vertices[curentFace.vertices[i]-1].z;
+          //add texture coordinate for this vector
+          ro.tex[vecCounter*2] = i%2;
+          ro.tex[vecCounter*2+1] = (i-1)%2;
+          //push vector to faces array
           ro.fac.push(vecCounter++);
         }
       }
@@ -181,93 +186,23 @@ var BlenderObject = {
 
 function initBuffers() {
     
+  var bo = BlenderObject.getTriangleFaces();
 
-  vertices = BlenderObject.getTriangleFaces([4,3,5]).vec;
-  
-    
+  var vertices = bo.vec;
   cubeVertexPositionBuffer = gl.createBuffer();
   cubeVertexPositionBuffer.itemSize = 3;
   cubeVertexPositionBuffer.numItems = vertices.length/cubeVertexPositionBuffer.itemSize;
   gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexPositionBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
-  var textureCoords = [
-    // Front face
-    1.0, 1.0,
-    0.0, 0.0,
-    1.0, 1.0,
-    0.0, 1.0,
-
-    // Front face
-    0.0, 0.0,
-    1.0, 0.0,
-    1.0, 1.0,
-    0.0, 1.0,
-    // Front face
-    0.0, 0.0,
-    1.0, 0.0,
-    1.0, 1.0,
-    0.0, 1.0,
-
-    // Front face
-    0.0, 0.0,
-    1.0, 1.0,
-
-    0.0, 0.0,
-
-    0.0, 0.0,
-    // Front face
-    0.5, 1.0,
-    1.0, 0.0,
-    
-    1.0, 1.0,
-    0.0, 1.0,
-
-    // Front face
-    0.0, 0.0,
-    1.0, 0.0,
-    1.0, 1.0,
-    0.0, 1.0,
-    // Front face
-    0.0, 0.0,
-    1.0, 0.0,
-    1.0, 1.0,
-    0.0, 1.0,
-
-    // Front face
-    0.0, 0.0,
-    1.0, 0.0,
-    1.0, 1.0,
-    0.0, 1.0,
-    // Front face
-    0.0, 0.0,
-    1.0, 0.0,
-    1.0, 1.0,
-    0.0, 1.0
-
-  ];
+  var textureCoords = bo.tex;
   cubeVertexTextureCoordBuffer = gl.createBuffer();
   cubeVertexTextureCoordBuffer.itemSize = 2;
   cubeVertexTextureCoordBuffer.numItems = textureCoords.length/cubeVertexTextureCoordBuffer.itemSize;
   gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexTextureCoordBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoords), gl.STATIC_DRAW);
 
-  var cubeVertexIndices = [
-//     0, 1, 2, 
-//     3, 4, 5, 
-//     6, 7, 8, 
-//     9, 10, 11, 
-//     12, 13, 14 
-     15, 16, 17
-//     18, 19, 20, 
-//     21, 22, 23, 
-//     24, 25, 26, 
-//     27, 28, 29
-    ];
-  cubeVertexIndices = BlenderObject.getTriangleFaces().fac;
-  
-  console.log(BlenderObject.getTriangleFaces().fac);
-  
+  var cubeVertexIndices = bo.fac;
   cubeVertexIndexBuffer = gl.createBuffer();
   cubeVertexIndexBuffer.itemSize = 1;
   cubeVertexIndexBuffer.numItems = cubeVertexIndices.length/cubeVertexIndexBuffer.itemSize;

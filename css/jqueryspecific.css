@@ -1,0 +1,17 @@
+/* 
+    Document   : jqueryspecific
+    Created on : Mar 1, 2011, 2:08:49 AM
+    Author     : zidar
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+/* 
+   TODO customize this sample style
+   Syntax recommendation http://www.w3.org/TR/REC-CSS2/
+*/
+
+div.growlUI { background: url(../images/check48.png) no-repeat 10px 10px }
+div.growlUI h1, div.growlUI h2 {
+	color: white; padding: 5px 5px 5px 75px; text-align: left
+}

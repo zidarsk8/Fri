@@ -1,12 +1,11 @@
 
-var gl;
-
+var gl = null;
 var pitch = 0;
 var pitchRate = 0;
 var yaw = 0;
 var yawRate = 0;
 var xPos = 1.0;
-var yPos = 0.0;
+var yPos = 0.2;
 var zPos = 8;
 var speed = 0;
 var lastTime = 0;
@@ -25,6 +24,8 @@ var cubeVertexPositionBuffer;
 var cubeVertexTextureCoordBuffer;
 var cubeVertexIndexBuffer;
 var currentlyPressedKeys = {};
+var fps = 0;
+var faks = null;
 
 
 
@@ -149,27 +150,6 @@ function degToRad(degrees) {
 
 
 function initBuffers() {
-  faks.getTriangleFaces = function(){
-    var ro = {vec:[],fac:[], tex:[]}; //return object
-    var vecCounter = 0;
-    for (var f in this.faces){
-      var curentFace = this.faces[f];
-      if (curentFace.vertices.length == 3){
-        for (var i=0 ; i<3 ; i++){
-          //add distinct vertex vector for each face
-          ro.vec[vecCounter*3]= this.vertices[curentFace.vertices[i]].x;
-          ro.vec[vecCounter*3+1]= this.vertices[curentFace.vertices[i]].y;
-          ro.vec[vecCounter*3+2]= this.vertices[curentFace.vertices[i]].z;
-          //add texture coordinate for this vector
-          ro.tex[vecCounter*2] = i%2;
-          ro.tex[vecCounter*2+1] = (i-1)%2;
-          //push vector to faces array
-          ro.fac.push(vecCounter++);
-        }
-      }
-    }
-    return ro;
-  }
   
   bo = faks.getTriangleFaces();
   
@@ -287,7 +267,6 @@ function animate() {
       if (speed != 0 && elapsed != 0) {
           xPos -= Math.sin(degToRad(yaw)) * speed * elapsed;
           zPos -= Math.cos(degToRad(yaw)) * speed * elapsed;
-
 //          joggingAngle += elapsed * 0.6; // 0.6 "fiddle factor" - makes it feel more realistic :-)
 //          yPos = Math.sin(degToRad(joggingAngle)) / 20 + 0.4
       }
@@ -297,7 +276,6 @@ function animate() {
   lastTime = timeNow;
 }
 
-var fps = 0;
 
 function tick() {
   // comment requestAnimFrame(tick); when debugging and use setInterval instead
@@ -308,39 +286,55 @@ function tick() {
   fps++;
 }
 
-var faks = null;
-
+    
 function webGLStart() {
-	
-	  console.log("Trying to get json");
-	  jQuery.getJSON('faks.js', function(data){
-		  console.log(data);
-		  faks = data;
-		  var canvas = document.getElementById("lesson05-canvas");
-		  initGL(canvas);
-		  initShaders();
-		  initBuffers();
-		  initTexture();
-		  
-		  canvas.onmousedown = handleMouseDown;
-		  document.onmouseup = handleMouseUp;
-		  document.onmousemove = handleMouseMove;
-		  document.onkeydown = handleKeyDown;
-		  document.onkeyup = handleKeyUp;
-		  
+  var canvas = document.getElementById("lesson05-canvas");
+  initGL(canvas);
+  initShaders();
+  initBuffers();
+  initTexture();
+
+  canvas.onmousedown = handleMouseDown;
+  document.onmouseup = handleMouseUp;
+  document.onmousemove = handleMouseMove;
+  document.onkeydown = handleKeyDown;
+  document.onkeyup = handleKeyUp;
 
 
-		  gl.clearColor(0.0, 0.0, 0.0, 1.0);
-		  gl.enable(gl.DEPTH_TEST);
-		//  use set interval for debugging cause requestAnimFrame(tick); is causing problems for firebug
-		//  setInterval("tick()", 50);
-		  tick();
-		  setInterval(function(){
-		    document.getElementById("fps").innerHTML="FPS: "+fps;
-		    fps = 0;
-		  }, 1000);
-	  });
-	
 
+  gl.clearColor(0.0, 0.0, 0.0, 1.0);
+  gl.enable(gl.DEPTH_TEST);
+//  use set interval for debugging cause requestAnimFrame(tick); is causing problems for firebug
+//  setInterval("tick()", 50);
+  tick();
+  setInterval(function(){
+    document.getElementById("fps").innerHTML="FPS: "+fps;
+    fps = 0;
+  }, 1000);
 }
 
+$.getJSON('faks.js', function(data){
+  faks = data;
+  faks.getTriangleFaces = function(){
+    var ro = {vec:[],fac:[], tex:[]}; //return object
+    var vecCounter = 0;
+    for (var f in this.faces){
+      var curentFace = this.faces[f];
+      if (curentFace.vertices.length == 3){
+        for (var i=0 ; i<3 ; i++){
+          //add distinct vertex vector for each face
+          ro.vec[vecCounter*3]= this.vertices[curentFace.vertices[i]].x;
+          ro.vec[vecCounter*3+1]= this.vertices[curentFace.vertices[i]].y;
+          ro.vec[vecCounter*3+2]= this.vertices[curentFace.vertices[i]].z;
+          //add texture coordinate for this vector
+          ro.tex[vecCounter*2] = this.vertices[curentFace.vertices[i]].x;
+          ro.tex[vecCounter*2+1] = this.vertices[curentFace.vertices[i]].z;
+          //push vector to faces array
+          ro.fac.push(vecCounter++);
+        }
+      }
+    }
+    return ro;
+  }
+  webGLStart();
+});

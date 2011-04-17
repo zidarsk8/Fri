@@ -96,11 +96,15 @@ function initShaders() {
 
   shaderProgram.textureCoordAttribute = gl.getAttribLocation(shaderProgram, "aTextureCoord");
   gl.enableVertexAttribArray(shaderProgram.textureCoordAttribute);
-
+  
   shaderProgram.pMatrixUniform = gl.getUniformLocation(shaderProgram, "uPMatrix");
   shaderProgram.mvMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
+  shaderProgram.nMatrixUniform = gl.getUniformLocation(shaderProgram, "uNMatrix");
   shaderProgram.samplerUniform = gl.getUniformLocation(shaderProgram, "uSampler");
-}
+  shaderProgram.useLightingUniform = gl.getUniformLocation(shaderProgram, "uUseLighting");
+  shaderProgram.ambientColorUniform = gl.getUniformLocation(shaderProgram, "uAmbientColor");
+  shaderProgram.lightingDirectionUniform = gl.getUniformLocation(shaderProgram, "uLightingDirection");
+  shaderProgram.directionalColorUniform = gl.getUniformLocation(shaderProgram, "uDirectionalColor");}
 
 function handleLoadedTexture(texture) {
 	gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
@@ -229,7 +233,7 @@ function drawScene() {
   
   //direction:
   var lightingDirection = [
-                           1.0, 1.0, -1.0                           
+                           -10.0, -10.0, -1.0                           
                          ];
   var adjustedLD = vec3.create();
   vec3.normalize(lightingDirection, adjustedLD);

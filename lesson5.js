@@ -187,7 +187,30 @@ var BlenderObject = {
 function initBuffers() {
     
   var bo = BlenderObject.getTriangleFaces();
-
+  faks.getTriangleFaces = function(){
+    var ro = {vec:[],fac:[], tex:[]}; //return object
+    var vecCounter = 0;
+    for (var f in this.faces){
+      var curentFace = this.faces[f];
+      if (curentFace.vertices.length == 3){
+        for (var i=0 ; i<3 ; i++){
+          //add distinct vertex vector for each face
+          ro.vec[vecCounter*3]= this.vertices[curentFace.vertices[i]].x;
+          ro.vec[vecCounter*3+1]= this.vertices[curentFace.vertices[i]].y;
+          ro.vec[vecCounter*3+2]= this.vertices[curentFace.vertices[i]].z;
+          //add texture coordinate for this vector
+          ro.tex[vecCounter*2] = i%2;
+          ro.tex[vecCounter*2+1] = (i-1)%2;
+          //push vector to faces array
+          ro.fac.push(vecCounter++);
+        }
+      }
+    }
+    return ro;
+  }
+  console.log(faks.getTriangleFaces().fac);
+  bo = faks.getTriangleFaces();
+  
   var vertices = bo.vec;
   cubeVertexPositionBuffer = gl.createBuffer();
   cubeVertexPositionBuffer.itemSize = 3;
@@ -210,10 +233,20 @@ function initBuffers() {
   gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(cubeVertexIndices), gl.STATIC_DRAW);
 }
 
-
+var pitch = 0;
+var pitchRate = 0;
+var yaw = 0;
+var yawRate = 0;
+var xPos = 1.0;
+var yPos = 0.5;
+var zPos = 8;
+var speed = 0;
+var lastTime = 0;
+var mouseDown = false;
+var lastMouseX = null;
+var lastMouseY = null;
 var xRot = 0;
-var yRot = 0;
-var zRot = 0;
+var yRot = 0.4;
 
 function drawScene() {
   gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
@@ -223,12 +256,11 @@ function drawScene() {
 
   mat4.identity(mvMatrix);
 
-  mat4.translate(mvMatrix, [0.0, 0.0, -5.0]);
-
-  mat4.rotate(mvMatrix, degToRad(xRot), [0, 1, 0]);
-  mat4.rotate(mvMatrix, degToRad(yRot), [1, 0, 0]);
-  mat4.rotate(mvMatrix, degToRad(zRot), [0, 0, 1]);
-
+  
+  mat4.rotate(mvMatrix, degToRad(-pitch), [1, 0, 0]);
+  mat4.rotate(mvMatrix, degToRad(-yaw), [0, 1, 0]);
+  mat4.translate(mvMatrix, [-xPos, -yPos, -zPos]);
+  
   gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexPositionBuffer);
   gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, cubeVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
@@ -245,16 +277,53 @@ function drawScene() {
 }
 
 
-var lastTime = 0;
+var currentlyPressedKeys = {};
+
+function handleKeyDown(event) {
+  currentlyPressedKeys[event.keyCode] = true;
+}
 
 
-var mouseDown = false;
-var lastMouseX = null;
-var lastMouseY = null;
+function handleKeyUp(event) {
+  currentlyPressedKeys[event.keyCode] = false;
+}
 
+
+
+function handleKeys() {
+  if (currentlyPressedKeys[33]) {
+      // Page Up
+      pitchRate = 0.1;
+  } else if (currentlyPressedKeys[34]) {
+      // Page Down
+      pitchRate = -0.1;
+  } else {
+      pitchRate = 0;
+  }
+
+  if (currentlyPressedKeys[37] || currentlyPressedKeys[65]) {
+      // Left cursor key or A
+      yawRate = 0.1;
+  } else if (currentlyPressedKeys[39] || currentlyPressedKeys[68]) {
+      // Right cursor key or D
+      yawRate = -0.1;
+  } else {
+      yawRate = 0;
+  }
+
+  if (currentlyPressedKeys[38] || currentlyPressedKeys[87]) {
+      // Up cursor key or W
+      speed = 0.003;
+  } else if (currentlyPressedKeys[40] || currentlyPressedKeys[83]) {
+      // Down cursor key
+      speed = -0.003;
+  } else {
+      speed = 0;
+  }
+
+}
 
 function handleMouseDown(event) {
-    console.log("mouse down");
     mouseDown = true;
     lastMouseX = event.clientX;
     lastMouseY = event.clientY;
@@ -288,10 +357,34 @@ function handleMouseMove(event) {
 }
 
 
+function animate() {
+  var timeNow = new Date().getTime();
+  if (lastTime != 0) {
+      var elapsed = timeNow - lastTime;
+
+      if (speed != 0) {
+          xPos -= Math.sin(degToRad(yaw)) * speed * elapsed;
+          zPos -= Math.cos(degToRad(yaw)) * speed * elapsed;
+
+          joggingAngle += elapsed * 0.6; // 0.6 "fiddle factor" - makes it feel more realistic :-)
+          yPos = Math.sin(degToRad(joggingAngle)) / 20 + 0.4
+      }
+
+      yaw += yawRate * elapsed;
+      pitch += pitchRate * elapsed;
+
+  }
+  lastTime = timeNow;
+}
+
+var fps = 0;
 
 function tick() {
-  //requestAnimFrame(tick);
+  requestAnimFrame(tick);
+  handleKeys();
+  animate();
   drawScene();
+  fps++;
 }
 
 
@@ -304,10 +397,16 @@ function webGLStart() {
   canvas.onmousedown = handleMouseDown;
   document.onmouseup = handleMouseUp;
   document.onmousemove = handleMouseMove;
+  document.onkeydown = handleKeyDown;
+  document.onkeyup = handleKeyUp;
 
   gl.clearColor(0.0, 0.0, 0.0, 1.0);
   gl.enable(gl.DEPTH_TEST);
-  setInterval("tick()", 50);
-  //tick();
+//  setInterval("tick()", 50);
+  tick();
+  setInterval(function(){
+    document.getElementById("fps").innerHTML="FPS: "+fps;
+    fps = 0;
+  }, 1000);
 }
 

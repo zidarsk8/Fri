@@ -158,13 +158,23 @@ function initBuffers() {
   cubeVertexPositionBuffer.numItems = vertices.length/cubeVertexPositionBuffer.itemSize;
   gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexPositionBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-
+  
+  var vertexNormals = bo.nor;
+  cubeVertexNormalBuffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexNormalBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexNormals), gl.STATIC_DRAW);
+  cubeVertexNormalBuffer.itemSize = 3;
+  cubeVertexNormalBuffer.numItems = vertexNormals.length/cubeVertexNormalBuffer.itemSize;
+  
   var textureCoords = bo.tex;
   cubeVertexTextureCoordBuffer = gl.createBuffer();
   cubeVertexTextureCoordBuffer.itemSize = 2;
   cubeVertexTextureCoordBuffer.numItems = textureCoords.length/cubeVertexTextureCoordBuffer.itemSize;
   gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexTextureCoordBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoords), gl.STATIC_DRAW);
+  
+
+  
 
   var cubeVertexIndices = bo.fac;
   cubeVertexIndexBuffer = gl.createBuffer();

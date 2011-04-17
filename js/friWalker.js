@@ -140,6 +140,11 @@ function mvPopMatrix() {
 function setMatrixUniforms() {
   gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, pMatrix);
   gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, mvMatrix);
+  
+  var normalMatrix = mat3.create();
+  mat4.toInverseMat3(mvMatrix, normalMatrix);
+  mat3.transpose(normalMatrix);
+  gl.uniformMatrix3fv(shaderProgram.nMatrixUniform, false, normalMatrix);
 }
 
 
@@ -160,6 +165,8 @@ function initBuffers() {
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
   
   var vertexNormals = bo.nor;
+  
+  console.log(vertexNormals);
   cubeVertexNormalBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexNormalBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexNormals), gl.STATIC_DRAW);
@@ -200,6 +207,9 @@ function drawScene() {
   gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexPositionBuffer);
   gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, cubeVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
+  gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexNormalBuffer);
+  gl.vertexAttribPointer(shaderProgram.vertexNormalAttribute, cubeVertexNormalBuffer.itemSize, gl.FLOAT, false, 0, 0);
+  
   gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexTextureCoordBuffer);
   gl.vertexAttribPointer(shaderProgram.textureCoordAttribute, cubeVertexTextureCoordBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
@@ -207,6 +217,32 @@ function drawScene() {
   gl.bindTexture(gl.TEXTURE_2D, neheTexture);
   gl.uniform1i(shaderProgram.samplerUniform, 0);
 
+  //lightning stuff:
+  
+  //light color:
+  gl.uniform3f(
+    shaderProgram.ambientColorUniform,
+    1.0,
+    0.2,
+    0.2
+  );
+  
+  //direction:
+  var lightingDirection = [
+                           1.0, 1.0, -1.0                           
+                         ];
+  var adjustedLD = vec3.create();
+  vec3.normalize(lightingDirection, adjustedLD);
+  vec3.scale(adjustedLD, -1);
+  gl.uniform3fv(shaderProgram.lightingDirectionUniform, adjustedLD);
+  
+  gl.uniform3f(
+    shaderProgram.directionalColorUniform,
+    0.2,
+    0.2,
+    1.0
+  );
+  
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeVertexIndexBuffer);
   setMatrixUniforms();
   gl.drawElements(gl.TRIANGLES, cubeVertexIndexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
@@ -325,7 +361,7 @@ function webGLStart() {
 $.getJSON('faks.js', function(data){
   faks = data;
   faks.getTriangleFaces = function(){
-    var ro = {vec:[],fac:[], tex:[]}; //return object
+    var ro = {vec:[], fac:[], tex:[], nor:[]}; //return object
     var vecCounter = 0;
     for (var f in this.faces){
       var curentFace = this.faces[f];
@@ -336,9 +372,12 @@ $.getJSON('faks.js', function(data){
           ro.vec[vecCounter*3+1]= this.vertices[curentFace.vertices[i]].y;
           ro.vec[vecCounter*3+2]= this.vertices[curentFace.vertices[i]].z;
           //add distinct normal
-          ro.nor[vecCounter*3]= this.normals[curentFace.normals[i]].x;
-          ro.nor[vecCounter*3+1]= this.normals[curentFace.normals[i]].y;
-          ro.nor[vecCounter*3+2]= this.normals[curentFace.normals[i]].z;
+          if(curentFace.normals.length > 0){
+        	
+        	  ro.nor[vecCounter*3]= this.normals[curentFace.normals[i]].x;
+        	  ro.nor[vecCounter*3+1]= this.normals[curentFace.normals[i]].y;
+        	  ro.nor[vecCounter*3+2]= this.normals[curentFace.normals[i]].z;
+          }
           //add texture coordinate for this vector
           ro.tex[vecCounter*2] = this.vertices[curentFace.vertices[i]].x;
           ro.tex[vecCounter*2+1] = this.vertices[curentFace.vertices[i]].z;

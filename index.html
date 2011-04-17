@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>WebGl FRI</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<link href="site_media/reset.css" rel="stylesheet" type="text/css" media="screen" />
+<link href="site_media/960.css" rel="stylesheet" type="text/css" media="screen" />
+<link href="site_media/site.css" rel="stylesheet" type="text/css" media="screen" />   
+<script type="text/javascript" src="jquery-1.5.2.min.js"></script>
+<script type="text/javascript" src="glMatrix-0.9.5.min.js"></script>
+<script type="text/javascript" src="webgl-utils.js"></script>
+
+<script id="shader-fs" type="x-shader/x-fragment">
+    #ifdef GL_ES
+    precision highp float;
+    #endif
+
+    varying vec2 vTextureCoord;
+
+    uniform sampler2D uSampler;
+
+    void main(void) {
+        gl_FragColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
+    }
+</script>
+
+<script id="shader-vs" type="x-shader/x-vertex">
+    attribute vec3 aVertexPosition;
+    attribute vec2 aTextureCoord;
+
+    uniform mat4 uMVMatrix;
+    uniform mat4 uPMatrix;
+
+    varying vec2 vTextureCoord;
+
+
+    void main(void) {
+        gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+        vTextureCoord = aTextureCoord;
+    }
+</script>
+
+
+<script type="text/javascript" src="lesson5.js">
+
+</script>
+
+
+</head>
+
+
+<body onload="webGLStart();">
+<div class="wrapper">
+    <div id="header-bg">
+        <div class="container_12">
+            <div class="grid_9"  id="header-txt">
+            <h1 class="shadow-dark">FRI</h1>
+            </div>
+            
+            
+        </div>
+    </div>
+    <div class="container_12" id = "content">      
+            <div id="fps">0</div>
+    <canvas id="lesson05-canvas" style="border: none;" width="960" height="500"></canvas>
+    </div>
+<div class="push"></div>
+</div>
+
+<div  id="footer" class="footer">
+<div class="container_12">
+<div class="grid_12">
+FOOTER
+</div>
+</div>
+</div>
+
+</body>
+</html>

@@ -373,7 +373,6 @@ $.getJSON('faks.js', function(data){
           ro.vec[vecCounter*3+2]= this.vertices[curentFace.vertices[i]].z;
           //add distinct normal
           if(curentFace.normals.length > 0){
-        	
         	  ro.nor[vecCounter*3]= this.normals[curentFace.normals[i]].x;
         	  ro.nor[vecCounter*3+1]= this.normals[curentFace.normals[i]].y;
         	  ro.nor[vecCounter*3+2]= this.normals[curentFace.normals[i]].z;

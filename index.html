@@ -50,7 +50,7 @@
     vTextureCoord = aTextureCoord;
 
     if (!uUseLighting) {
-      vLightWeighting = vec3(1.0, 1.0, 1.0);
+      vLightWeighting = vec3(20.0, 20.0, 1.0);
     } else {
       vec3 transformedNormal = uNMatrix * aVertexNormal;
       float directionalLightWeighting = max(dot(transformedNormal, uLightingDirection), 0.0);

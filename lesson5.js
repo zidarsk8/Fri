@@ -308,28 +308,39 @@ function tick() {
   fps++;
 }
 
+var faks = null;
 
 function webGLStart() {
-  var canvas = document.getElementById("lesson05-canvas");
-  initGL(canvas);
-  initShaders();
-  initBuffers();
-  initTexture();
-  
-  canvas.onmousedown = handleMouseDown;
-  document.onmouseup = handleMouseUp;
-  document.onmousemove = handleMouseMove;
-  document.onkeydown = handleKeyDown;
-  document.onkeyup = handleKeyUp;
+	
+	  console.log("Trying to get json");
+	  jQuery.getJSON('faks.js', function(data){
+		  console.log(data);
+		  faks = data;
+		  var canvas = document.getElementById("lesson05-canvas");
+		  initGL(canvas);
+		  initShaders();
+		  initBuffers();
+		  initTexture();
+		  
+		  canvas.onmousedown = handleMouseDown;
+		  document.onmouseup = handleMouseUp;
+		  document.onmousemove = handleMouseMove;
+		  document.onkeydown = handleKeyDown;
+		  document.onkeyup = handleKeyUp;
+		  
 
-  gl.clearColor(0.0, 0.0, 0.0, 1.0);
-  gl.enable(gl.DEPTH_TEST);
-//  use set interval for debugging cause requestAnimFrame(tick); is causing problems for firebug
-//  setInterval("tick()", 50);
-  tick();
-  setInterval(function(){
-    document.getElementById("fps").innerHTML="FPS: "+fps;
-    fps = 0;
-  }, 1000);
+
+		  gl.clearColor(0.0, 0.0, 0.0, 1.0);
+		  gl.enable(gl.DEPTH_TEST);
+		//  use set interval for debugging cause requestAnimFrame(tick); is causing problems for firebug
+		//  setInterval("tick()", 50);
+		  tick();
+		  setInterval(function(){
+		    document.getElementById("fps").innerHTML="FPS: "+fps;
+		    fps = 0;
+		  }, 1000);
+	  });
+	
+
 }
 

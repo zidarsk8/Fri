@@ -238,7 +238,7 @@ var pitchRate = 0;
 var yaw = 0;
 var yawRate = 0;
 var xPos = 1.0;
-var yPos = 0.5;
+var yPos = 0.0;
 var zPos = 8;
 var speed = 0;
 var lastTime = 0;
@@ -247,6 +247,8 @@ var lastMouseX = null;
 var lastMouseY = null;
 var xRot = 0;
 var yRot = 0.4;
+var joggingAngle = 0;
+
 
 function drawScene() {
   gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);

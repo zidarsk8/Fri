@@ -1,15 +1,42 @@
 
 var gl;
 
+var pitch = 0;
+var pitchRate = 0;
+var yaw = 0;
+var yawRate = 0;
+var xPos = 1.0;
+var yPos = 0.0;
+var zPos = 8;
+var speed = 0;
+var lastTime = 0;
+var mouseDown = false;
+var lastMouseX = null;
+var lastMouseY = null;
+var xRot = 0;
+var yRot = 0.4;
+var joggingAngle = 0;
+var shaderProgram;
+var neheTexture;
+var mvMatrix = mat4.create();
+var mvMatrixStack = [];
+var pMatrix = mat4.create();
+var cubeVertexPositionBuffer;
+var cubeVertexTextureCoordBuffer;
+var cubeVertexIndexBuffer;
+var currentlyPressedKeys = {};
+
+
+
 function initGL(canvas) {
   try {
-      gl = canvas.getContext("experimental-webgl");
-      gl.viewportWidth = canvas.width;
-      gl.viewportHeight = canvas.height;
+    gl = canvas.getContext("experimental-webgl");
+    gl.viewportWidth = canvas.width;
+    gl.viewportHeight = canvas.height;
   } catch (e) {
   }
   if (!gl) {
-      alert("Could not initialise WebGL, sorry :-(");
+    alert("Could not initialise WebGL, sorry :-(");
   }
 }
 
@@ -17,40 +44,37 @@ function initGL(canvas) {
 function getShader(gl, id) {
   var shaderScript = document.getElementById(id);
   if (!shaderScript) {
-      return null;
+    return null;
   }
 
   var str = "";
   var k = shaderScript.firstChild;
   while (k) {
-      if (k.nodeType == 3) {
-          str += k.textContent;
-      }
-      k = k.nextSibling;
+    if (k.nodeType == 3) {
+        str += k.textContent;
+    }
+    k = k.nextSibling;
   }
 
   var shader;
   if (shaderScript.type == "x-shader/x-fragment") {
-      shader = gl.createShader(gl.FRAGMENT_SHADER);
+    shader = gl.createShader(gl.FRAGMENT_SHADER);
   } else if (shaderScript.type == "x-shader/x-vertex") {
-      shader = gl.createShader(gl.VERTEX_SHADER);
+    shader = gl.createShader(gl.VERTEX_SHADER);
   } else {
-      return null;
+    return null;
   }
 
   gl.shaderSource(shader, str);
   gl.compileShader(shader);
 
   if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-      alert(gl.getShaderInfoLog(shader));
-      return null;
+    alert(gl.getShaderInfoLog(shader));
+    return null;
   }
 
   return shader;
 }
-
-
-var shaderProgram;
 
 function initShaders() {
   var fragmentShader = getShader(gl, "shader-fs");
@@ -62,7 +86,7 @@ function initShaders() {
   gl.linkProgram(shaderProgram);
 
   if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
-      alert("Could not initialise shaders");
+    alert("Could not initialise shaders");
   }
 
   gl.useProgram(shaderProgram);
@@ -78,7 +102,6 @@ function initShaders() {
   shaderProgram.samplerUniform = gl.getUniformLocation(shaderProgram, "uSampler");
 }
 
-
 function handleLoadedTexture(texture) {
 	gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
 	gl.bindTexture(gl.TEXTURE_2D, texture);
@@ -88,9 +111,6 @@ function handleLoadedTexture(texture) {
     gl.generateMipmap(gl.TEXTURE_2D);
     gl.bindTexture(gl.TEXTURE_2D, null);
 }
-
-
-var neheTexture;
 
 function initTexture() {
   neheTexture = gl.createTexture();
@@ -102,10 +122,6 @@ function initTexture() {
   neheTexture.image.src = "brick.jpg";
 }
 
-
-var mvMatrix = mat4.create();
-var mvMatrixStack = [];
-var pMatrix = mat4.create();
 
 function mvPushMatrix() {
   var copy = mat4.create();
@@ -131,63 +147,8 @@ function degToRad(degrees) {
   return degrees * Math.PI / 180;
 }
 
-var cubeVertexPositionBuffer;
-var cubeVertexTextureCoordBuffer;
-var cubeVertexIndexBuffer;
-
-var BlenderObject = {
-  vertices : [
-      {x: 1.000000,  y: -1.000000, z: -1.000000},
-      {x: 1.000000,  y: -1.000000, z: -1.000000},
-      {x: 1.000000,  y: -1.000000, z: 1.000000},
-      {x: -1.000000, y: -1.000000, z: 1.000000},
-      {x: -1.000000, y: -1.000000, z: -1.000000},
-      {x: 1.000000,  y: 1.000000,  z: -1.000000},
-      {x: -0.000001, y: 1.000000,  z: 1.000000},
-      {x: -1.000000, y: 1.000000,  z: -1.000000}
-  ],
-  normals:[       
-      {x: 1.000000,  y: -1.000000, z: -1.000000},
-      {x: 1.000000,  y: -1.000000, z: -1.000000}
-  ],
-  faces: [
-   {vertices : [5, 7, 6], normal: 0},
-   {vertices : [2, 6, 3], normal: 0},
-   {vertices : [5, 1, 4], normal: 0},
-   {vertices : [5, 4, 7], normal: 0},
-   {vertices : [3, 6, 7], normal: 0},
-   {vertices : [3, 7, 4], normal: 0},
-   {vertices : [1, 5, 2], normal: 0},
-   {vertices : [5, 6, 2], normal: 0},
-   {vertices : [1, 2, 3], normal: 0},
-   {vertices : [1, 3, 4], normal: 0}
-  ],
-  getTriangleFaces : function(){
-    var ro = {vec:[],fac:[], tex:[]}; //return object
-    var vecCounter = 0;
-    for (var f in this.faces){
-      var curentFace = this.faces[f];
-      if (curentFace.vertices.length == 3){
-        for (var i=0 ; i<3 ; i++){
-          //add distinct vertex vector for each face
-          ro.vec[vecCounter*3]= this.vertices[curentFace.vertices[i]-1].x;
-          ro.vec[vecCounter*3+1]= this.vertices[curentFace.vertices[i]-1].y;
-          ro.vec[vecCounter*3+2]= this.vertices[curentFace.vertices[i]-1].z;
-          //add texture coordinate for this vector
-          ro.tex[vecCounter*2] = i%2;
-          ro.tex[vecCounter*2+1] = (i-1)%2;
-          //push vector to faces array
-          ro.fac.push(vecCounter++);
-        }
-      }
-    }
-    return ro;
-  }
-};
 
 function initBuffers() {
-    
-  var bo = BlenderObject.getTriangleFaces();
   faks.getTriangleFaces = function(){
     var ro = {vec:[],fac:[], tex:[]}; //return object
     var vecCounter = 0;
@@ -209,7 +170,7 @@ function initBuffers() {
     }
     return ro;
   }
-  console.log(faks.getTriangleFaces().fac);
+  
   bo = faks.getTriangleFaces();
   
   var vertices = bo.vec;
@@ -234,22 +195,6 @@ function initBuffers() {
   gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(cubeVertexIndices), gl.STATIC_DRAW);
 }
 
-var pitch = 0;
-var pitchRate = 0;
-var yaw = 0;
-var yawRate = 0;
-var xPos = 1.0;
-var yPos = 0.0;
-var zPos = 8;
-var speed = 0;
-var lastTime = 0;
-var mouseDown = false;
-var lastMouseX = null;
-var lastMouseY = null;
-var xRot = 0;
-var yRot = 0.4;
-var joggingAngle = 0;
-
 
 function drawScene() {
   gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
@@ -259,7 +204,6 @@ function drawScene() {
 
   mat4.identity(mvMatrix);
 
-  
   mat4.rotate(mvMatrix, degToRad(-pitch), [1, 0, 0]);
   mat4.rotate(mvMatrix, degToRad(-yaw), [0, 1, 0]);
   mat4.translate(mvMatrix, [-xPos, -yPos, -zPos]);
@@ -280,7 +224,6 @@ function drawScene() {
 }
 
 
-var currentlyPressedKeys = {};
 
 function handleKeyDown(event) {
   currentlyPressedKeys[event.keyCode] = true;
@@ -294,69 +237,46 @@ function handleKeyUp(event) {
 
 
 function handleKeys() {
-  if (currentlyPressedKeys[33]) {
-      // Page Up
-      pitchRate = 0.1;
-  } else if (currentlyPressedKeys[34]) {
-      // Page Down
-      pitchRate = -0.1;
-  } else {
-      pitchRate = 0;
+  speed = 0;
+  pitchRate = 0;
+  yawRate = 0;
+  if (currentlyPressedKeys[33]) { // Page Up
+    pitchRate = 0.1;
+  } else if (currentlyPressedKeys[34]) { // Page Down
+    pitchRate = -0.1;
   }
-
-  if (currentlyPressedKeys[37] || currentlyPressedKeys[65]) {
-      // Left cursor key or A
-      yawRate = 0.1;
-  } else if (currentlyPressedKeys[39] || currentlyPressedKeys[68]) {
-      // Right cursor key or D
-      yawRate = -0.1;
-  } else {
-      yawRate = 0;
+  if (currentlyPressedKeys[37] || currentlyPressedKeys[65]) { // Left cursor key or A
+    yawRate = 0.1;
+  } else if (currentlyPressedKeys[39] || currentlyPressedKeys[68]) { // Right cursor key or D
+    yawRate = -0.1;
   }
-
-  if (currentlyPressedKeys[38] || currentlyPressedKeys[87]) {
-      // Up cursor key or W
-      speed = 0.003;
-  } else if (currentlyPressedKeys[40] || currentlyPressedKeys[83]) {
-      // Down cursor key
-      speed = -0.003;
-  } else {
-      speed = 0;
+  if (currentlyPressedKeys[38] || currentlyPressedKeys[87]) { // Up cursor key or W
+    speed = 0.003;
+  } else if (currentlyPressedKeys[40] || currentlyPressedKeys[83]) { // Down cursor key
+    speed = -0.003;
   }
-
 }
 
 function handleMouseDown(event) {
-    mouseDown = true;
-    lastMouseX = event.clientX;
-    lastMouseY = event.clientY;
-    
-    var arr = BlenderObject.getTriangleFaces().vec;
-    console.log(arr);
+  mouseDown = true;
+  lastMouseX = event.clientX;
+  lastMouseY = event.clientY;
 }
-
-
 function handleMouseUp(event) {
-    mouseDown = false;
+  mouseDown = false;
 }
-
-
 function handleMouseMove(event) {
-    if (!mouseDown) {
-        return;
-    }
-    var newX = event.clientX;
-    var newY = event.clientY;
-
-    var deltaX = newX - lastMouseX
-
-    var deltaY = newY - lastMouseY;
-
-    xRot += deltaX / 3;
-    yRot += deltaY / 3;
-    
-    lastMouseX = newX
-    lastMouseY = newY;
+  if (!mouseDown) {
+      return;
+  }
+  var newX = event.clientX;
+  var newY = event.clientY;
+  var deltaX = newX - lastMouseX
+  var deltaY = newY - lastMouseY;
+  xRot += deltaX / 3;
+  yRot += deltaY / 3;
+  lastMouseX = newX
+  lastMouseY = newY;
 }
 
 
@@ -364,18 +284,15 @@ function animate() {
   var timeNow = new Date().getTime();
   if (lastTime != 0) {
       var elapsed = timeNow - lastTime;
-
-      if (speed != 0) {
+      if (speed != 0 && elapsed != 0) {
           xPos -= Math.sin(degToRad(yaw)) * speed * elapsed;
           zPos -= Math.cos(degToRad(yaw)) * speed * elapsed;
 
-          joggingAngle += elapsed * 0.6; // 0.6 "fiddle factor" - makes it feel more realistic :-)
-          yPos = Math.sin(degToRad(joggingAngle)) / 20 + 0.4
+//          joggingAngle += elapsed * 0.6; // 0.6 "fiddle factor" - makes it feel more realistic :-)
+//          yPos = Math.sin(degToRad(joggingAngle)) / 20 + 0.4
       }
-
       yaw += yawRate * elapsed;
       pitch += pitchRate * elapsed;
-
   }
   lastTime = timeNow;
 }
@@ -383,6 +300,7 @@ function animate() {
 var fps = 0;
 
 function tick() {
+  // comment requestAnimFrame(tick); when debugging and use setInterval instead
   requestAnimFrame(tick);
   handleKeys();
   animate();
@@ -397,6 +315,7 @@ function webGLStart() {
   initShaders();
   initBuffers();
   initTexture();
+  
   canvas.onmousedown = handleMouseDown;
   document.onmouseup = handleMouseUp;
   document.onmousemove = handleMouseMove;
@@ -405,6 +324,7 @@ function webGLStart() {
 
   gl.clearColor(0.0, 0.0, 0.0, 1.0);
   gl.enable(gl.DEPTH_TEST);
+//  use set interval for debugging cause requestAnimFrame(tick); is causing problems for firebug
 //  setInterval("tick()", 50);
   tick();
   setInterval(function(){

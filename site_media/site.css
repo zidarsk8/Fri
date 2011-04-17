@@ -1,0 +1,55 @@
+/* http://colorschemedesigner.com/#0011T1BsOw0w0 */
+
+/*
+E6DADA  ACA6A6  954747  F2E9E9  F2ECEC
+*/
+
+@CHARSET "UTF-8";
+
+* { font-family: arial, serif; }
+
+html, body { height:100%; background-color: #F2ECEC; line-height: 22px; font-size: 16px; }
+
+a { color: #954747; text-decoration: none; text-shadow: 0 1px 0px white; font-weight: bold; }
+
+#header-bg { background-color: #2B4F89; height: 100px; }
+
+#header-txt { color: white; font-size: 40px; line-height: 100px; }
+
+#header-txt a { color:white; background-color: #954747; text-shadow: 0 2px 0px black;  }
+
+#header-login { padding: 10px 0px; }
+#header-login input { width:100%; display:inline; }
+
+.shadow-dark {
+	text-shadow: 0 2px 0px black;
+}
+
+#content p  { padding: 20px 0px; line-height: 22px;  }
+
+#content p:first-letter { 
+	font-size: 32px; color: #954747; font-weight: bold;  
+	text-shadow: 0 1px 0px white; 
+}
+
+#content .description { color:#ACA6A6; text-shadow: 0 1px 0px white; }
+
+#content li { border-bottom: 1px solid white; padding:10px 0px; }
+
+#content div.technology { font-size: 12px; }
+
+#content div.technology h2, ul { display: inline; }
+
+#content div.technology li { border-bottom: 0px; display:inline; }
+
+#content h1 { padding: 10px 0px; font-size: 20px; text-shadow: 0 1px 0px white; }
+
+.wrapper              { min-height: 100%; height: auto !important; height: 100%; margin: 0 auto -30px; }
+
+.footer, .push        { height: 30px; clear:both; }
+
+.error                { text-align: center; }
+
+
+#footer               { background-color: #444546; text-align:center; line-height: 30px; font-size: 14px; color:white; text-shadow: none;  }
+

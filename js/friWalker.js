@@ -1,4 +1,3 @@
-
 var gl = null;
 var pitch = 0;
 var pitchRate = 0;
@@ -326,6 +325,10 @@ $.getJSON('faks.js', function(data){
           ro.vec[vecCounter*3]= this.vertices[curentFace.vertices[i]].x;
           ro.vec[vecCounter*3+1]= this.vertices[curentFace.vertices[i]].y;
           ro.vec[vecCounter*3+2]= this.vertices[curentFace.vertices[i]].z;
+          //add distinct normal
+          ro.nor[vecCounter*3]= this.normals[curentFace.normals[i]].x;
+          ro.nor[vecCounter*3+1]= this.normals[curentFace.normals[i]].y;
+          ro.nor[vecCounter*3+2]= this.normals[curentFace.normals[i]].z;
           //add texture coordinate for this vector
           ro.tex[vecCounter*2] = this.vertices[curentFace.vertices[i]].x;
           ro.tex[vecCounter*2+1] = this.vertices[curentFace.vertices[i]].z;

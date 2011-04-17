@@ -2,79 +2,77 @@
 <html>
 
 <head>
-<title>WebGl FRI</title>
-<meta http-equiv="content-type" content="text/html; charset=UTF-8">
-<link href="site_media/reset.css" rel="stylesheet" type="text/css" media="screen" />
-<link href="site_media/960.css" rel="stylesheet" type="text/css" media="screen" />
-<link href="site_media/site.css" rel="stylesheet" type="text/css" media="screen" />   
-<script type="text/javascript" src="js/jquery-1.5.2.min.js"></script>
-<script type="text/javascript" src="js/glMatrix-0.9.5.min.js"></script>
-<script type="text/javascript" src="js/webgl-utils.js"></script>
+  <title>WebGl FRI Walker</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" type="text/css" href="css/style.css" />
+  <link rel="stylesheet" type="text/css" href="css/jqueryspecific.css" />  
+  <script type="text/javascript" src="js/jquery-1.5.2.min.js"></script>
+  <script type="text/javascript" src="js/glMatrix-0.9.5.min.js"></script>
+  <script type="text/javascript" src="js/webgl-utils.js"></script>
 
-<script id="shader-fs" type="x-shader/x-fragment">
-    #ifdef GL_ES
-    precision highp float;
-    #endif
+  <script id="shader-fs" type="x-shader/x-fragment">
+      #ifdef GL_ES
+      precision highp float;
+      #endif
 
-    varying vec2 vTextureCoord;
+      varying vec2 vTextureCoord;
 
-    uniform sampler2D uSampler;
+      uniform sampler2D uSampler;
 
-    void main(void) {
-        gl_FragColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
-    }
-</script>
+      void main(void) {
+          gl_FragColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
+      }
+  </script>
 
-<script id="shader-vs" type="x-shader/x-vertex">
-    attribute vec3 aVertexPosition;
-    attribute vec2 aTextureCoord;
+  <script id="shader-vs" type="x-shader/x-vertex">
+      attribute vec3 aVertexPosition;
+      attribute vec2 aTextureCoord;
 
-    uniform mat4 uMVMatrix;
-    uniform mat4 uPMatrix;
+      uniform mat4 uMVMatrix;
+      uniform mat4 uPMatrix;
 
-    varying vec2 vTextureCoord;
+      varying vec2 vTextureCoord;
 
+      void main(void) {
+          gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+          vTextureCoord = aTextureCoord;
+      }
+  </script>
 
-    void main(void) {
-        gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
-        vTextureCoord = aTextureCoord;
-    }
-</script>
-
-
-<script type="text/javascript" src="js/friWalker.js">
-
-</script>
-
-
+  <script type="text/javascript" src="js/friWalker.js"></script>
 </head>
-
-
 <body >
-<div class="wrapper">
-    <div id="header-bg">
-        <div class="container_12">
-            <div class="grid_9"  id="header-txt">
-            <h1 class="shadow-dark">FRI</h1>
-            </div>
-            
-            
-        </div>
-    </div>
-    <div class="container_12" id = "content">      
-            <div id="fps">0</div>
-    <canvas id="lesson05-canvas" style="border: none;" width="960" height="500"></canvas>
-    </div>
-<div class="push"></div>
-</div>
 
-<div  id="footer" class="footer">
-<div class="container_12">
-<div class="grid_12">
-FOOTER
-</div>
-</div>
-</div>
+<header>
+  <div id="page_title_container">
+    <canvas id="animated-header-logo" width="1000" height="130">
+      <!-- his text is displayed if your browser does not support HTML5 Canvas.-->
+    </canvas>
+    <div id="page_title" >
+      <h1>FRI Walker</h1>
+    </div>
+  </div>
+</header>  
+  
+<section id="mainPannel" class="hfeed">
+  <div class="container_12" id = "content">      
+          <div id="fps">0</div>
+  <canvas id="lesson05-canvas" style="border: none;" width="960" height="500"></canvas>
+  </div>
+</section>
+
+<footer id="main-footer">
+  <section id="footer-1">
+    <p>
+      <a href="http://validator.w3.org/check?uri=http%3A%2F%2Flocalhost%2Findex.php;st=1;No200=1;verbose=1">
+        <img src="http://www.w3.org/html/logo/badge/html5-badge-h-css3-semantics.png" width="88" height="31" alt="HTML5 Powered with CSS3" title="HTML5 Powered with CSS3"/>
+      </a>
+        <a href="http://jigsaw.w3.org/css-validator/check/referer?profile=css3">
+            <img style="border:0;width:88px;height:31px" src="http://jigsaw.w3.org/css-validator/images/vcss-blue" alt="Valid CSS!" />
+      </a>
+    </p>
+  </section>
+</footer>
 
 </body>
 </html>

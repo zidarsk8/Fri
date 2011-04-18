@@ -96,11 +96,15 @@ function initShaders() {
 
   shaderProgram.textureCoordAttribute = gl.getAttribLocation(shaderProgram, "aTextureCoord");
   gl.enableVertexAttribArray(shaderProgram.textureCoordAttribute);
-
+  
   shaderProgram.pMatrixUniform = gl.getUniformLocation(shaderProgram, "uPMatrix");
   shaderProgram.mvMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
+  shaderProgram.nMatrixUniform = gl.getUniformLocation(shaderProgram, "uNMatrix");
   shaderProgram.samplerUniform = gl.getUniformLocation(shaderProgram, "uSampler");
-}
+  shaderProgram.useLightingUniform = gl.getUniformLocation(shaderProgram, "uUseLighting");
+  shaderProgram.ambientColorUniform = gl.getUniformLocation(shaderProgram, "uAmbientColor");
+  shaderProgram.lightingDirectionUniform = gl.getUniformLocation(shaderProgram, "uLightingDirection");
+  shaderProgram.directionalColorUniform = gl.getUniformLocation(shaderProgram, "uDirectionalColor");}
 
 function handleLoadedTexture(texture) {
 	gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
@@ -222,14 +226,14 @@ function drawScene() {
   //light color:
   gl.uniform3f(
     shaderProgram.ambientColorUniform,
-    1.0,
-    0.2,
-    0.2
+    0.6,
+    0.6,
+    0.7
   );
   
   //direction:
   var lightingDirection = [
-                           1.0, 1.0, -1.0                           
+-0.550000, 1.040000, 3.410000                     
                          ];
   var adjustedLD = vec3.create();
   vec3.normalize(lightingDirection, adjustedLD);
@@ -373,7 +377,6 @@ $.getJSON('faks.js', function(data){
           ro.vec[vecCounter*3+2]= this.vertices[curentFace.vertices[i]].z;
           //add distinct normal
           if(curentFace.normals.length > 0){
-        	
         	  ro.nor[vecCounter*3]= this.normals[curentFace.normals[i]].x;
         	  ro.nor[vecCounter*3+1]= this.normals[curentFace.normals[i]].y;
         	  ro.nor[vecCounter*3+2]= this.normals[curentFace.normals[i]].z;

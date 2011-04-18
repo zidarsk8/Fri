@@ -339,7 +339,8 @@ function renderStart() {
 function handleLoad() {
   sf = new SporeFile();
   sf._loadHandler = renderStart;
-  sf.load("creatures/Amahani.dae");
+//  sf.load("creatures/Amahani.dae");
+  sf.load("creatures/arch.dae");
 }
 
 window.onload = handleLoad;

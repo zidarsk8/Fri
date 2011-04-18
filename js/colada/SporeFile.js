@@ -130,7 +130,7 @@ SporeFile.prototype = {
     function getNode(xpathexpr, ctxNode) {
       if (ctxNode == null)
         ctxNode = xml;
-      //console.log("xpath: " + xpathexpr);
+      console.log("xpath: " + xpathexpr);
       return xml.evaluate(xpathexpr, ctxNode, nsResolver, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
     }
 

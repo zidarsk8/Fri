@@ -226,14 +226,14 @@ function drawScene() {
   //light color:
   gl.uniform3f(
     shaderProgram.ambientColorUniform,
-    1.0,
-    0.2,
-    0.2
+    0.6,
+    0.6,
+    0.7
   );
   
   //direction:
   var lightingDirection = [
-                           -10.0, -10.0, -1.0                           
+-0.550000, 1.040000, 3.410000                     
                          ];
   var adjustedLD = vec3.create();
   vec3.normalize(lightingDirection, adjustedLD);

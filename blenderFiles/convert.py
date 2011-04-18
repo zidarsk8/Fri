@@ -36,8 +36,7 @@ for l in f:
             
             if len(n) == 2:
                 face["normals"].append(int(int(n[1])-1))
-                print face["normals"]
-                
+               
         obj["faces"].append(face)
         
     if l[0] == 'n':

@@ -97,14 +97,18 @@ function initShaders() {
   shaderProgram.textureCoordAttribute = gl.getAttribLocation(shaderProgram, "aTextureCoord");
   gl.enableVertexAttribArray(shaderProgram.textureCoordAttribute);
   
+  shaderProgram.vertexNormalAttribute = gl.getAttribLocation(shaderProgram, "aVertexNormal");
+  gl.enableVertexAttribArray(shaderProgram.vertexNormalAttribute);
+        
   shaderProgram.pMatrixUniform = gl.getUniformLocation(shaderProgram, "uPMatrix");
   shaderProgram.mvMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
-  shaderProgram.nMatrixUniform = gl.getUniformLocation(shaderProgram, "uNMatrix");
   shaderProgram.samplerUniform = gl.getUniformLocation(shaderProgram, "uSampler");
+  shaderProgram.nMatrixUniform = gl.getUniformLocation(shaderProgram, "uNMatrix");
   shaderProgram.useLightingUniform = gl.getUniformLocation(shaderProgram, "uUseLighting");
   shaderProgram.ambientColorUniform = gl.getUniformLocation(shaderProgram, "uAmbientColor");
   shaderProgram.lightingDirectionUniform = gl.getUniformLocation(shaderProgram, "uLightingDirection");
-  shaderProgram.directionalColorUniform = gl.getUniformLocation(shaderProgram, "uDirectionalColor");}
+  shaderProgram.directionalColorUniform = gl.getUniformLocation(shaderProgram, "uDirectionalColor");
+}
 
 function handleLoadedTexture(texture) {
 	gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
@@ -159,35 +163,30 @@ function degToRad(degrees) {
 
 function initBuffers() {
   
-  bo = faks.getTriangleFaces();
-  
+  var bo = faks.getTriangleFaces();
   var vertices = bo.vec;
+  var vertexNormals  = bo.nor;
+  var textureCoords = bo.tex;
+  var cubeVertexIndices = bo.fac;
+    
   cubeVertexPositionBuffer = gl.createBuffer();
   cubeVertexPositionBuffer.itemSize = 3;
   cubeVertexPositionBuffer.numItems = vertices.length/cubeVertexPositionBuffer.itemSize;
   gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexPositionBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
   
-  var vertexNormals = bo.nor;
-  
-  console.log(vertexNormals);
   cubeVertexNormalBuffer = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexNormalBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexNormals), gl.STATIC_DRAW);
   cubeVertexNormalBuffer.itemSize = 3;
   cubeVertexNormalBuffer.numItems = vertexNormals.length/cubeVertexNormalBuffer.itemSize;
+  gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexNormalBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexNormals), gl.STATIC_DRAW);
   
-  var textureCoords = bo.tex;
   cubeVertexTextureCoordBuffer = gl.createBuffer();
   cubeVertexTextureCoordBuffer.itemSize = 2;
   cubeVertexTextureCoordBuffer.numItems = textureCoords.length/cubeVertexTextureCoordBuffer.itemSize;
   gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexTextureCoordBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoords), gl.STATIC_DRAW);
   
-
-  
-
-  var cubeVertexIndices = bo.fac;
   cubeVertexIndexBuffer = gl.createBuffer();
   cubeVertexIndexBuffer.itemSize = 1;
   cubeVertexIndexBuffer.numItems = cubeVertexIndices.length/cubeVertexIndexBuffer.itemSize;
@@ -221,20 +220,25 @@ function drawScene() {
   gl.bindTexture(gl.TEXTURE_2D, neheTexture);
   gl.uniform1i(shaderProgram.samplerUniform, 0);
 
+
   //lightning stuff:
   
+  gl.uniform1i(shaderProgram.useLightingUniform, true);
   //light color:
   gl.uniform3f(
     shaderProgram.ambientColorUniform,
-    0.6,
-    0.6,
-    0.7
+    0.2,
+    0.2,
+    0.2
   );
   
   //direction:
   var lightingDirection = [
--0.550000, 1.040000, 3.410000                     
-                         ];
+    -0.550000, 
+    1.040000, 
+    3.410000                     
+  ];
+  
   var adjustedLD = vec3.create();
   vec3.normalize(lightingDirection, adjustedLD);
   vec3.scale(adjustedLD, -1);
@@ -247,6 +251,7 @@ function drawScene() {
     1.0
   );
   
+
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeVertexIndexBuffer);
   setMatrixUniforms();
   gl.drawElements(gl.TRIANGLES, cubeVertexIndexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
@@ -348,8 +353,6 @@ function webGLStart() {
   document.onmousemove = handleMouseMove;
   document.onkeydown = handleKeyDown;
   document.onkeyup = handleKeyUp;
-
-
 
   gl.clearColor(0.0, 0.0, 0.0, 1.0);
   gl.enable(gl.DEPTH_TEST);

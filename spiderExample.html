@@ -530,7 +530,7 @@ ColladaTest.prototype = {
 		this.stereoEnabled = false;
 		this.gldoc = null;
 
-		var daeSource = { url:"examples/data/duck.dae", specular:[0.0, 0.0, 0.0, 0.0], light:true, eye:[0.0, 0.0, 4.0] };
+		var daeSource = { url:"http://spidergl.org/examples/data/duck.dae", specular:[0.0, 0.0, 0.0, 0.0], light:true, eye:[0.0, 0.0, 4.0] };
 		this.loadDataset(daeSource);		
 	},
 
@@ -761,10 +761,10 @@ function toggleStereo(value) {
 
 function changeScene() {
 	var scenes = [
-		{ url:"examples/data/duck.dae",                          specular:[0.0, 0.0, 0.0, 0.0], light:true,  eye:[0.0, 0.0, 4.0]  },
-		{ url:"examples/data/seymourplane_triangulate.dae",      specular:[0.0, 0.0, 0.0, 0.0], light:true,  eye:[0.0, 0.0, 2.0]  },
-		{ url:"examples/data/Dining_Room/diningroomC.dae",       specular:[0.0, 0.0, 0.0, 0.0], light:false, eye:[-0.6, 0.0, 0.1] },
-		{ url:"examples/data/Moon_Buggy/lunar_vehicle_tris.dae", specular:[0.0, 0.0, 0.0, 0.0], light:false, eye:[0.0, 0.5, 1.0]  }
+		{ url:"http://spidergl.org/examples/data/duck.dae",                          specular:[0.0, 0.0, 0.0, 0.0], light:true,  eye:[0.0, 0.0, 4.0]  },
+		{ url:"http://spidergl.org/examples/data/seymourplane_triangulate.dae",      specular:[0.0, 0.0, 0.0, 0.0], light:true,  eye:[0.0, 0.0, 2.0]  },
+		{ url:"http://spidergl.org/examples/data/Dining_Room/diningroomC.dae",       specular:[0.0, 0.0, 0.0, 0.0], light:false, eye:[-0.6, 0.0, 0.1] },
+		{ url:"http://spidergl.org/examples/data/Moon_Buggy/lunar_vehicle_tris.dae", specular:[0.0, 0.0, 0.0, 0.0], light:false, eye:[0.0, 0.5, 1.0]  }
 	];
 
 	var cb = document.getElementById("MODELS_COMBO");

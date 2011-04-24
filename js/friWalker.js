@@ -4,8 +4,9 @@ var pitchRate = 0;
 var yaw = 0;
 var yawRate = 0;
 var xPos = 1.0;
-var yPos = 0.2;
+var yPos = 0.5;
 var zPos = 8;
+var movingSpeed = 0.01;
 var speed = 0;
 var lastTime = 0;
 var mouseDown = false;
@@ -222,34 +223,21 @@ function drawScene() {
 
 
   //lightning stuff:
-  
   gl.uniform1i(shaderProgram.useLightingUniform, true);
   //light color:
-  gl.uniform3f(
-    shaderProgram.ambientColorUniform,
-    0.2,
-    0.2,
-    0.2
-  );
-  
+  gl.uniform3f( shaderProgram.ambientColorUniform, 0.2, 0.2, 0.2 );
   //direction:
-  var lightingDirection = [
-    -0.550000, 
-    1.040000, 
-    3.410000                     
-  ];
+  var lightingDirection = [ -0.550000, 1.040000, 3.410000];
   
   var adjustedLD = vec3.create();
   vec3.normalize(lightingDirection, adjustedLD);
-  vec3.scale(adjustedLD, -1);
+  vec3.scale(adjustedLD, 1);
+//  vec3.rotate(mvMatrix, degToRad(-pitch), [1, 0, 0]);
+//  vec3.rotate(mvMatrix, degToRad(-yaw), [0, 1, 0]);
+
   gl.uniform3fv(shaderProgram.lightingDirectionUniform, adjustedLD);
   
-  gl.uniform3f(
-    shaderProgram.directionalColorUniform,
-    0.2,
-    0.2,
-    1.0
-  );
+  gl.uniform3f( shaderProgram.directionalColorUniform, 0.7, 0.7, 0.7 );
   
 
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeVertexIndexBuffer);
@@ -285,9 +273,9 @@ function handleKeys() {
     yawRate = -0.1;
   }
   if (currentlyPressedKeys[38] || currentlyPressedKeys[87]) { // Up cursor key or W
-    speed = 0.003;
+    speed = movingSpeed;
   } else if (currentlyPressedKeys[40] || currentlyPressedKeys[83]) { // Down cursor key
-    speed = -0.003;
+    speed = -movingSpeed;
   }
 }
 
@@ -360,7 +348,7 @@ function webGLStart() {
 //  setInterval("tick()", 50);
   tick();
   setInterval(function(){
-    document.getElementById("fps").innerHTML="FPS: "+fps;
+    document.getElementById("fps").innerHTML="FPS: "+fps+"<br>x:"+xPos+"<br>y:"+yPos+"<br>z:"+zPos+"<br>pitch:"+pitch+"<br>yaw:"+yaw;
     fps = 0;
   }, 1000);
 }

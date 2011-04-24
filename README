@@ -11,6 +11,7 @@ DONE:
  - implemented simple moving around
 
 TODO:
+ - get directional or spot light to work normally
  - collision detection and simple phisics
  - try to get SpiderGL workin with the college model
  - Make a few simple animation (vending machine, sliding and regular doors)

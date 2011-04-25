@@ -371,10 +371,24 @@ $.getJSON('faks.js', function(data){
         	  ro.nor[vecCounter*3]= this.normals[curentFace.normals[i]].x;
         	  ro.nor[vecCounter*3+1]= this.normals[curentFace.normals[i]].y;
         	  ro.nor[vecCounter*3+2]= this.normals[curentFace.normals[i]].z;
+        	  
+        	//add texture coordinate for this vector
+
+              if(ro.nor[vecCounter*3] != 0){
+            	  ro.tex[vecCounter*2] = this.vertices[curentFace.vertices[i]].z;
+            	  ro.tex[vecCounter*2+1] = this.vertices[curentFace.vertices[i]].y;
+              }
+              if(ro.nor[vecCounter*3+2] != 0){
+            	  ro.tex[vecCounter*2] = this.vertices[curentFace.vertices[i]].x;
+            	  ro.tex[vecCounter*2+1] = this.vertices[curentFace.vertices[i]].y;
+              }
+              if(ro.nor[vecCounter*3+1] != 0){
+            	  ro.tex[vecCounter*2] = this.vertices[curentFace.vertices[i]].x;
+            	  ro.tex[vecCounter*2+1] = this.vertices[curentFace.vertices[i]].z;
+              }
           }
-          //add texture coordinate for this vector
-          ro.tex[vecCounter*2] = this.vertices[curentFace.vertices[i]].x;
-          ro.tex[vecCounter*2+1] = this.vertices[curentFace.vertices[i]].z;
+          
+
           //push vector to faces array
           ro.fac.push(vecCounter++);
         }

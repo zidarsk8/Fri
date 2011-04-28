@@ -17,6 +17,7 @@ var yRot = 0.4;
 var joggingAngle = 0;
 var shaderProgram;
 var neheTexture;
+var wallTexture;
 var mvMatrix = mat4.create();
 var mvMatrixStack = [];
 var pMatrix = mat4.create();
@@ -129,6 +130,15 @@ function initTexture() {
   }
 
   neheTexture.image.src = "brick.jpg";
+  
+
+  wallTexture = gl.createTexture();
+  wallTexture.image = new Image();
+  wallTexture.image.onload = function () {
+      handleLoadedTexture(wallTexture)
+  }
+
+  wallTexture.image.src = "floor.jpg";
 }
 
 
@@ -161,14 +171,14 @@ function degToRad(degrees) {
   return degrees * Math.PI / 180;
 }
 
-
+var cubeVertexIndices;
 function initBuffers() {
   
   var bo = faks.getTriangleFaces();
   var vertices = bo.vec;
   var vertexNormals  = bo.nor;
   var textureCoords = bo.tex;
-  var cubeVertexIndices = bo.fac;
+  cubeVertexIndices = bo.fac;
     
   cubeVertexPositionBuffer = gl.createBuffer();
   cubeVertexPositionBuffer.itemSize = 3;
@@ -217,17 +227,15 @@ function drawScene() {
   gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexTextureCoordBuffer);
   gl.vertexAttribPointer(shaderProgram.textureCoordAttribute, cubeVertexTextureCoordBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
-  gl.activeTexture(gl.TEXTURE0);
-  gl.bindTexture(gl.TEXTURE_2D, neheTexture);
-  gl.uniform1i(shaderProgram.samplerUniform, 0);
+  
 
 
   //lightning stuff:
   gl.uniform1i(shaderProgram.useLightingUniform, true);
   //light color:
-  gl.uniform3f( shaderProgram.ambientColorUniform, 0.2, 0.2, 0.2 );
+  gl.uniform3f( shaderProgram.ambientColorUniform, 0.9, 0.9, 0.9 );
   //direction:
-  var lightingDirection = [ -0.550000, 1.040000, 3.410000];
+  var lightingDirection = [  0, 0, 0];
   
   var adjustedLD = vec3.create();
   vec3.normalize(lightingDirection, adjustedLD);
@@ -240,9 +248,21 @@ function drawScene() {
   gl.uniform3f( shaderProgram.directionalColorUniform, 0.7, 0.7, 0.7 );
   
 
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeVertexIndexBuffer);
+  
   setMatrixUniforms();
-  gl.drawElements(gl.TRIANGLES, cubeVertexIndexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
+  gl.activeTexture(gl.TEXTURE0);
+  gl.uniform1i(shaderProgram.samplerUniform, 0);
+  
+  //Draw the floors:
+  
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeVertexIndexBuffer);
+  //cubeVertexIndexBuffer.numItems
+  gl.bindTexture(gl.TEXTURE_2D, wallTexture);  
+  gl.drawElements(gl.TRIANGLES, 2000, gl.UNSIGNED_SHORT, cubeVertexIndices);
+  gl.bindTexture(gl.TEXTURE_2D, neheTexture);  
+  gl.drawElements(gl.TRIANGLES, cubeVertexIndexBuffer.numItems-2000, gl.UNSIGNED_SHORT, cubeVertexIndices);
+
+
 }
 
 
@@ -386,8 +406,7 @@ $.getJSON('faks.js', function(data){
             	  ro.tex[vecCounter*2] = this.vertices[curentFace.vertices[i]].x;
             	  ro.tex[vecCounter*2+1] = this.vertices[curentFace.vertices[i]].z;
               }
-          }
-          
+          }      
 
           //push vector to faces array
           ro.fac.push(vecCounter++);

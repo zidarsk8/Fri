@@ -42,7 +42,7 @@ for l in f:
     if l[0] == 'n':
         output += ""     
         
-json.dump(obj, open(sys.argv[2], 'w'))
+json.dump(obj, open(sys.argv[2], 'w'), indent=4)
 print "Done"
     
 

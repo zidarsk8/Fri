@@ -174,7 +174,7 @@ function degToRad(degrees) {
 var cubeVertexIndices;
 function initBuffers() {
   
-  var bo = faks.getTriangleFaces();
+  var bo = faks.getTriangleFaces('glass');
   var vertices = bo.vec;
   var vertexNormals  = bo.nor;
   var textureCoords = bo.tex;
@@ -375,11 +375,15 @@ function webGLStart() {
 
 $.getJSON('faks.js', function(data){
   faks = data;
-  faks.getTriangleFaces = function(){
+  faks.getTriangleFaces = function(material){
     var ro = {vec:[], fac:[], tex:[], nor:[]}; //return object
     var vecCounter = 0;
+    
     for (var f in this.faces){
+      
       var curentFace = this.faces[f];
+      if (curentFace.material != material)
+    	  continue;
       if (curentFace.vertices.length == 3){
         for (var i=0 ; i<3 ; i++){
           //add distinct vertex vector for each face

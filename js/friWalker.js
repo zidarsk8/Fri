@@ -257,9 +257,7 @@ function drawScene() {
 	  gl.bindBuffer(gl.ARRAY_BUFFER, buffers[mat].tex);
 	  gl.vertexAttribPointer(shaderProgram.textureCoordAttribute, buffers[mat].tex.itemSize, gl.FLOAT, false, 0, 0);
 	  
-
-	  
-  }
+  
 
   //lightning stuff:
   gl.uniform1i(shaderProgram.useLightingUniform, true);
@@ -286,16 +284,16 @@ function drawScene() {
   
   //Draw the floors:
 
-  for (var key in buffers){
+
 	  texture = neheTexture;
-	  if(key == "glass"){
+	  if(mat == "glass"){
 		  texture = wallTexture;
 		  
 	  }
 	  
-	  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffers[key].fac);
+	  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffers[mat].fac);
 	  gl.bindTexture(gl.TEXTURE_2D, texture);  
-	  gl.drawElements(gl.TRIANGLES, buffers[key].fac.numItems, gl.UNSIGNED_SHORT, vertexIndices[key]);
+	  gl.drawElements(gl.TRIANGLES, buffers[mat].fac.numItems, gl.UNSIGNED_SHORT, vertexIndices[mat]);
 
   }
   //gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeVertexIndexBuffer);

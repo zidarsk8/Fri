@@ -171,38 +171,58 @@ function degToRad(degrees) {
   return degrees * Math.PI / 180;
 }
 
-var cubeVertexIndices;
+var vertexIndices = [];
+var buffers = [];
 function initBuffers() {
   
-  var bo = faks.getTriangleFaces('glass');
-  var vertices = bo.vec;
-  var vertexNormals  = bo.nor;
-  var textureCoords = bo.tex;
-  cubeVertexIndices = bo.fac;
+	
+  $.each(faks.materials, function(key, material){
+	
+	var bo = faks.getTriangleFaces(material);
+	
+    var buff = {
+			 vec : gl.createBuffer(),
+			 nor : gl.createBuffer(),
+			 tex : gl.createBuffer(),
+			 fac : gl.createBuffer()
+	};	 
     
-  cubeVertexPositionBuffer = gl.createBuffer();
-  cubeVertexPositionBuffer.itemSize = 3;
-  cubeVertexPositionBuffer.numItems = vertices.length/cubeVertexPositionBuffer.itemSize;
-  gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexPositionBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-  
-  cubeVertexNormalBuffer = gl.createBuffer();
-  cubeVertexNormalBuffer.itemSize = 3;
-  cubeVertexNormalBuffer.numItems = vertexNormals.length/cubeVertexNormalBuffer.itemSize;
-  gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexNormalBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexNormals), gl.STATIC_DRAW);
-  
-  cubeVertexTextureCoordBuffer = gl.createBuffer();
-  cubeVertexTextureCoordBuffer.itemSize = 2;
-  cubeVertexTextureCoordBuffer.numItems = textureCoords.length/cubeVertexTextureCoordBuffer.itemSize;
-  gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexTextureCoordBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoords), gl.STATIC_DRAW);
-  
-  cubeVertexIndexBuffer = gl.createBuffer();
-  cubeVertexIndexBuffer.itemSize = 1;
-  cubeVertexIndexBuffer.numItems = cubeVertexIndices.length/cubeVertexIndexBuffer.itemSize;
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeVertexIndexBuffer);
-  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(cubeVertexIndices), gl.STATIC_DRAW);
+    var item_size = {'vec' : 3, 'nor':3, 'tex': 2, 'fac':1};
+     
+	for(var key in buff){
+	  buff[key].itemSize = item_size[key];
+	  buff[key].numItems = bo[key].length/buff[key].itemSize;
+	  gl.bindBuffer(gl.ARRAY_BUFFER, buff[key]);
+	  
+	  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(bo[key]), gl.STATIC_DRAW);		
+	}
+    buffers[material] = buff;
+    vertexIndices[material] = bo.fac;
+  });  
+    
+//  cubeVertexPositionBuffer = gl.createBuffer();
+//  cubeVertexPositionBuffer.itemSize = 3;
+//  cubeVertexPositionBuffer.numItems = vertices.length/cubeVertexPositionBuffer.itemSize;
+//  gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexPositionBuffer);
+//  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+//  
+//  cubeVertexNormalBuffer = gl.createBuffer();
+//  cubeVertexNormalBuffer.itemSize = 3;
+//  cubeVertexNormalBuffer.numItems = vertexNormals.length/cubeVertexNormalBuffer.itemSize;
+//  gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexNormalBuffer);
+//  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexNormals), gl.STATIC_DRAW);
+//  
+//  cubeVertexTextureCoordBuffer = gl.createBuffer();
+//  cubeVertexTextureCoordBuffer.itemSize = 2;
+//  cubeVertexTextureCoordBuffer.numItems = textureCoords.length/cubeVertexTextureCoordBuffer.itemSize;
+//  gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexTextureCoordBuffer);
+//  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoords), gl.STATIC_DRAW);
+//  
+//  cubeVertexIndexBuffer = gl.createBuffer();
+//  cubeVertexIndexBuffer.itemSize = 1;
+//  cubeVertexIndexBuffer.numItems = cubeVertexIndices.length/cubeVertexIndexBuffer.itemSize;
+//  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeVertexIndexBuffer);
+//  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(cubeVertexIndices), gl.STATIC_DRAW);
 }
 
 
@@ -218,17 +238,20 @@ function drawScene() {
   mat4.rotate(mvMatrix, degToRad(-yaw), [0, 1, 0]);
   mat4.translate(mvMatrix, [-xPos, -yPos, -zPos]);
   
-  gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexPositionBuffer);
-  gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, cubeVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
+  for (var mat in buffers){
+	  // Should I have an array of shaders?
+	  gl.bindBuffer(gl.ARRAY_BUFFER, buffers[mat].vec);
+	  gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, buffers[mat].vec.itemSize, gl.FLOAT, false, 0, 0);
+	  
+	  gl.bindBuffer(gl.ARRAY_BUFFER, buffers[mat].nor);
+	  gl.vertexAttribPointer(shaderProgram.vertexNormalAttribute, buffers[mat].nor.itemSize, gl.FLOAT, false, 0, 0);
+	  
+	  gl.bindBuffer(gl.ARRAY_BUFFER, buffers[mat].tex);
+	  gl.vertexAttribPointer(shaderProgram.textureCoordAttribute, buffers[mat].tex.itemSize, gl.FLOAT, false, 0, 0);
+	  
 
-  gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexNormalBuffer);
-  gl.vertexAttribPointer(shaderProgram.vertexNormalAttribute, cubeVertexNormalBuffer.itemSize, gl.FLOAT, false, 0, 0);
-  
-  gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexTextureCoordBuffer);
-  gl.vertexAttribPointer(shaderProgram.textureCoordAttribute, cubeVertexTextureCoordBuffer.itemSize, gl.FLOAT, false, 0, 0);
-
-  
-
+	  
+  }
 
   //lightning stuff:
   gl.uniform1i(shaderProgram.useLightingUniform, true);
@@ -254,13 +277,25 @@ function drawScene() {
   gl.uniform1i(shaderProgram.samplerUniform, 0);
   
   //Draw the floors:
-  
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeVertexIndexBuffer);
+
+  for (var key in buffers){
+	  texture = neheTexture;
+	  if(key == "glass"){
+		  texture = wallTexture;
+		  
+	  }
+	  
+	  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffers[key].fac);
+	  gl.bindTexture(gl.TEXTURE_2D, texture);  
+	  gl.drawElements(gl.TRIANGLES, buffers[key].fac.numItems, gl.UNSIGNED_SHORT, vertexIndices[key]);
+
+  }
+  //gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeVertexIndexBuffer);
   //cubeVertexIndexBuffer.numItems
   //gl.bindTexture(gl.TEXTURE_2D, wallTexture);  
   //gl.drawElements(gl.TRIANGLES, 2000, gl.UNSIGNED_SHORT, cubeVertexIndices);
-  gl.bindTexture(gl.TEXTURE_2D, neheTexture);  
-  gl.drawElements(gl.TRIANGLES, cubeVertexIndexBuffer.numItems, gl.UNSIGNED_SHORT, cubeVertexIndices);
+  //gl.bindTexture(gl.TEXTURE_2D, neheTexture);  
+  //gl.drawElements(gl.TRIANGLES, cubeVertexIndexBuffer.numItems, gl.UNSIGNED_SHORT, cubeVertexIndices);
 
 
 }
@@ -341,7 +376,7 @@ function animate() {
 
 function tick() {
   // comment requestAnimFrame(tick); when debugging and use setInterval instead
-  requestAnimFrame(tick);
+  //requestAnimFrame(tick);
   handleKeys();
   animate();
   drawScene();
@@ -365,7 +400,7 @@ function webGLStart() {
   gl.clearColor(0.0, 0.0, 0.0, 1.0);
   gl.enable(gl.DEPTH_TEST);
 //  use set interval for debugging cause requestAnimFrame(tick); is causing problems for firebug
-//  setInterval("tick()", 50);
+  setInterval("tick()", 50);
   tick();
   setInterval(function(){
     document.getElementById("fps").innerHTML="FPS: "+fps+"<br>x:"+xPos+"<br>y:"+yPos+"<br>z:"+zPos+"<br>pitch:"+pitch+"<br>yaw:"+yaw;
@@ -376,7 +411,7 @@ function webGLStart() {
 $.getJSON('faks.js', function(data){
   faks = data;
   faks.getTriangleFaces = function(material){
-    var ro = {vec:[], fac:[], tex:[], nor:[]}; //return object
+    var ro = {vec:[], fac:[], tex:[], nor:[] }; //return object
     var vecCounter = 0;
     
     for (var f in this.faces){

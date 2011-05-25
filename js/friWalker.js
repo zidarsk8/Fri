@@ -187,14 +187,21 @@ function initBuffers() {
 			 fac : gl.createBuffer()
 	};	 
     
-    var item_size = {'vec' : 3, 'nor':3, 'tex': 2, 'fac':1};
+    var item_size = {'vec':3, 'nor':3, 'tex':2, 'fac':1};
      
 	for(var key in buff){
 	  buff[key].itemSize = item_size[key];
 	  buff[key].numItems = bo[key].length/buff[key].itemSize;
-	  gl.bindBuffer(gl.ARRAY_BUFFER, buff[key]);
-	  
-	  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(bo[key]), gl.STATIC_DRAW);		
+	  if (buff[key].itemSize == 1){
+		  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buff[key]);
+		  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, Uint16Array(bo[key]), gl.STATIC_DRAW);		
+	  }
+	  else{
+		  gl.bindBuffer(gl.ARRAY_BUFFER, buff[key]);
+		  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(bo[key]), gl.STATIC_DRAW);
+	  }
+		  
+		  
 	}
     buffers[material] = buff;
     vertexIndices[material] = bo.fac;
@@ -240,6 +247,7 @@ function drawScene() {
   
   for (var mat in buffers){
 	  // Should I have an array of shaders?
+	  
 	  gl.bindBuffer(gl.ARRAY_BUFFER, buffers[mat].vec);
 	  gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, buffers[mat].vec.itemSize, gl.FLOAT, false, 0, 0);
 	  

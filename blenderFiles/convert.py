@@ -13,13 +13,14 @@ def parse_xyz(str):
     arr = l[2:].strip().split(' ')
     return {'x':float(arr[0]), 'y':float(arr[1]), 'z':float(arr[2])}
 
-obj = {'name': "", 'vertices': [], 'normals': [], 'faces':[],}
+obj = {'name': "", 'vertices': [], 'normals': [], 'faces':[],'materials': []}
 output = ""
 material = ""
 for l in f:
     
     if l[0] == 'u':
-        material = l[7:-1]        
+        material = l[7:-1]
+        obj['materials'].append(material)        
     
     if l[0] == 'o':
         obj["name"] = l[2:].strip()

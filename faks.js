@@ -1,4 +1,9 @@
 {
+    "materials": [
+        "Material", 
+        "glass", 
+        "wood-floor"
+    ], 
     "faces": [
         {
             "material": "Material", 

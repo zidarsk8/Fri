@@ -15,7 +15,12 @@ def parse_xyz(str):
 
 obj = {'name': "", 'vertices': [], 'normals': [], 'faces':[],}
 output = ""
+material = ""
 for l in f:
+    
+    if l[0] == 'u':
+        material = l[7:-1]        
+    
     if l[0] == 'o':
         obj["name"] = l[2:].strip()
         
@@ -26,10 +31,10 @@ for l in f:
         obj['normals'].append(parse_xyz(l[3:]))
         
     if l[0:1] == 'f':
-        face = {'type':0, 'vertices': [], 'normals':[]}
-        arr = l[2:].strip().split(' ')
+        face = {'type':0, 'material': "", 'vertices': [], 'normals':[]}
+        arr = l[2:].strip().split(' ')  
         face["type"] = len(arr)
-        
+        face["material"] = material
         for i in arr:
             n = i.split('//')
             face["vertices"].append(int(n[0])-1)

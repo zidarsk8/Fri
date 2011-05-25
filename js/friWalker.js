@@ -257,10 +257,10 @@ function drawScene() {
   
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeVertexIndexBuffer);
   //cubeVertexIndexBuffer.numItems
-  gl.bindTexture(gl.TEXTURE_2D, wallTexture);  
-  gl.drawElements(gl.TRIANGLES, 2000, gl.UNSIGNED_SHORT, cubeVertexIndices);
+  //gl.bindTexture(gl.TEXTURE_2D, wallTexture);  
+  //gl.drawElements(gl.TRIANGLES, 2000, gl.UNSIGNED_SHORT, cubeVertexIndices);
   gl.bindTexture(gl.TEXTURE_2D, neheTexture);  
-  gl.drawElements(gl.TRIANGLES, cubeVertexIndexBuffer.numItems-2000, gl.UNSIGNED_SHORT, cubeVertexIndices);
+  gl.drawElements(gl.TRIANGLES, cubeVertexIndexBuffer.numItems, gl.UNSIGNED_SHORT, cubeVertexIndices);
 
 
 }

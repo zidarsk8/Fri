@@ -129,15 +129,21 @@ var glassy;
 function initTexture() {
   var images = new Array();	
   for (mat in faks.materials){
-	  console.log(faks.materials[mat]);
-	  mat_textures[faks.materials[mat]] = gl.createTexture();
-	  mat_textures[faks.materials[mat]].image = new Image();
-	  mat_textures[faks.materials[mat]].image.src = faks.materials[mat] + ".jpg";
-	  mat_textures[faks.materials[mat]].image.onload = handleLoadedTexture(mat_textures[faks.materials[mat]]);
-//	  function () {
-//	      handleLoadedTexture(mat_textures[faks.materials[mat]]);
-//	      alert("OnLoad: " + mat_textures[faks.materials[mat]].image.src);
-//	  }
+	  
+	  (function(){
+		  
+		  var texty = gl.createTexture();
+		  texty.image = new Image();
+		  texty.image.onload = //handleLoadedTexture(mat_textures[faks.materials[mat]]);
+		  
+		  function () {
+			  handleLoadedTexture(texty);
+			  //alert("OnLoad: " + texty.image.src);
+		  };
+		  texty.image.src = faks.materials[mat] + ".jpg";
+		  mat_textures[faks.materials[mat]] = texty;
+	  })();
+	  
 	  
 //	  mat_textures[faks.materials[mat]] = gl.createTexture();
 //	  mat_textures[faks.materials[mat]].image = new Image();
@@ -151,7 +157,7 @@ function initTexture() {
 	  images.push(floor);
 	  //mat_textures[faks.materials[mat]] = floor;
   }
-  console.log(floor);
+  //console.log(floor);
 //  floor = gl.createTexture();
 //  floor.image = new Image();
 //  floor.image.onload = function () {

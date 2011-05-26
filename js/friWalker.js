@@ -365,11 +365,22 @@ function drawScene() {
 //	  else{
 //		  gl.bindTexture(gl.TEXTURE_2D, floor);
 //	  }
+	  if (mat == "glass") {
+		  gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
+		  gl.enable(gl.BLEND);
+		  gl.disable(gl.DEPTH_TEST);
+		  gl.uniform1f(shaderProgram.alphaUniform, 0.9);
+	  } else {
+		  gl.disable(gl.BLEND);
+		  gl.enable(gl.DEPTH_TEST);
+	  }
 	  
 	  gl.bindTexture(gl.TEXTURE_2D, mat_textures[mat]);
 	  //console.log(mat_textures[mat]);
 	  gl.drawElements(gl.TRIANGLES, buffers[mat].fac.numItems, gl.UNSIGNED_SHORT, vertexIndices[mat]);
 
+	  
+	  
 	  gl.uniform1i(shaderProgram.samplerUniform, 0);
 
   }

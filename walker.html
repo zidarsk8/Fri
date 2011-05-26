@@ -9,7 +9,7 @@
   <script type="text/javascript" src="js/jquery-1.5.2.min.js"></script>
   <script type="text/javascript" src="js/glMatrix-0.9.5.min.js"></script>
   <script type="text/javascript" src="js/webgl-utils.js"></script>
-
+  <script type="text/javascript" src="js/global.js"></script>
   <script id="shader-fs" type="x-shader/x-fragment">
     #ifdef GL_ES
     precision highp float;
@@ -72,9 +72,10 @@
 </header>  
   
 <section id="mainPannel" class="hfeed">
-  <div class="container_12" id = "content">      
+  <div class="container_12" id = "content">     
+  <button id="fullscreen">Fullscreen</button> 
           <div id="fps">0</div>
-  <canvas id="lesson05-canvas" style="border: none;" width="960" height="500"></canvas>
+  <canvas id="lesson05-canvas"width="960" height="500"  style="border: none;" ></canvas>
   </div>
 </section>
 

@@ -128,6 +128,8 @@ a:visited { color: #104258; }
 a:active { background: #eaf7fc; }
 a:hover { color: #0c1e2f; }
  
+ 
+ 
 hr {
     border-bottom: 0px;
     border-left: 0px;
@@ -143,3 +145,8 @@ hr {
         font-weight: bold;
         text-align: center;
     }
+
+.fullscreen{
+	position:fixed; top:0px; left:0px; width:100%; height:100%;
+	
+}

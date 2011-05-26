@@ -113,7 +113,7 @@ function initShaders() {
 }
 
 function handleLoadedTexture(texture) {
-	console.log(texture.image.src);
+	
 	gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
 	gl.bindTexture(gl.TEXTURE_2D, texture);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, texture.image);
@@ -127,8 +127,18 @@ var floor;
 var bricky;
 var glassy;
 function initTexture() {
-	
-//  for (mat in faks.materials){
+  var images = new Array();	
+  for (mat in faks.materials){
+	  console.log(faks.materials[mat]);
+	  mat_textures[faks.materials[mat]] = gl.createTexture();
+	  mat_textures[faks.materials[mat]].image = new Image();
+	  mat_textures[faks.materials[mat]].image.src = faks.materials[mat] + ".jpg";
+	  mat_textures[faks.materials[mat]].image.onload = handleLoadedTexture(mat_textures[faks.materials[mat]]);
+//	  function () {
+//	      handleLoadedTexture(mat_textures[faks.materials[mat]]);
+//	      alert("OnLoad: " + mat_textures[faks.materials[mat]].image.src);
+//	  }
+	  
 //	  mat_textures[faks.materials[mat]] = gl.createTexture();
 //	  mat_textures[faks.materials[mat]].image = new Image();
 //	  mat_textures[faks.materials[mat]].image.onload = function () {
@@ -136,36 +146,64 @@ function initTexture() {
 //	  }
 //	  //neh.image.src = "Material.jpg";
 //	  mat_textures[faks.materials[mat]].image.src = faks.materials[mat] + ".jpg";
-//	  
-//	  
+//	  console.log(mat_textures[faks.materials[mat]]);
+	  
+	  images.push(floor);
+	  //mat_textures[faks.materials[mat]] = floor;
+  }
+  console.log(floor);
+//  floor = gl.createTexture();
+//  floor.image = new Image();
+//  floor.image.onload = function () {
+//      handleLoadedTexture(floor)
 //  }
-  
-  floor = gl.createTexture();
-  floor.image = new Image();
-  floor.image.onload = function () {
-      handleLoadedTexture(floor)
-  }
-  //neh.image.src = "Material.jpg";
-  floor.image.src = "wood-floor.jpg";
-  
-  bricky = gl.createTexture();
-  bricky.image = new Image();
-  bricky.image.onload = function () {
-      handleLoadedTexture(bricky)
-  }
-  //neh.image.src = "Material.jpg";
-  bricky.image.src = "Material.jpg";
-  
-  
-  glassy = gl.createTexture();
-  glassy.image = new Image();
-  glassy.image.onload = function () {
-      handleLoadedTexture(glassy)
-  }
-  //neh.image.src = "Material.jpg";
-  glassy.image.src = "glass.jpg";
+//  //neh.image.src = "Material.jpg";
+//  floor.image.src = "wood-floor.jpg";
+//  
+//  bricky = gl.createTexture();
+//  bricky.image = new Image();
+//  bricky.image.onload = function () {
+//      handleLoadedTexture(bricky)
+//  }
+//  //neh.image.src = "Material.jpg";
+//  bricky.image.src = "Material.jpg";
+//  
+//  
+//  glassy = gl.createTexture();
+//  glassy.image = new Image();
+//  glassy.image.onload = function () {
+//      handleLoadedTexture(glassy)
+//  }
+//  //neh.image.src = "Material.jpg";
+//  glassy.image.src = "glass.jpg";
   
   //console.log(mat_textures);
+//  mat_textures["wood-floor"] = gl.createTexture();
+//  mat_textures["wood-floor"].image = new Image();
+//  mat_textures["wood-floor"].image.onload = function () {
+//      handleLoadedTexture(mat_textures["wood-floor"]);
+//  }
+//  //neh.image.src = "Material.jpg";
+//  mat_textures["wood-floor"].image.src = "wood-floor.jpg";
+//  
+//  mat_textures["Material"] = gl.createTexture();
+//  mat_textures["Material"].image = new Image();
+//  mat_textures["Material"].image.onload = function () {
+//      handleLoadedTexture(mat_textures["Material"]);
+//  }
+//  //neh.image.src = "Material.jpg";
+//  mat_textures["Material"].image.src = "Material.jpg";
+//  
+//  
+//  mat_textures["glass"] = gl.createTexture();
+//  mat_textures["glass"].image = new Image();
+//  mat_textures["glass"].image.onload = function () {
+//      handleLoadedTexture(mat_textures["glass"]);
+//  }
+//  //neh.image.src = "Material.jpg";
+//  mat_textures["glass"].image.src = "glass.jpg";
+  
+  console.log(mat_textures);
 }
 
 
@@ -310,16 +348,19 @@ function drawScene() {
 
 	  
 	  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffers[mat].fac);
-	  if (mat == 'Material'){
-		  
-		  gl.bindTexture(gl.TEXTURE_2D, bricky);  
-	  }
-	  else if (mat == 'glass'){
-		  gl.bindTexture(gl.TEXTURE_2D, glassy);
-	  }
-	  else{
-		  gl.bindTexture(gl.TEXTURE_2D, floor);
-	  }
+//	  if (mat == 'Material'){
+//		  
+//		  gl.bindTexture(gl.TEXTURE_2D, bricky);  
+//	  }
+//	  else if (mat == 'glass'){
+//		  gl.bindTexture(gl.TEXTURE_2D, glassy);
+//	  }
+//	  else{
+//		  gl.bindTexture(gl.TEXTURE_2D, floor);
+//	  }
+	  
+	  gl.bindTexture(gl.TEXTURE_2D, mat_textures[mat]);
+	  //console.log(mat_textures[mat]);
 	  gl.drawElements(gl.TRIANGLES, buffers[mat].fac.numItems, gl.UNSIGNED_SHORT, vertexIndices[mat]);
 
 	  gl.uniform1i(shaderProgram.samplerUniform, 0);

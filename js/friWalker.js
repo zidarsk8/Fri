@@ -375,6 +375,7 @@ function drawScene() {
 	  } else {
 		  gl.disable(gl.BLEND);
 		  gl.enable(gl.DEPTH_TEST);
+		  gl.uniform1f(shaderProgram.alphaUniform, 1);
 	  }
 	  
 	  gl.bindTexture(gl.TEXTURE_2D, mat_textures[mat]);

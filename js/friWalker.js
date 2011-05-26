@@ -278,7 +278,7 @@ function initBuffers() {
     buffers[material] = buff;
     vertexIndices[material] = bo.fac;
   });  
-    
+  console.log(buffers.sort())
 //  cubeVertexPositionBuffer = gl.createBuffer();
 //  cubeVertexPositionBuffer.itemSize = 3;
 //  cubeVertexPositionBuffer.numItems = vertices.length/cubeVertexPositionBuffer.itemSize;
@@ -318,7 +318,7 @@ function drawScene() {
   mat4.translate(mvMatrix, [-xPos, -yPos, -zPos]);
   var i = 0;
   for (var mat in buffers){
-  
+	  
 	  gl.bindBuffer(gl.ARRAY_BUFFER, buffers[mat].vec);
 	  gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, buffers[mat].vec.itemSize, gl.FLOAT, false, 0, 0);
 	  
@@ -365,11 +365,13 @@ function drawScene() {
 //	  else{
 //		  gl.bindTexture(gl.TEXTURE_2D, floor);
 //	  }
+	  gl.uniform1i(shaderProgram.samplerUniform, 0);
+	  
 	  if (mat == "glass") {
 		  gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
 		  gl.enable(gl.BLEND);
-		  gl.disable(gl.DEPTH_TEST);
-		  gl.uniform1f(shaderProgram.alphaUniform, 0.9);
+		  //gl.disable(gl.DEPTH_TEST);
+		  gl.uniform1f(shaderProgram.alphaUniform, 0.4);
 	  } else {
 		  gl.disable(gl.BLEND);
 		  gl.enable(gl.DEPTH_TEST);
@@ -381,7 +383,6 @@ function drawScene() {
 
 	  
 	  
-	  gl.uniform1i(shaderProgram.samplerUniform, 0);
 
   }
   //gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeVertexIndexBuffer);

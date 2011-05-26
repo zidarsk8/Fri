@@ -110,6 +110,7 @@ function initShaders() {
   shaderProgram.ambientColorUniform = gl.getUniformLocation(shaderProgram, "uAmbientColor");
   shaderProgram.lightingDirectionUniform = gl.getUniformLocation(shaderProgram, "uLightingDirection");
   shaderProgram.directionalColorUniform = gl.getUniformLocation(shaderProgram, "uDirectionalColor");
+  shaderProgram.alphaUniform = gl.getUniformLocation(shaderProgram, "uAlpha");
 }
 
 function handleLoadedTexture(texture) {
@@ -129,15 +130,21 @@ var glassy;
 function initTexture() {
   var images = new Array();	
   for (mat in faks.materials){
-	  console.log(faks.materials[mat]);
-	  mat_textures[faks.materials[mat]] = gl.createTexture();
-	  mat_textures[faks.materials[mat]].image = new Image();
-	  mat_textures[faks.materials[mat]].image.src = faks.materials[mat] + ".jpg";
-	  mat_textures[faks.materials[mat]].image.onload = handleLoadedTexture(mat_textures[faks.materials[mat]]);
-//	  function () {
-//	      handleLoadedTexture(mat_textures[faks.materials[mat]]);
-//	      alert("OnLoad: " + mat_textures[faks.materials[mat]].image.src);
-//	  }
+	  
+	  (function(){
+		  
+		  var texty = gl.createTexture();
+		  texty.image = new Image();
+		  texty.image.onload = //handleLoadedTexture(mat_textures[faks.materials[mat]]);
+		  
+		  function () {
+			  handleLoadedTexture(texty);
+			  //alert("OnLoad: " + texty.image.src);
+		  };
+		  texty.image.src = faks.materials[mat] + ".jpg";
+		  mat_textures[faks.materials[mat]] = texty;
+	  })();
+	  
 	  
 //	  mat_textures[faks.materials[mat]] = gl.createTexture();
 //	  mat_textures[faks.materials[mat]].image = new Image();
@@ -151,7 +158,7 @@ function initTexture() {
 	  images.push(floor);
 	  //mat_textures[faks.materials[mat]] = floor;
   }
-  console.log(floor);
+  //console.log(floor);
 //  floor = gl.createTexture();
 //  floor.image = new Image();
 //  floor.image.onload = function () {
@@ -271,7 +278,7 @@ function initBuffers() {
     buffers[material] = buff;
     vertexIndices[material] = bo.fac;
   });  
-    
+  console.log(buffers.sort())
 //  cubeVertexPositionBuffer = gl.createBuffer();
 //  cubeVertexPositionBuffer.itemSize = 3;
 //  cubeVertexPositionBuffer.numItems = vertices.length/cubeVertexPositionBuffer.itemSize;
@@ -311,7 +318,7 @@ function drawScene() {
   mat4.translate(mvMatrix, [-xPos, -yPos, -zPos]);
   var i = 0;
   for (var mat in buffers){
-  
+	  
 	  gl.bindBuffer(gl.ARRAY_BUFFER, buffers[mat].vec);
 	  gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, buffers[mat].vec.itemSize, gl.FLOAT, false, 0, 0);
 	  
@@ -358,12 +365,25 @@ function drawScene() {
 //	  else{
 //		  gl.bindTexture(gl.TEXTURE_2D, floor);
 //	  }
+	  gl.uniform1i(shaderProgram.samplerUniform, 0);
+	  
+	  if (mat == "glass") {
+		  gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
+		  gl.enable(gl.BLEND);
+		  //gl.disable(gl.DEPTH_TEST);
+		  gl.uniform1f(shaderProgram.alphaUniform, 0.2);
+	  } else {
+		  gl.disable(gl.BLEND);
+		  gl.enable(gl.DEPTH_TEST);
+		  gl.uniform1f(shaderProgram.alphaUniform, 1);
+	  }
 	  
 	  gl.bindTexture(gl.TEXTURE_2D, mat_textures[mat]);
 	  //console.log(mat_textures[mat]);
 	  gl.drawElements(gl.TRIANGLES, buffers[mat].fac.numItems, gl.UNSIGNED_SHORT, vertexIndices[mat]);
 
-	  gl.uniform1i(shaderProgram.samplerUniform, 0);
+	  
+	  
 
   }
   //gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeVertexIndexBuffer);

@@ -371,7 +371,7 @@ function drawScene() {
 		  gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
 		  gl.enable(gl.BLEND);
 		  //gl.disable(gl.DEPTH_TEST);
-		  gl.uniform1f(shaderProgram.alphaUniform, 0.4);
+		  gl.uniform1f(shaderProgram.alphaUniform, 0.2);
 	  } else {
 		  gl.disable(gl.BLEND);
 		  gl.enable(gl.DEPTH_TEST);

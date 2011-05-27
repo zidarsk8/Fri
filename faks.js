@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
     "materials": {
         "wood-floor": {
             "alpha": 1.0
@@ -10,6 +11,22 @@
             "alpha": 1.0
         }
     }, 
+=======
+    "materials": [
+        {
+            "alpha": 1.0, 
+            "name": "Material"
+        }, 
+        {
+            "alpha": 1.0, 
+            "name": "wood-floor"
+        }, 
+        {
+            "alpha": 0.430108, 
+            "name": "glass"
+        }
+    ], 
+>>>>>>> Fixed convert.py
     "faces": [
         {
             "material": "Material", 

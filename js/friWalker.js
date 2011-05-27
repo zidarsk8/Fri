@@ -132,7 +132,7 @@ function initTexture() {
   for (mat in faks.materials){
 	  
 	  (function(){
-		  
+		   
 		  var texty = gl.createTexture();
 		  texty.image = new Image();
 		  texty.image.onload = //handleLoadedTexture(mat_textures[faks.materials[mat]]);
@@ -141,8 +141,8 @@ function initTexture() {
 			  handleLoadedTexture(texty);
 			  //alert("OnLoad: " + texty.image.src);
 		  };
-		  texty.image.src = faks.materials[mat] + ".jpg";
-		  mat_textures[faks.materials[mat]] = texty;
+		  texty.image.src = faks.materials[mat].name + ".jpg";
+		  mat_textures[faks.materials[mat].name] = texty;
 	  })();
 	  
 	  
@@ -209,8 +209,7 @@ function initTexture() {
 //  }
 //  //neh.image.src = "Material.jpg";
 //  mat_textures["glass"].image.src = "glass.jpg";
-  
-  console.log(mat_textures);
+
 }
 
 
@@ -247,10 +246,10 @@ var vertexIndices = [];
 var buffers = [];
 function initBuffers() {
   
+
+  $.each(faks.materials, function(mat, material){
+	var bo = faks.getTriangleFaces(material.name);
 	
-  $.each(faks.materials, function(key, material){
-	
-	var bo = faks.getTriangleFaces(material);
 	
     var buff = {
 			 vec : gl.createBuffer(),
@@ -275,10 +274,11 @@ function initBuffers() {
 		  
 		  
 	}
-    buffers[material] = buff;
-    vertexIndices[material] = bo.fac;
+    buffers[material.name] = buff;
+    vertexIndices[material.name] = bo.fac;
+
   });  
-  console.log(buffers.sort())
+
 //  cubeVertexPositionBuffer = gl.createBuffer();
 //  cubeVertexPositionBuffer.itemSize = 3;
 //  cubeVertexPositionBuffer.numItems = vertices.length/cubeVertexPositionBuffer.itemSize;
@@ -317,8 +317,9 @@ function drawScene() {
   mat4.rotate(mvMatrix, degToRad(-yaw), [0, 1, 0]);
   mat4.translate(mvMatrix, [-xPos, -yPos, -zPos]);
   var i = 0;
+  
   for (var mat in buffers){
-	  
+
 	  gl.bindBuffer(gl.ARRAY_BUFFER, buffers[mat].vec);
 	  gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, buffers[mat].vec.itemSize, gl.FLOAT, false, 0, 0);
 	  
@@ -509,12 +510,13 @@ $.getJSON('faks.js', function(data){
   faks.getTriangleFaces = function(material){
     var ro = {vec:[], fac:[], tex:[], nor:[] }; //return object
     var vecCounter = 0;
-    
     for (var f in this.faces){
       
       var curentFace = this.faces[f];
+      
       if (curentFace.material != material)
     	  continue;
+
       if (curentFace.vertices.length == 3){
         for (var i=0 ; i<3 ; i++){
           //add distinct vertex vector for each face

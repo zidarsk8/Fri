@@ -15,16 +15,17 @@ def parse_xyz(str):
     arr = l[2:].strip().split(' ')
     return {'x':float(arr[0]), 'y':float(arr[1]), 'z':float(arr[2])}
 
-materials = {}
+materials = []
 for l in m:
     if l.startswith('newmtl'):
-        material = { 'alpha': 1}
+        material = {'name' : l[7:-1], 'alpha': 1}
         for l1 in m:
             if l1[0] == 'd':
                 material['alpha'] = float(l1[2:])
                 break
-        materials[l[7:-1]] = material
-        
+        materials.append(material)
+materials = sorted(materials, key=lambda mat: mat['alpha'], reverse=True)
+
 obj = {'name': "", 'vertices': [], 'normals': [], 'faces':[],'materials': materials}
 output = ""
 material = ""
@@ -61,7 +62,7 @@ for l in f:
         output += ""     
 
 # Put those with highest alpha to the top:
-obj['faces'] = sorted(obj['faces'], key=lambda face: obj['materials'][face['material']]['alpha'], reverse=True)
+#obj['faces'] = sorted(obj['faces'], key=lambda face: obj['materials'][face['material']]['alpha'], reverse=True)
 
 # Return json
 json.dump(obj, open(sys.argv[2], 'w'), indent=4)

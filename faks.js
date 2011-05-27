@@ -1,9 +1,15 @@
 {
-    "materials": [
-        "Material", 
-        "wood-floor", 
-        "glass"
-    ], 
+    "materials": {
+        "wood-floor": {
+            "alpha": 1.0
+        }, 
+        "glass": {
+            "alpha": 0.430108
+        }, 
+        "Material": {
+            "alpha": 1.0
+        }
+    }, 
     "faces": [
         {
             "material": "Material", 
@@ -160607,118 +160613,6 @@
                 5434
             ], 
             "normals": []
-        }, 
-        {
-            "material": "glass", 
-            "type": 3, 
-            "vertices": [
-                5752, 
-                5748, 
-                5747
-            ], 
-            "normals": [
-                4, 
-                4, 
-                4
-            ]
-        }, 
-        {
-            "material": "glass", 
-            "type": 3, 
-            "vertices": [
-                5752, 
-                5747, 
-                5750
-            ], 
-            "normals": [
-                4, 
-                4, 
-                4
-            ]
-        }, 
-        {
-            "material": "glass", 
-            "type": 3, 
-            "vertices": [
-                5749, 
-                5746, 
-                5745
-            ], 
-            "normals": [
-                6, 
-                6, 
-                6
-            ]
-        }, 
-        {
-            "material": "glass", 
-            "type": 3, 
-            "vertices": [
-                5749, 
-                5745, 
-                5751
-            ], 
-            "normals": [
-                6, 
-                6, 
-                6
-            ]
-        }, 
-        {
-            "material": "glass", 
-            "type": 3, 
-            "vertices": [
-                11, 
-                5351, 
-                5352
-            ], 
-            "normals": [
-                6, 
-                6, 
-                6
-            ]
-        }, 
-        {
-            "material": "glass", 
-            "type": 3, 
-            "vertices": [
-                11, 
-                5352, 
-                9
-            ], 
-            "normals": [
-                6, 
-                6, 
-                6
-            ]
-        }, 
-        {
-            "material": "glass", 
-            "type": 3, 
-            "vertices": [
-                8, 
-                5349, 
-                5350
-            ], 
-            "normals": [
-                4, 
-                4, 
-                4
-            ]
-        }, 
-        {
-            "material": "glass", 
-            "type": 3, 
-            "vertices": [
-                8, 
-                5350, 
-                10
-            ], 
-            "normals": [
-                4, 
-                4, 
-                4
-            ]
         }
     ], 
     "normals": [

@@ -1,4 +1,5 @@
 # Create your views here.
+import json
 from django.core import serializers
 from django.http import HttpResponse
 from models import Tag
@@ -8,5 +9,10 @@ def tags_get(request, tag):
     return HttpResponse(serializers.serialize("json", Tag.search(tag)), mimetype='application/json')
     
 def tag_add(request):
-    print "add"
-    return HttpResponse(serializers.serialize("json",  ["AAA"]), mimetype='application/json')
+    #if request.method != "POST":
+     #   return HttpResponse(json.dumps({"message": "Please use POST"}), mimetype='application/json')
+    tag = new Tag()
+    print request.POST
+    
+    return HttpResponse(json.dumps([["AAA"]]), mimetype='application/json')
+

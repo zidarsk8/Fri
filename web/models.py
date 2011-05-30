@@ -5,7 +5,15 @@ class Tag(models.Model):
     description = models.CharField(max_length = 1000)
     x = models.FloatField()
     y = models.FloatField()
-    z = models.FloatField()
+    z = models.FloatField()   
     
+    @staticmethod
+    def search(term):
+        
+        return Tag.objects.all().filter(name__icontains=term).order_by("name")[:10]
+    
+            
     def __unicode__(self):
-        return self.name + " " + self.description
+        return '{!s} ({:-f}, {:-f}, {:-f}) - {!s}'.format(
+            self.name, self.x, self.y, self.z, self.description
+        )

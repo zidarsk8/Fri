@@ -5,8 +5,9 @@ $(document).ready(function(){
 	});
 	
 	$(document).keypress(function(e){
-		if(e.which == 0){
-			$('#lesson05-canvas').removeClass('fullscreen');
+	    console.log(e.which, "PRESSED");
+		if(e.which == 0 || e.which == 102){
+			$('#lesson05-canvas').toggleClass('fullscreen');
 		}
 		
 	});

@@ -569,7 +569,7 @@ function webGLStart() {
   //setInterval("tick()", 50);
   tick();
   setInterval(function(){
-    document.getElementById("fps").innerHTML="FPS: "+fps+"<br>x:"+xPos+"<br>y:"+yPos+"<br>z:"+zPos+"<br>pitch:"+pitch+"<br>yaw:"+yaw;
+    document.getElementById("fps").innerHTML="<b>FPS:</b> "+fps+" <b>x:</b> "+xPos+" <b>y:</b> "+yPos+" <b>z:</b> "+zPos+" <b>pitch:</b> "+pitch+" <b>yaw:</b> "+yaw;
     fps = 0;
   }, 1000);
 }

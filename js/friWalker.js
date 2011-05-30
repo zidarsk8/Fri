@@ -510,8 +510,28 @@ function dotProduct(vec1,vec2){
 	return sum;
 }
 
-function sameSide(plane,point1,point2){
-	
+function subVec3d(vec1,vec2){
+	return [vec2[0]-vec1[0],
+			vec2[1]-vec1[1],
+			vec2[2]-vec1[2]];
+}
+
+function dotProduct3d(vec1,vec2){
+	  return vec1[0]*vec2[0]+vec1[1]*vec2[1]+vec1[2]*vec2[2];
+}
+/**
+* cross product of two 3D vectors
+*/
+function crossProduct(vec1, vec2){
+	return [vec1[2]*vec2[3]-vec2[2]*vec1[3],
+			vec1[1]*vec2[3]-vec2[1]*vec1[3],
+			vec1[1]*vec2[2]-vec2[1]*vec1[2]];
+}
+ 
+
+function sameSide(planePoint,planeNormal,point1,point2){
+	return  dotProduct3d(planeNormal, subVec3d(planePoint, point1))*
+			dotProduct3d(planeNormal, subVec3d(planePoint, point2));
 }
 
 function intersection(face1,face2){

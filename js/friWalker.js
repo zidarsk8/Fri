@@ -265,7 +265,7 @@ function initBuffers() {
 	  buff[key].numItems = bo[key].length/buff[key].itemSize;
 	  if (buff[key].itemSize == 1){
 		  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buff[key]);
-		  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, Uint16Array(bo[key]), gl.STATIC_DRAW);		
+		  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(bo[key]), gl.STATIC_DRAW);		
 	  }
 	  else{
 		  gl.bindBuffer(gl.ARRAY_BUFFER, buff[key]);

@@ -480,8 +480,57 @@ function tick() {
   fps++;
 }
 
-    
+/***********************************************************/
+/***********************************************************/
+
+function normalize(vec){
+	var square = 0;
+	var vec2 = {};
+	for (var i in vec){
+		square += vec[i]*vec[i];
+		vec2[i] = vec[i];
+	}
+	var size = Math.sqrt(square);
+	//check skope of vars in javascript. netbeans says this is redeclaration of i - for (var i...
+	for (i in vec2){
+	  vec2[i] = vec2[i]/size;
+	}
+	return vec2;
+}
+
+function normalizedDotProduct(v1,v2){
+	return dotProduct(normalize(v1),normalize(v2));
+}
+
+function dotProduct(vec1,vec2){
+	var sum = 0;
+	for (var i in vec1){
+		sum += vec1[i]*vec2[i];
+	}
+	return sum;
+}
+
+function sameSide(plane,point1,point2){
+	
+}
+
+function intersection(face1,face2){
+
+}
+/***********************************************************/
+/***********************************************************/
+/***********************************************************/
+
+
+
+function splitFaces(faks){
+//	for (var f in faks.faces){
+//		
+//	}
+}
+
 function webGLStart() {
+  splitFaces(faks);
   var canvas = document.getElementById("lesson05-canvas");
   initGL(canvas);
   initShaders();

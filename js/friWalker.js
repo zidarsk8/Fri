@@ -4,9 +4,9 @@ var pitchRate = 0;
 var yaw = 0;
 var yawRate = 0;
 var xPos = 1.0;
-var yPos = 0.5;
+var yPos = 5.8;
 var zPos = 8;
-var movingSpeed = 0.01;
+var movingSpeed = 0.005;
 var speed = 0;
 var lastTime = 0;
 var mouseDown = false;
@@ -473,7 +473,7 @@ function animate() {
 
 function tick() {
   // comment requestAnimFrame(tick); when debugging and use setInterval instead
-  //requestAnimFrame(tick);
+  requestAnimFrame(tick);
   handleKeys();
   animate();
   drawScene();
@@ -497,7 +497,7 @@ function webGLStart() {
   gl.clearColor(0.0, 0.0, 0.0, 1.0);
   gl.enable(gl.DEPTH_TEST);
 //  use set interval for debugging cause requestAnimFrame(tick); is causing problems for firebug
-  setInterval("tick()", 50);
+  //setInterval("tick()", 50);
   tick();
   setInterval(function(){
     document.getElementById("fps").innerHTML="FPS: "+fps+"<br>x:"+xPos+"<br>y:"+yPos+"<br>z:"+zPos+"<br>pitch:"+pitch+"<br>yaw:"+yaw;
@@ -508,7 +508,7 @@ function webGLStart() {
 $.getJSON('faks.js', function(data){
   faks = data;
   faks.getTriangleFaces = function(material){
-    var ro = {vec:[], fac:[], tex:[], nor:[] }; //return object
+    var ro = {vec:[], fac:[], tex:[], nor:[]}; //return object
     var vecCounter = 0;
     for (var f in this.faces){
       
@@ -531,17 +531,15 @@ $.getJSON('faks.js', function(data){
         	  
         	//add texture coordinate for this vector
 
-              if(ro.nor[vecCounter*3] != 0){
-            	  ro.tex[vecCounter*2] = this.vertices[curentFace.vertices[i]].z;
-            	  ro.tex[vecCounter*2+1] = this.vertices[curentFace.vertices[i]].y;
-              }
-              if(ro.nor[vecCounter*3+2] != 0){
-            	  ro.tex[vecCounter*2] = this.vertices[curentFace.vertices[i]].x;
-            	  ro.tex[vecCounter*2+1] = this.vertices[curentFace.vertices[i]].y;
-              }
-              if(ro.nor[vecCounter*3+1] != 0){
+              if(Math.abs(ro.nor[vecCounter*3+1]) > 0.5){
             	  ro.tex[vecCounter*2] = this.vertices[curentFace.vertices[i]].x;
             	  ro.tex[vecCounter*2+1] = this.vertices[curentFace.vertices[i]].z;
+              }else if(Math.abs(ro.nor[vecCounter*3]) > 0.5){
+            	  ro.tex[vecCounter*2] = this.vertices[curentFace.vertices[i]].z;
+            	  ro.tex[vecCounter*2+1] = this.vertices[curentFace.vertices[i]].y;
+              }else{
+            	  ro.tex[vecCounter*2] = this.vertices[curentFace.vertices[i]].x;
+            	  ro.tex[vecCounter*2+1] = this.vertices[curentFace.vertices[i]].y;
               }
           }      
 

@@ -16,5 +16,8 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^api/v1/tags/add$', 'Fri.web.views.tag_add'),
+    url(r'^api/v1/tags/(?P<tag>[-\w]+)$', 'Fri.web.views.tags_get'),
+
 )
 urlpatterns += staticfiles_urlpatterns()

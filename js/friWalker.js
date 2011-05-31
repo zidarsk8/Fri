@@ -145,71 +145,9 @@ function initTexture() {
 		  mat_textures[faks.materials[mat].name] = texty;
 	  })();
 	  
-	  
-//	  mat_textures[faks.materials[mat]] = gl.createTexture();
-//	  mat_textures[faks.materials[mat]].image = new Image();
-//	  mat_textures[faks.materials[mat]].image.onload = function () {
-//	      handleLoadedTexture(mat_textures[faks.materials[mat]])
-//	  }
-//	  //neh.image.src = "Material.jpg";
-//	  mat_textures[faks.materials[mat]].image.src = faks.materials[mat] + ".jpg";
-//	  console.log(mat_textures[faks.materials[mat]]);
-	  
 	  images.push(floor);
 	  //mat_textures[faks.materials[mat]] = floor;
   }
-  //console.log(floor);
-//  floor = gl.createTexture();
-//  floor.image = new Image();
-//  floor.image.onload = function () {
-//      handleLoadedTexture(floor)
-//  }
-//  //neh.image.src = "Material.jpg";
-//  floor.image.src = "wood-floor.jpg";
-//  
-//  bricky = gl.createTexture();
-//  bricky.image = new Image();
-//  bricky.image.onload = function () {
-//      handleLoadedTexture(bricky)
-//  }
-//  //neh.image.src = "Material.jpg";
-//  bricky.image.src = "Material.jpg";
-//  
-//  
-//  glassy = gl.createTexture();
-//  glassy.image = new Image();
-//  glassy.image.onload = function () {
-//      handleLoadedTexture(glassy)
-//  }
-//  //neh.image.src = "Material.jpg";
-//  glassy.image.src = "glass.jpg";
-  
-  //console.log(mat_textures);
-//  mat_textures["wood-floor"] = gl.createTexture();
-//  mat_textures["wood-floor"].image = new Image();
-//  mat_textures["wood-floor"].image.onload = function () {
-//      handleLoadedTexture(mat_textures["wood-floor"]);
-//  }
-//  //neh.image.src = "Material.jpg";
-//  mat_textures["wood-floor"].image.src = "wood-floor.jpg";
-//  
-//  mat_textures["Material"] = gl.createTexture();
-//  mat_textures["Material"].image = new Image();
-//  mat_textures["Material"].image.onload = function () {
-//      handleLoadedTexture(mat_textures["Material"]);
-//  }
-//  //neh.image.src = "Material.jpg";
-//  mat_textures["Material"].image.src = "Material.jpg";
-//  
-//  
-//  mat_textures["glass"] = gl.createTexture();
-//  mat_textures["glass"].image = new Image();
-//  mat_textures["glass"].image.onload = function () {
-//      handleLoadedTexture(mat_textures["glass"]);
-//  }
-//  //neh.image.src = "Material.jpg";
-//  mat_textures["glass"].image.src = "glass.jpg";
-
 }
 
 
@@ -279,29 +217,6 @@ function initBuffers() {
 
   });  
 
-//  cubeVertexPositionBuffer = gl.createBuffer();
-//  cubeVertexPositionBuffer.itemSize = 3;
-//  cubeVertexPositionBuffer.numItems = vertices.length/cubeVertexPositionBuffer.itemSize;
-//  gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexPositionBuffer);
-//  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-//  
-//  cubeVertexNormalBuffer = gl.createBuffer();
-//  cubeVertexNormalBuffer.itemSize = 3;
-//  cubeVertexNormalBuffer.numItems = vertexNormals.length/cubeVertexNormalBuffer.itemSize;
-//  gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexNormalBuffer);
-//  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexNormals), gl.STATIC_DRAW);
-//  
-//  cubeVertexTextureCoordBuffer = gl.createBuffer();
-//  cubeVertexTextureCoordBuffer.itemSize = 2;
-//  cubeVertexTextureCoordBuffer.numItems = textureCoords.length/cubeVertexTextureCoordBuffer.itemSize;
-//  gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexTextureCoordBuffer);
-//  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoords), gl.STATIC_DRAW);
-//  
-//  cubeVertexIndexBuffer = gl.createBuffer();
-//  cubeVertexIndexBuffer.itemSize = 1;
-//  cubeVertexIndexBuffer.numItems = cubeVertexIndices.length/cubeVertexIndexBuffer.itemSize;
-//  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeVertexIndexBuffer);
-//  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(cubeVertexIndices), gl.STATIC_DRAW);
 }
 
 
@@ -383,17 +298,7 @@ function drawScene() {
 	  //console.log(mat_textures[mat]);
 	  gl.drawElements(gl.TRIANGLES, buffers[mat].fac.numItems, gl.UNSIGNED_SHORT, vertexIndices[mat]);
 
-	  
-	  
-
   }
-  //gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeVertexIndexBuffer);
-  //cubeVertexIndexBuffer.numItems
-  //gl.bindTexture(gl.TEXTURE_2D, wallTexture);  
-  //gl.drawElements(gl.TRIANGLES, 2000, gl.UNSIGNED_SHORT, cubeVertexIndices);
-  //gl.bindTexture(gl.TEXTURE_2D, neheTexture);  
-  //gl.drawElements(gl.TRIANGLES, cubeVertexIndexBuffer.numItems, gl.UNSIGNED_SHORT, cubeVertexIndices);
-
 
 }
 
@@ -496,6 +401,10 @@ function tick() {
 /***********************************************************/
 /***********************************************************/
 
+
+/**
+ * normalize a vector. |a| = 1
+ */
 function normalize(vec){
 	var square = 0;
 	var vec2 = {};
@@ -510,11 +419,15 @@ function normalize(vec){
 	}
 	return vec2;
 }
-
+/**
+ * compute a dot product of two normalized vectors
+ */
 function normalizedDotProduct(v1,v2){
 	return dotProduct(normalize(v1),normalize(v2));
 }
-
+/**
+ *compute dot product of two same sized vectors 
+ */
 function dotProduct(vec1,vec2){
 	var sum = 0;
 	for (var i in vec1){
@@ -522,15 +435,19 @@ function dotProduct(vec1,vec2){
 	}
 	return sum;
 }
-
+/**
+ *compute dot product of two 3D vectors
+ */
+function dotProduct3d(vec1,vec2){
+	  return vec1[0]*vec2[0]+vec1[1]*vec2[1]+vec1[2]*vec2[2];
+}
+/**
+ * substract vec1 from vec2
+ */
 function subVec3d(vec1,vec2){
 	return [vec2[0]-vec1[0],
 			vec2[1]-vec1[1],
 			vec2[2]-vec1[2]];
-}
-
-function dotProduct3d(vec1,vec2){
-	  return vec1[0]*vec2[0]+vec1[1]*vec2[1]+vec1[2]*vec2[2];
 }
 /**
 * cross product of two 3D vectors
@@ -547,14 +464,26 @@ function sameSide(planePoint,planeNormal,point1,point2){
 			dotProduct3d(planeNormal, subVec3d(planePoint, point2));
 }
 
+
+function minComponent(face, componenet){
+	return Math.min(faks.vertices[face.vertices[0]][componenet],
+			Math.min(faks.vertices[face.vertices[1]][componenet],
+					faks.vertices[face.vertices[2]][componenet]));
+}
+
+function maxComponent(face, componenet){
+	return Math.max(faks.vertices[face.vertices[0]][componenet],
+			Math.max(faks.vertices[face.vertices[1]][componenet],
+		 			faks.vertices[face.vertices[2]][componenet]));
+}
+
 function intersection(face1,face2){
 
 }
-/***********************************************************/
-/***********************************************************/
-/***********************************************************/
 
-
+/***********************************************************/
+/***********************************************************/
+/***********************************************************/
 
 function splitFaces(faks){
 //	for (var f in faks.faces){

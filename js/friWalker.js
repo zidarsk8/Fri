@@ -400,6 +400,7 @@ function drawScene() {
 
 
 function handleKeyDown(event) {
+  
   currentlyPressedKeys[event.keyCode] = true;
 }
 
@@ -409,11 +410,12 @@ function handleKeyUp(event) {
 }
 
 
-
+var fly;
 function handleKeys() {
   speed = 0;
   pitchRate = 0;
   yawRate = 0;
+  fly = 0;
   if (currentlyPressedKeys[33]) { // Page Up
     pitchRate = 0.1;
   } else if (currentlyPressedKeys[34]) { // Page Down
@@ -428,6 +430,12 @@ function handleKeys() {
     speed = movingSpeed;
   } else if (currentlyPressedKeys[40] || currentlyPressedKeys[83]) { // Down cursor key
     speed = -movingSpeed;
+  }
+  
+  if (currentlyPressedKeys[17]) { // Space
+    fly = movingSpeed;
+  } else if (currentlyPressedKeys[32]) { // Control
+    fly = -movingSpeed;
   }
 }
 
@@ -461,6 +469,11 @@ function animate() {
       if (speed != 0 && elapsed != 0) {
           xPos -= Math.sin(degToRad(yaw)) * speed * elapsed;
           zPos -= Math.cos(degToRad(yaw)) * speed * elapsed;
+//          joggingAngle += elapsed * 0.6; // 0.6 "fiddle factor" - makes it feel more realistic :-)
+//          yPos = Math.sin(degToRad(joggingAngle)) / 20 + 0.4
+      }
+      if (fly != 0 && elapsed != 0) {
+          yPos -= Math.sin(degToRad(yaw)) * fly * elapsed;
 //          joggingAngle += elapsed * 0.6; // 0.6 "fiddle factor" - makes it feel more realistic :-)
 //          yPos = Math.sin(degToRad(joggingAngle)) / 20 + 0.4
       }

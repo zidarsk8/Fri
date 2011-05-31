@@ -379,8 +379,6 @@ function animate() {
       }
       if (fly != 0 && elapsed != 0) {
           yPos -= fly * elapsed;
-//          joggingAngle += elapsed * 0.6; // 0.6 "fiddle factor" - makes it feel more realistic :-)
-//          yPos = Math.sin(degToRad(joggingAngle)) / 20 + 0.4
       }
       yaw += yawRate * elapsed;
       pitch += pitchRate * elapsed;
@@ -478,7 +476,40 @@ function maxComponent(face, componenet){
 }
 
 function intersection(face1,face2){
-
+	var normal1 = faks.normals[face1.normals[0]]; //face1.normals[1] face1.normals[2] should be the same 
+	var normal2 = faks.normals[face2.normals[0]]; //face1.normals[1] face1.normals[2] should be the same 
+	var d1 = -dotProduct3d(normal1, faks.vertices[face1.vertices[0]]);
+	var d2 = -dotProduct3d(normal2, faks.vertices[face2.vertices[0]]);
+	
+	//calculate distances of of all vertexes in face1 from the plane of face2
+	var d1v0 = dotProduct3d(normal2, faks.vertices[face1.vertices[0]]) + d2;
+	var d1v1 = dotProduct3d(normal2, faks.vertices[face1.vertices[1]]) + d2;
+	var d1v2 = dotProduct3d(normal2, faks.vertices[face1.vertices[2]]) + d2;
+	if ((d1v0 > 0 && d1v1 > 0 && d1v2 >0) || (d1v0 < 0 && d1v1 < 0 && d1v2 < 0)){
+		return 0; // no collisoin possible, the triangle is above or below the plane
+	}
+	
+	if (d1v0 == 0 && d1v1 == 0 && d1v2 ==0){
+		return 0; // triangles are laying on the same plane
+	}
+	
+	//calculate distances of of all vertexes in face2 from the plane of face1
+	var d2v0 = dotProduct3d(normal1, faks.vertices[face2.vertices[0]]) + d1;
+	var d2v1 = dotProduct3d(normal1, faks.vertices[face2.vertices[1]]) + d1;
+	var d2v2 = dotProduct3d(normal1, faks.vertices[face2.vertices[2]]) + d1;
+	if ((d2v0 > 0 && d2v1 > 0 && d2v2 >0) || (d2v0 < 0 && d2v1 < 0 && d2v2 < 0)){
+		return 0; // no collisoin possible, the triangle is above or below the plane
+	}
+	
+	var L = crossProduct(normal1, normal2); //intersect vector of the two planes
+	if (L[0]>L[1] && L[0]>L[2]){ // x cord is the biggest
+		
+	}else if( L[2]>L[1]){ // z cord is the biggest
+		
+	}else{ // y cord is the biggest
+		
+	}
+	return 1;
 }
 
 /***********************************************************/
@@ -513,7 +544,7 @@ function webGLStart() {
   setInterval(function(){
     document.getElementById("fps").innerHTML="<b>FPS:</b> "+fps+" <b>x:</b> "+xPos+" <b>y:</b> "+yPos+" <b>z:</b> "+zPos+" <b>pitch:</b> "+pitch+" <b>yaw:</b> "+yaw;
     fps = 0;
-  }, 1000);
+  }, 500);
 }
 
 $.getJSON('faks.js', function(data){

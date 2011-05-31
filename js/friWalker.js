@@ -27,6 +27,7 @@ var cubeVertexIndexBuffer;
 var currentlyPressedKeys = {};
 var fps = 0;
 var faks = null;
+var fly;
 
 
 
@@ -315,7 +316,6 @@ function handleKeyUp(event) {
 }
 
 
-var fly;
 function handleKeys() {
   speed = 0;
   pitchRate = 0;
@@ -378,7 +378,7 @@ function animate() {
 //          yPos = Math.sin(degToRad(joggingAngle)) / 20 + 0.4
       }
       if (fly != 0 && elapsed != 0) {
-          yPos -= Math.sin(degToRad(yaw)) * fly * elapsed;
+          yPos -= fly * elapsed;
 //          joggingAngle += elapsed * 0.6; // 0.6 "fiddle factor" - makes it feel more realistic :-)
 //          yPos = Math.sin(degToRad(joggingAngle)) / 20 + 0.4
       }

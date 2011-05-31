@@ -553,8 +553,11 @@ function tick() {
   // comment requestAnimFrame(tick); when debugging and use setInterval instead
   if (!debug) requestAnimFrame(tick);
   
+<<<<<<< HEAD
+=======
   //console.log("fuuu : "+intersection(faks.faces[0],faks.faces[1]));
   
+>>>>>>> FRI Walker now opens correctly on index page
   handleKeys();
   animate();
   drawScene();

@@ -142,7 +142,7 @@ function initTexture() {
 			  handleLoadedTexture(texty);
 			  //alert("OnLoad: " + texty.image.src);
 		  };
-		  texty.image.src = faks.materials[mat].name + ".jpg";
+		  texty.image.src = "static/" + faks.materials[mat].name + ".jpg";
 		  mat_textures[faks.materials[mat].name] = texty;
 	  })();
 	  
@@ -516,7 +516,7 @@ function webGLStart() {
   }, 1000);
 }
 
-$.getJSON('faks.js', function(data){
+$.getJSON('static/faks.js', function(data){
   faks = data;
   faks.getTriangleFaces = function(material){
     var ro = {vec:[], fac:[], tex:[], nor:[]}; //return object

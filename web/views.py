@@ -10,12 +10,16 @@ def tags_get(request, tag):
     return HttpResponse(serializers.serialize("json", Tag.search(tag)), mimetype='application/json')
     
 def tag_add(request):
-    #if request.method != "POST":
-     #   return HttpResponse(json.dumps({"message": "Please use POST"}), mimetype='application/json')
-
-    print request.POST
+    t = Tag()
+    t.x = float(request.GET['x'])
+    t.y = float(request.GET['y'])
+    t.z = float(request.GET['z'])
+    t.name = request.GET['name']
+    t.description = request.GET['description']
+    t.save()
+    return HttpResponse(json.dumps({'message': 'ok'}))
     
-    return HttpResponse(json.dumps([["AAA"]]), mimetype='application/json')
+    #return HttpResponse(json.dumps([["AAA"]]), mimetype='application/json')
     
 def index(request):
     return render_to_response('walker.html')

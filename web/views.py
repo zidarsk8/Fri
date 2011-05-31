@@ -5,10 +5,13 @@ from django.http import HttpResponse
 from models import Tag
 from django.shortcuts import render_to_response
 
-def tags_get(request, tag):
+def tags_get(request):
+    term = ""
+    if request.GET.__contains__("name"):
+        term = request.GET['name']
+    print term
+    return HttpResponse(json.dumps(Tag.search(term)), mimetype='application/json')
 
-    return HttpResponse(serializers.serialize("json", Tag.search(tag)), mimetype='application/json')
-    
 def tag_add(request):
     t = Tag()
     t.x = float(request.GET['x'])

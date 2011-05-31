@@ -25,4 +25,22 @@ $(document).ready(function(){
 	    
 	});
 	
+	$('#tag-search').keyup(function(){
+	    
+	    getTags();
+	});   
+	
+	function getTags(){	    
+	    data = {'name':$('#tag-search').val()}
+	    
+	    $.get('/api/v1/tags/list',data, function(d){
+	        $('#tag-list').html("");
+	        console.log(d);
+	        $.each(d, function(i, e){
+	            $('#tag-list').append('<li>' + e.name + '</li>');
+	        });
+	    });
+	}
+	getTags();
+	
 });

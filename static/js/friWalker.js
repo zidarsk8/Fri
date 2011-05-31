@@ -272,16 +272,7 @@ function drawScene() {
 
 	  
 	  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffers[mat].fac);
-//	  if (mat == 'Material'){
-//		  
-//		  gl.bindTexture(gl.TEXTURE_2D, bricky);  
-//	  }
-//	  else if (mat == 'glass'){
-//		  gl.bindTexture(gl.TEXTURE_2D, glassy);
-//	  }
-//	  else{
-//		  gl.bindTexture(gl.TEXTURE_2D, floor);
-//	  }
+
 	  gl.uniform1i(shaderProgram.samplerUniform, 0);
 	  
 	  if (mat == "glass") {

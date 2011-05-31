@@ -8,7 +8,7 @@ urlpatterns = patterns('',
 
     url(r'^admin/', include(admin.site.urls)),
     url(r'^api/v1/tags/add', 'Fri.web.views.tag_add'),
-    url(r'^api/v1/tags/(?P<tag>[-\w]+)$', 'Fri.web.views.tags_get'),
+    url(r'^api/v1/tags/list', 'Fri.web.views.tags_get'),
     url(r'^$', 'Fri.web.views.index'),
 )
 urlpatterns += staticfiles_urlpatterns()

@@ -20,7 +20,8 @@ $(document).ready(function(){
 	   
 	   $.get('/api/v1/tags/add', data, function(d){
 	        $('#tag-name').val("");
-	        $('#tag-description').val("")
+	        $('#tag-description').val("");
+	        getTags();
 	   }, "json");
 	    
 	});

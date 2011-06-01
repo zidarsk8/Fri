@@ -123,9 +123,9 @@ teče tekoče na sodobnih brskalnikih z WebGL podporo.
 \pagebreak
 \section{Zabavni deli}
 \subsection{Collision detection}
-V našem modelu imamo zaradi lažjega risanja v wegGL, vse ploskve predstavljene z trikotniki in ne z štirikotniki. To pa tudi nekoliko olajša detekcijo trkov med posameznimi površinami. Ponavadi se detekcijo trkov, hrani posebna podatkovna struktura, ki ima enako 3D predstavitev, vendar je načeloma razdeljena na manjše dele kot prvotna 3D mapa. Tukaj je tudi uprašanje, ali se nam splača hraniti dve strukturi ali samo eno. Mi smo se pri tej seminarski nalogi odločili da bomo imeli dve ločeni strukturi:
+V našem modelu imamo zaradi lažjega risanja v wegGL, vse ploskve predstavljene s trikotniki in ne s štirikotniki. To pa tudi nekoliko olajša detekcijo trkov med posameznimi površinami. Ponavadi se detekcijo trkov, hrani posebna podatkovna struktura, ki ima enako 3D predstavitev, vendar je načeloma razdeljena na manjše dele kot prvotna 3D mapa. Tukaj je tudi vprašanje, ali se nam splača hraniti dve strukturi ali samo eno. Mi smo se pri tej seminarski nalogi odločili da bomo imeli dve ločeni strukturi:
 \begin{itemize}
-\item faks: podatkovna struktura velikimi poligoni in manj oglišči ki se bo izrisovala 
+\item faks: podatkovna struktura z velikimi poligoni in manj oglišči, ki se bo izrisovala 
 \item coll: podatkovna struktura, ki je sestavljena iz veliko več manjših poligonov, ki se bojo uporabljali za detekcijo trkov.
 \end{itemize}
 Ponavadi so najbolj priljubljene strukture za zaznavanje trkov 
@@ -135,8 +135,8 @@ Ponavadi so najbolj priljubljene strukture za zaznavanje trkov
 \item R-tree - drevo ki prostor razdeli na bounding box-e in se nato išče točke znotraj teh.
 \item PR-tree - prioritetno R-tree, ki je le nadgranja R-tree da je iskanje hitrejše.
 \end{itemize}
-In tako kot so vse te strukture dobre za splošno iskanje trvko ene predmeta z ostalimi predmeti v prostoru, si lahko za naše potrebe izberemo kakšno, ki je malo bolj enostavna. To lahko rečemo, ker ne bomo veliko leteli (ko se leti, bo collision detection izklopljen), ali skakali. Torej to pomeni da bomo vedno v stiku z vsaj eno ploskvijo (tla), ter morda še z kakčno steno ali drugim objektom.\\
-Torej ko smo se odločili za našo \"coll\" strukturo, smo upoštevali kakšne so naše zahteve za detekcijo trkov in smo jo naredili tako da je največji trikotnik manjši ali enak objektu ki bo predstavljal čoveka ki se sprehaja po faksu. V nadaljevnju bomo videlu da ni potrebno da bi bili poligoni še manjši, čeprav so lahko nekateri, ki sestavljalo majhne natančne dele modela.
+In tako kot so vse te strukture dobre za splošno iskanje trkov enega predmeta z ostalimi predmeti v prostoru, si lahko za naše potrebe izberemo kakšno, ki je malo bolj enostavna. To lahko rečemo, ker ne bomo veliko leteli (ko se leti, bo collision detection izklopljen), ali skakali. Torej to pomeni da bomo vedno v stiku z vsaj eno ploskvijo (tla), ter morda še z kakčno steno ali drugim objektom.\\
+Torej ko smo se odločili za našo \verb|coll| strukturo, smo upoštevali kakšne so naše zahteve za detekcijo trkov in smo jo naredili tako da je največji trikotnik manjši ali enak objektu ki bo predstavljal čoveka, ki se sprehaja po faksu. V nadaljevnju bomo videli, da ni potrebno, da bi bili poligoni še manjši, čeprav so lahko nekateri, ki sestavljalo majhne natančne dele modela.
 \subsubsection*{Struktura - navadena 2D tabela}
 Na koncu smo videli da bo najlažje implementirati navadno 2D tabelo, ki bo imela naslednjo strukturo
 
@@ -186,8 +186,6 @@ izluščiti $vertexe$, $normale$, $face$ in različne materiale. Za ta namen smo
 napisali preprosto python skripto, ki .obj datoteko prebere in prebrane podatke 
 zapiše v json formatu. Na ta način smo pohitrili začetek izrisovanja, saj spletnemu
 brskalniku ni potrebno parsati .obj datoteke ob vsaki naložitvi strani.
-\subsection{Phongov odbojni model}
-\subsection{Collision detection}
 \pagebreak
 \section{Problemi}
 \subsection{Blacklisted GPUs}
@@ -232,17 +230,16 @@ znotraj navidezne fakultete.
 \section{Posnetki zaslonov}
 \ \\
 \includegraphics[scale=0.3]{screen1.png}\\ 
-\ \\
+
 \includegraphics[scale=0.3]{screen2.png}\\
-\ \\
+
 \includegraphics[scale=0.3]{screen3.png}\\
-\ \\
+
 \includegraphics[scale=0.3]{screen4.png}\\
-\ \\
 \includegraphics[scale=0.4]{screen5.png}\\ 
-\ \\
+
 \includegraphics[scale=0.4]{screen6.png}\\ 
-\ \\
+
 \includegraphics[scale=0.3]{Screenshot.jpg}\\ 
 \ \\
 \includegraphics[scale=0.3]{Screenshot2.jpg}\\ 

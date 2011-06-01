@@ -1,8 +1,8 @@
-A school project for computer graphincs class:
+A school project for computer graphics class:
 
-enviromet: webGL
+Environment: webGL
 
-includes a 3D model of our College, with important places taged so you can search for the shortest path to them.
+Includes a 3D model of our college, with important places tagged so you can find the shortest path to them.
 
 DONE:
  - modeled the first floor of our college
@@ -12,7 +12,7 @@ DONE:
 
 TODO:
  - get directional or spot light to work normally
- - collision detection and simple phisics
- - try to get SpiderGL workin with the college model
- - Make a few simple animation (vending machine, sliding and regular doors)
+ - collision detection and simple physics
+ - try to get SpiderGL working with the college model
+ - make a few simple animations (vending machine, sliding and regular doors)
  - put some nice textures on our model

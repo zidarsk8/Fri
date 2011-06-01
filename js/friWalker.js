@@ -245,24 +245,24 @@ function drawScene() {
 	  gl.bindBuffer(gl.ARRAY_BUFFER, buffers[mat].tex);
 	  gl.vertexAttribPointer(shaderProgram.textureCoordAttribute, buffers[mat].tex.itemSize, gl.FLOAT, false, 0, 0);
 	
+	
+	
 	  //lightning stuff:
-	  gl.uniform1i(shaderProgram.useLightingUniform, true);
-	  //light color:
-	  gl.uniform3f( shaderProgram.ambientColorUniform, 0.9, 0.9, 0.9 );
-	  //direction:
-	  var lightingDirection = [  0, 0, 0];
-	  
-	  var adjustedLD = vec3.create();
-	  vec3.normalize(lightingDirection, adjustedLD);
-	  vec3.scale(adjustedLD, 1);
-	//  vec3.rotate(mvMatrix, degToRad(-pitch), [1, 0, 0]);
-	//  vec3.rotate(mvMatrix, degToRad(-yaw), [0, 1, 0]);
-	
-	  gl.uniform3fv(shaderProgram.lightingDirectionUniform, adjustedLD);
-	  
-	  gl.uniform3f( shaderProgram.directionalColorUniform, 0.7, 0.7, 0.7 );
-	  
-	
+      gl.uniform1i(shaderProgram.useLightingUniform, true);
+      //light color:
+      gl.uniform3f( shaderProgram.ambientColorUniform, 0.2, 0.2, 0.2 );
+      //direction:
+      var lightingDirection = [ -0.550000, 1.040000, 3.410000];
+      
+      var adjustedLD = vec3.create();
+      vec3.normalize(lightingDirection, adjustedLD);
+      vec3.scale(adjustedLD, 1);
+    //  vec3.rotate(mvMatrix, degToRad(-pitch), [1, 0, 0]);
+    //  vec3.rotate(mvMatrix, degToRad(-yaw), [0, 1, 0]);
+
+      gl.uniform3fv(shaderProgram.lightingDirectionUniform, adjustedLD);
+      
+      gl.uniform3f( shaderProgram.directionalColorUniform, 0.7, 0.7, 0.7 );
 	  
 	  setMatrixUniforms();
 	  gl.activeTexture(gl.TEXTURE0);

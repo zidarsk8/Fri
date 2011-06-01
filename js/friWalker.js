@@ -527,11 +527,22 @@ function splitFaces(faks){
 function webGLStart() {
   splitFaces(faks);
   var canvas = document.getElementById("lesson05-canvas");
+  for(i in faks.materials){
+    if(faks.materials[i].name == "Material"){
+        faks.materials[i].scale = 2;
+    }
+    else if(faks.materials[i].name == "wood-floor"){
+        faks.materials[i].scale = 4;
+    }
+    else if(faks.materials[i].name == "horizon"){
+        faks.materials[i].scale = 0.06;
+    }
+  }
   initGL(canvas);
   initShaders();
   initBuffers();
   initTexture();
-
+  
   canvas.onmousedown = handleMouseDown;
   document.onmouseup = handleMouseUp;
   document.onmousemove = handleMouseMove;
@@ -574,16 +585,16 @@ $.getJSON('faks.js', function(data){
         	  ro.nor[vecCounter*3+2]= this.normals[curentFace.normals[i]].z;
         	  
         	//add texture coordinate for this vector
-
+              
               if(Math.abs(ro.nor[vecCounter*3+1]) > 0.5){
-            	  ro.tex[vecCounter*2] = this.vertices[curentFace.vertices[i]].x;
-            	  ro.tex[vecCounter*2+1] = this.vertices[curentFace.vertices[i]].z;
+            	  ro.tex[vecCounter*2] = faks.materials[material].scale * this.vertices[curentFace.vertices[i]].x;
+            	  ro.tex[vecCounter*2+1] = faks.materials[material].scale * this.vertices[curentFace.vertices[i]].z;
               }else if(Math.abs(ro.nor[vecCounter*3]) > 0.5){
-            	  ro.tex[vecCounter*2] = this.vertices[curentFace.vertices[i]].z;
-            	  ro.tex[vecCounter*2+1] = this.vertices[curentFace.vertices[i]].y;
+            	  ro.tex[vecCounter*2] = faks.materials[material].scale * this.vertices[curentFace.vertices[i]].z;
+            	  ro.tex[vecCounter*2+1] = faks.materials[material].scale * this.vertices[curentFace.vertices[i]].y;
               }else{
-            	  ro.tex[vecCounter*2] = this.vertices[curentFace.vertices[i]].x;
-            	  ro.tex[vecCounter*2+1] = this.vertices[curentFace.vertices[i]].y;
+            	  ro.tex[vecCounter*2] = faks.materials[material].scale * this.vertices[curentFace.vertices[i]].x;
+            	  ro.tex[vecCounter*2+1] = faks.materials[material].scale * this.vertices[curentFace.vertices[i]].y;
               }
           }      
 

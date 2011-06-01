@@ -123,6 +123,63 @@ teče tekoče na sodobnih brskalnikih z WebGL podporo.
 \pagebreak
 \section{Zabavni deli}
 \subsection{Collision detection}
+V našem modelu imamo zaradi lažjega risanja v wegGL, vse ploskve predstavljene z trikotniki in ne z štirikotniki. To pa tudi nekoliko olajša detekcijo trkov med posameznimi površinami. Ponavadi se detekcijo trkov, hrani posebna podatkovna struktura, ki ima enako 3D predstavitev, vendar je načeloma razdeljena na manjše dele kot prvotna 3D mapa. Tukaj je tudi uprašanje, ali se nam splača hraniti dve strukturi ali samo eno. Mi smo se pri tej seminarski nalogi odločili da bomo imeli dve ločeni strukturi:
+\begin{itemize}
+\item faks: podatkovna struktura velikimi poligoni in manj oglišči ki se bo izrisovala 
+\item coll: podatkovna struktura, ki je sestavljena iz veliko več manjših poligonov, ki se bojo uporabljali za detekcijo trkov.
+\end{itemize}
+Ponavadi so najbolj priljubljene strukture za zaznavanje trkov 
+\begin{itemize}
+\item KD-tree - k dimenzionalno drevo ki prostor na vsakem nivoju razdeli na dva dela glede na trenutno dimenzijo.
+\item BSP-tree - struktura podobna kot KD-tree, vendar da na vsakem nivoju bolj optimalno razdeli prostor.
+\item R-tree - drevo ki prostor razdeli na bounding box-e in se nato išče točke znotraj teh.
+\item PR-tree - prioritetno R-tree, ki je le nadgranja R-tree da je iskanje hitrejše.
+\end{itemize}
+In tako kot so vse te strukture dobre za splošno iskanje trvko ene predmeta z ostalimi predmeti v prostoru, si lahko za naše potrebe izberemo kakšno, ki je malo bolj enostavna. To lahko rečemo, ker ne bomo veliko leteli (ko se leti, bo collision detection izklopljen), ali skakali. Torej to pomeni da bomo vedno v stiku z vsaj eno ploskvijo (tla), ter morda še z kakčno steno ali drugim objektom.\\
+Torej ko smo se odločili za našo \"coll\" strukturo, smo upoštevali kakšne so naše zahteve za detekcijo trkov in smo jo naredili tako da je največji trikotnik manjši ali enak objektu ki bo predstavljal čoveka ki se sprehaja po faksu. V nadaljevnju bomo videlu da ni potrebno da bi bili poligoni še manjši, čeprav so lahko nekateri, ki sestavljalo majhne natančne dele modela.
+\subsubsection*{Struktura - navadena 2D tabela}
+Na koncu smo videli da bo najlažje implementirati navadno 2D tabelo, ki bo imela naslednjo strukturo
+
+
+\[
+\begin{array}{l|l}
+Index     & Value \\
+0    & \lbrace x_0^0 \ldots x_m^0 \ | \ m\leq n  \rbrace \\
+1    & \lbrace x_0^1 \ldots x_m^1 \ | \ m\leq n  \rbrace \\
+2    & \lbrace x_0^2 \ldots x_m^2 \ | \ m\leq n  \rbrace \\
+ \vdots   & \vdots \\
+n    & \lbrace x_0^n \ldots x_m^n \ | \ m\leq n  \rbrace \\
+\end{array}
+\]
+V kateri Index predstavlja zaporedno število posameznega trikotnika, in v Value je zapisan seznam indeksov ostalih trikotnikov, ki so zelo blizu trenutnega. Podatke o posameznem trikotniku lahko preberemo iz naše prejšnje strukture \"coll\" in indeksom trikotnika o katerem želimo podatke.\\
+
+Sedaj pa potrebujemo le še manjšo strukturo, v kateri je seznam trikotnikov z katerimi se že dotikamo. To strukturo bomo pa imenovali "Touching". Celoten algoritem pa zgleda tako:
+\begin{enumerate}
+\item začetni položaj je na točno določenem trikotniku, in indeks tega trikotnika damo v Touching seznam.
+\item shranimo trenutni položaj
+\item premaknemo se na željeno mesto (kamor želi uporabnik).
+\item za vsak indeks trikotnika ki je shranjen v Touching preverimo če se seka z našim osebkom.
+\item preverimo tudi za vse indekse trikotnikov ki se nahajajo v seznamu trenutnega Touching trikotnika.
+\item trikotnike katerih se dotikamo damo v Touching in tiste, ki se jih ne, damo ven. 
+\item popravimo premik, če je potrebno in nadaljujemo pri točki 2.
+\end{enumerate}
+
+\subsubsection*{Algoritem - hitra detekcija trkov dveh trikotnikov}
+Za detekcijo ne pregledujemo bounding boxov posameznih trikotnikov, in struktur, saj smo pri postavljanju strukture zagotovili da ne bomo pregledovali nobenih trikotnikov ki so nam predaleč.\\
+Ugotavljanje pa poteka tako:
+\begin{enumerate}
+\item izračunaj enačbo ravnine za vsak trikotnik. 
+\item naredimo skalarni produkt normale ravnine z vektorjemo od poljubne točke na ravnini do vsake točke na drugem trikotniku. Tako bojo imele točke na eni strani ravnine en predznak, točke na drugi strani pa drug predznak.
+\item pogledamo če imajo vse točke enak predznak, kar pomeni da en trikotnik leži v celoti nad ali pod ravnino drugega trikotnika. V temu primeru ne more priti do trka in vrnemo 0.
+\item enako naredimo tudi za drugi trikotnik.
+\item pogledamo če so vse razdalje toče enega trikotnika od ravnine drugega trikotnika enake 0. in vrnemo da ni prišlo do trka. ker se tako znebimo dodatnih težav.
+\item če oba trikotnika sekata ravnino drugega trikotnika, pa lahko naredimo črto presečišča ravnin in vemo da se laho trikotnika sekata le na tisti črti.
+\item izračunamo presečišče stranic trikotnika z črto ki je je na presečišču ravnin, za oba trikotnika.
+\item sedaj pa le pogledamo na tej premici če se intervala posameznih trikotnikov sekata, in v temu primeru vrnemo da je prišlo do trka
+\end{enumerate}
+
+Obravnavanje trkov pa je tudi enostavno, saj imamo shranjeno zadnjo dovoljeno pozicijo in nimamo nobenih prožnih odbojev. Edina posebnost je le da ko izvemo za vse ploskve s katerimi je prišlo do trka, bomo naš objekt premaknili v smeri seštevka normaliziranih normal teh ploskev. to nam bo omogočalo da hodimo v klanec in po stopnicah. 
+
 \subsection{Pretvarjanje iz .obj v json in parsanje}
 \subsection{Phongov odbojni model}
 \pagebreak

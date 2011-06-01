@@ -43,7 +43,6 @@ function initGL(canvas) {
   }
 }
 
-
 function getShader(gl, id) {
   var shaderScript = document.getElementById(id);
   if (!shaderScript) {
@@ -244,9 +243,7 @@ function drawScene() {
 	  
 	  gl.bindBuffer(gl.ARRAY_BUFFER, buffers[mat].tex);
 	  gl.vertexAttribPointer(shaderProgram.textureCoordAttribute, buffers[mat].tex.itemSize, gl.FLOAT, false, 0, 0);
-	
-	
-	
+
 	  //lightning stuff:
       gl.uniform1i(shaderProgram.useLightingUniform, true);
       //light color:

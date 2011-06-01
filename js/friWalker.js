@@ -142,7 +142,7 @@ function initTexture() {
 			  handleLoadedTexture(texty);
 			  //alert("OnLoad: " + texty.image.src);
 		  };
-		  texty.image.src = faks.materials[mat].name + ".jpg";
+		  texty.image.src = faks.materials[mat].img;
 		  mat_textures[faks.materials[mat].name] = texty;
 	  })();
 	  
@@ -187,7 +187,7 @@ function initBuffers() {
   
 
   $.each(faks.materials, function(mat, material){
-	var bo = faks.getTriangleFaces(material.name);
+	var bo = faks.getTriangleFaces(mat);
 	
 	
     var buff = {

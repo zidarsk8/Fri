@@ -142,6 +142,12 @@ Po nekaj dneh Googlanja smo le naleteli na sistemsko spremenljivko \verb|MOZ_GLX
 s katero smo omogočili WebGL znotraj FireFoxa in Chromovo \verb|--ignore-gpu-blacklist| zagonsko stikalo.\\\\
 Z najnovejšo različico Google Chromea nastavljanje zagonskega stikala ni več potrebno, 
 FireFox4 pa še vedno potrebuje nastavljeno sistemsko spremenljivko.
+\subsection{WebGL}
+Začetnikom v OpenGLu iz lastnih izkušenj ne priporočamo dela z WebGLom. WebGL namreč temelji
+na \verb|OpenGL ES 2.0|, ki je oskrunjena verzija OpenGLa, saj so iz specifikacije odstranili
+vse funkcije iz OpenGLa, ki so v pomoč začetnikom. Brez dodatnih knjižnic WebGL ne
+omogoča niti funkcij za skalarni ali vektorski produkt med vektorji, kaj šele funkcije
+za translacije in rotacije matrik.
 \subsection{Lepljenje tekstur}
 \subsection{Zaplet v ekipi}
 Zaradi hujše prometne nesreče članica ekipe Aleksandra ni mogla opraviti svojega dela 

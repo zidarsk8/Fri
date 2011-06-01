@@ -207,9 +207,13 @@ vse funkcije iz OpenGLa, ki so v pomoč začetnikom. Brez dodatnih knjižnic Web
 omogoča niti funkcij za skalarni ali vektorski produkt med vektorji, kaj šele funkcije
 za translacije in rotacije matrik.
 \subsection{Lepljenje tekstur}
+Za lepljene tekstur smo sprva poskušali različne načine izvoza modelov iz Blenderja. Najbolj pogost izvoz ki se uporablja za WebGL je collada, ki pa nam brez posebnega ogrodja ne pusti veliko svobode pri programiranju - da bi pa naredili sami  svoj framework kot je naprimer spiderGL ali podobno pa nimamo časa. Torej smo se odločili da bomo zadevo izvažali v .obj format. Ta format lepo podpira tudi izvoz UVmap, ki bi jih lahko nato porabili za lepljenje tekstur na posamezne stranice.
+Problem pa je ker imamo zelo velik model v blenderju in bi bilo rezanje in lepljenje tekstur ročno malo preveč mučno delo, tako smo se zato, in tudi da se malo več naučimo, odločili da bomo sami naredili svoj UVmap glede na materjal. Materjal pa je v blenderju zelo lahko določati posameznim stranicam, in po dogovoru smo tudi rekli da bo ime materjala pomenilo ime slike z .jpg končico ki se uporabi za teksturo.\\
+
+Končno lepljenje teksture pa smo naredili tako, da smo vzeli trikotnik, in naredili projekcijo na osnovno ploskev ki mu je najbližja. To pomeni na ploskev, ki ima najbolj podobno normalo trikotniku. Probavali smo tudi da nebi prihajalo do popačenj in da bi trikotnik rajči rotirali do najbližje ploskve, vendar pri temu nebi vedno dobili lepih stikov med posameznimi ploskvami, tako smo videli da je navadna projekcija več kot dovolj za osnovni model.  
+
 \subsection{Zaplet v ekipi}
-Zaradi hujše prometne nesreče članica ekipe Aleksandra ni mogla opraviti svojega dela 
-seminarske naloge v celoti, zato sva Anže in Miha sama nadaljevala projekt. 
+Zaradi nepredvidljivih nesreč, se je upočasnilo delo enega člana ekipe, zaradi česa je celoten projekt potekal počasneje kot smo sprva predvidevali, saj so morali ostali člani za nekaj časa prevzeti drugo delo. Menim da to sicer ni preveč vplivalo na razvoj izdelka, se pa pozna v detajlih, ki bi jih lahko drugače dodali in bi občutno izboljšali uporabniško izkušnjo. Kot prototip pa smo z izdelkom še zmeraj zelo zadovoljni, in estetika ne odraža ravno vsega česar smo se pri izdelavi projekta naučili.
 \pagebreak
 \section{Nadaljne delo}
 \subsection{Podrobnosti na modelu}

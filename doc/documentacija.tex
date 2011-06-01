@@ -49,10 +49,6 @@
 
 \pagestyle{empty}
 
-\author{Miha Zidar (63060317)}
-\title{OS1: Peta domača naloga}
-
-
 \begin{document}
 
 \begin{titlepage}
@@ -84,13 +80,38 @@ Aleksandra \textsc{Bersan}\\
 
 % Bottom of the page
 {\large \today}
-
 \end{center}
 \end{titlepage}
 \pagebreak
 \section{Opis rešitve}
 \subsection{Kaj rešitev sploh je}
+Vsi vemo, da ima naša fakulteta zelo nelogično razporejene prostore in pogosto 
+se zgodi, da obiskovalec ne najde prave predavalnice. Da bi obiskovalcem in 
+brucom olajšali življenje, smo se odločili narediti 3-D model fakultete.\\\\
+Ker želimo, da bi bila naša aplikacija čim lažje dostopna, smo jo postavili na 
+internet s pomočjo odprtokodne knjižnice WebGL. Potrudili smo se, da aplikacija 
+teče tekoče na sodobnih brskalnikih z WebGL podporo.
 \subsection{Uporabljene metode}
+\subsection*{Jeziki}
+\begin{itemize}
+	\item JavaScript - Delo z gl knjižnico
+	\item GLSL - za Fragment in Vertex shaderja
+	\item Python - Backend, pretvarjanje .obj datotek v json
+\end{itemize}
+\subsection*{Ogrodja}
+\begin{itemize}
+	\item webql-utils - Za funkcijo requestAnimFrame
+	\item glMatrix - Uporabne funkcije nad matrikami in vektorji
+	\item jQuery - Interaktivnost ob canvas oknu
+	\item Django - Backend za shranjevanje podatkov o mestih zanimanja v podatkovno bazo 
+\end{itemize}
+\subsection*{Orodja}
+\begin{itemize}
+	\item Blender - Modeliranje faksa po gradbenih načrtih
+\end{itemize}
+\subsection*{Metode}
+\subsection*{Algoritmi}
+
 \begin{center}
 \includegraphics{./WebGL.png}
 \end{center}

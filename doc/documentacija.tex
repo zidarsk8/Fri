@@ -92,18 +92,21 @@ Ker želimo, da bi bila naša aplikacija čim lažje dostopna, smo jo postavili 
 internet s pomočjo odprtokodne knjižnice WebGL. Potrudili smo se, da aplikacija 
 teče tekoče na sodobnih brskalnikih z WebGL podporo.
 \subsection{Uporabljene metode}
+\begin{center}
+\includegraphics{./WebGL.png}
+\end{center}
 \subsection*{Jeziki}
 \begin{itemize}
-	\item JavaScript - Delo z gl knjižnico
-	\item GLSL - za Fragment in Vertex shaderja
-	\item Python - Backend, pretvarjanje .obj datotek v json
+	\item \verb|JavaScript| - Delo z gl knjižnico
+	\item \verb|GLSL| - za Fragment in Vertex shaderja
+	\item \verb|Python| - Backend, pretvarjanje .obj datotek v json
 \end{itemize}
 \subsection*{Ogrodja}
 \begin{itemize}
-	\item webql-utils - Za funkcijo requestAnimFrame
-	\item glMatrix - Uporabne funkcije nad matrikami in vektorji
-	\item jQuery - Izboljšanje uporabniške iskušnje
-	\item Django - Backend za shranjevanje podatkov o mestih zanimanja v podatkovno bazo 
+	\item \verb|webql-utils| - Za funkcijo requestAnimFrame
+	\item \verb|glMatrix| - Uporabne funkcije nad matrikami in vektorji
+	\item \verb|jQuery| - Izboljšanje uporabniške iskušnje
+	\item \verb|Django| - Backend za shranjevanje podatkov o mestih zanimanja v podatkovno bazo 
 \end{itemize}
 \subsection*{Orodja}
 \begin{itemize}
@@ -117,9 +120,6 @@ teče tekoče na sodobnih brskalnikih z WebGL podporo.
 	\item Phongov odbojni model
 	\item Collision detection
 \end{itemize}
-\begin{center}
-\includegraphics{./WebGL.png}
-\end{center}
 \pagebreak
 \section{Zabavni deli}
 \subsection{Collision detection}
@@ -181,12 +181,49 @@ Ugotavljanje pa poteka tako:
 Obravnavanje trkov pa je tudi enostavno, saj imamo shranjeno zadnjo dovoljeno pozicijo in nimamo nobenih prožnih odbojev. Edina posebnost je le da ko izvemo za vse ploskve s katerimi je prišlo do trka, bomo naš objekt premaknili v smeri seštevka normaliziranih normal teh ploskev. to nam bo omogočalo da hodimo v klanec in po stopnicah. 
 
 \subsection{Pretvarjanje iz .obj v json in parsanje}
+Za izrisovanja modelov iz Blenderja je potrebno prebrati datoteko v .obj formatu in iz zapisa
+izluščiti $vertexe$, $normale$, $face$ in različne materiale. Za ta namen smo 
+napisali preprosto python skripto, ki .obj datoteko prebere in prebrane podatke 
+zapiše v json formatu. Na ta način smo pohitrili začetek izrisovanja, saj spletnemu
+brskalniku ni potrebno parsati .obj datoteke ob vsaki naložitvi strani.
 \subsection{Phongov odbojni model}
+\subsection{Collision detection}
 \pagebreak
 \section{Problemi}
-\subsection{Blacklistane graficne}
+\subsection{Blacklisted GPUs}
+Še preden smo začeli z razvojem naše seminarske naloge, smo naleteli na probleme.
+Tako Googlov Chrome, kot Mozillin Firefox sta imela na črni listi grafične kartice,
+ki so bile v naših računalnikih, kar je pomenilo, da je bil WebGL onemogočen. 
+WebGLa ni bilo možno prisiliti k delovanju iz nastavitev znotraj brskalnika pa 
+čeprav smo šarili po nastavitvah za developerje (Chromov: \verb|about:flags| in FFjev: \verb|about:config|).
+Po nekaj dneh Googlanja smo le naleteli na sistemsko spremenljivko \verb|MOZ_GLX_IGNORE_BLACKLIST=1|,
+s katero smo omogočili WebGL znotraj FireFoxa in Chromovo \verb|--ignore-gpu-blacklist| zagonsko stikalo.\\\\
+Z najnovejšo različico Google Chromea nastavljanje zagonskega stikala ni več potrebno, 
+FireFox4 pa še vedno potrebuje nastavljeno sistemsko spremenljivko.
+\subsection{WebGL}
+Začetnikom v OpenGLu iz lastnih izkušenj ne priporočamo dela z WebGLom. WebGL namreč temelji
+na \verb|OpenGL ES 2.0|, ki je oskrunjena verzija OpenGLa, saj so iz specifikacije odstranili
+vse funkcije iz OpenGLa, ki so v pomoč začetnikom. Brez dodatnih knjižnic WebGL ne
+omogoča niti funkcij za skalarni ali vektorski produkt med vektorji, kaj šele funkcije
+za translacije in rotacije matrik.
 \subsection{Lepljenje tekstur}
-\subsection{Nesreca enega clana ekipe}
+\subsection{Zaplet v ekipi}
+Zaradi hujše prometne nesreče članica ekipe Aleksandra ni mogla opraviti svojega dela 
+seminarske naloge v celoti, zato sva Anže in Miha sama nadaljevala projekt. 
+\pagebreak
+\section{Nadaljne delo}
+\subsection{Podrobnosti na modelu}
+Zaradi časovne stiske in zapletov v ekipi nam je zmanjkalo časa za dodajanje podrobnosti, kot so 
+table, lijaki, koši za smeti in ostali predmeti v predavalnicah in na faksu. Prav
+tako nam ni uspelo dokončati vseh nadstropij fakultete. 
+\subsection{Boljše teksture}
+Če bi imeli več časa, bi lahko ustvarili svoje teksture iz fotografij, ki bi 
+jih posneli na fakulteti. Lahko bi pa tudi nadgradili izrisovanje iz Mipmapinga
+na kaj bolj modernega. 
+\subsection{Druge ideje}
+Ena izmed idej je bila tudi, da bi omogočili prikaz jakosti WiFi signala v posameznih delih 
+fakultete. Zabavno pa bi bilo tudi, da bi se prikazoval položaj vseh obiskovalcev, ki so trenutno
+znotraj navidezne fakultete.
 \pagebreak
 \section{Posnetki zaslonov}
 \end{document}  %End of document.

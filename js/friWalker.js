@@ -4,7 +4,7 @@ var pitchRate = 0;
 var yaw = 0;
 var yawRate = 0;
 var xPos = 1.0;
-var yPos = 1.5;//5.8;
+var yPos = 5.8;
 var zPos = 8;
 var movingSpeed = 0.005;
 var speed = 0;
@@ -29,7 +29,7 @@ var fps = 0;
 var faks = null;
 var fly;
 var debug = true;
-var debugtimeout = 5000;
+var debugtimeout = 50;
 
 
 function initGL(canvas) {

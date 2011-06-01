@@ -4,7 +4,7 @@ var pitchRate = 0;
 var yaw = 0;
 var yawRate = 0;
 var xPos = 1.0;
-var yPos = 5.8;
+var yPos = 1.5;//5.8;
 var zPos = 8;
 var movingSpeed = 0.005;
 var speed = 0;
@@ -29,6 +29,7 @@ var fps = 0;
 var faks = null;
 var fly;
 var debug = true;
+var debugtimeout = 5000;
 
 
 function initGL(canvas) {
@@ -387,6 +388,9 @@ function animate() {
 function tick() {
   // comment requestAnimFrame(tick); when debugging and use setInterval instead
   if (!debug) requestAnimFrame(tick);
+  
+  console.log("fuuu : "+intersection(faks.faces[0],faks.faces[1]));
+  
   handleKeys();
   animate();
   drawScene();
@@ -455,8 +459,8 @@ function crossProduct(vec1, vec2){
  
 
 function sameSide(planePoint,planeNormal,point1,point2){
-	return  dotProduct3d(planeNormal, subVec3d(planePoint, point1))*
-			dotProduct3d(planeNormal, subVec3d(planePoint, point2));
+	return  dotProduct(planeNormal, subVec3d(planePoint, point1))*
+			dotProduct(planeNormal, subVec3d(planePoint, point2));
 }
 
 
@@ -475,13 +479,18 @@ function maxComponent(face, componenet){
 function intersection(face1,face2){
 	var normal1 = faks.normals[face1.normals[0]]; //face1.normals[1] face1.normals[2] should be the same 
 	var normal2 = faks.normals[face2.normals[0]]; //face1.normals[1] face1.normals[2] should be the same 
-	var d1 = -dotProduct3d(normal1, faks.vertices[face1.vertices[0]]);
-	var d2 = -dotProduct3d(normal2, faks.vertices[face2.vertices[0]]);
+	var d1 = -dotProduct(normal1, faks.vertices[face1.vertices[0]]);
+	var d2 = -dotProduct(normal2, faks.vertices[face2.vertices[0]]);
 	
+	console.log("normal 2 ",normal2);
+	console.log("vertices 2 ",faks.vertices[face1.vertices[0]]);
 	//calculate distances of of all vertexes in face1 from the plane of face2
-	var d1v0 = dotProduct3d(normal2, faks.vertices[face1.vertices[0]]) + d2;
-	var d1v1 = dotProduct3d(normal2, faks.vertices[face1.vertices[1]]) + d2;
-	var d1v2 = dotProduct3d(normal2, faks.vertices[face1.vertices[2]]) + d2;
+	var d1v0 = dotProduct(normal2, faks.vertices[face1.vertices[0]]) + d2;
+	var d1v1 = dotProduct(normal2, faks.vertices[face1.vertices[1]]) + d2;
+	var d1v2 = dotProduct(normal2, faks.vertices[face1.vertices[2]]) + d2;
+	
+	console.log("visine 1 ",d1v0,d1v1,d1v2);
+	
 	if ((d1v0 > 0 && d1v1 > 0 && d1v2 >0) || (d1v0 < 0 && d1v1 < 0 && d1v2 < 0)){
 		return 0; // no collisoin possible, the triangle is above or below the plane
 	}
@@ -491,9 +500,9 @@ function intersection(face1,face2){
 	}
 	
 	//calculate distances of of all vertexes in face2 from the plane of face1
-	var d2v0 = dotProduct3d(normal1, faks.vertices[face2.vertices[0]]) + d1;
-	var d2v1 = dotProduct3d(normal1, faks.vertices[face2.vertices[1]]) + d1;
-	var d2v2 = dotProduct3d(normal1, faks.vertices[face2.vertices[2]]) + d1;
+	var d2v0 = dotProduct(normal1, faks.vertices[face2.vertices[0]]) + d1;
+	var d2v1 = dotProduct(normal1, faks.vertices[face2.vertices[1]]) + d1;
+	var d2v2 = dotProduct(normal1, faks.vertices[face2.vertices[2]]) + d1;
 	if ((d2v0 > 0 && d2v1 > 0 && d2v2 >0) || (d2v0 < 0 && d2v1 < 0 && d2v2 < 0)){
 		return 0; // no collisoin possible, the triangle is above or below the plane
 	}
@@ -501,13 +510,49 @@ function intersection(face1,face2){
 	
 	
 	var L = crossProduct(normal1, normal2); //intersect vector of the two planes
+	var max = 'y';
 	if (L[0]>L[1] && L[0]>L[2]){ // x cord is the biggest
-		
+		max = 'x';
 	}else if( L[2]>L[1]){ // z cord is the biggest
-		
-	}else{ // y cord is the biggest
-		
+		max = 'z';
+	}// y cord is the biggest
+	
+	var p1v0 = faks.vertices[face1.vertices[0]][max];
+	var p1v1 = faks.vertices[face1.vertices[1]][max];
+	var p1v2 = faks.vertices[face1.vertices[2]][max];
+	var p2v0 = faks.vertices[face2.vertices[0]][max];
+	var p2v1 = faks.vertices[face2.vertices[1]][max];
+	var p2v2 = faks.vertices[face2.vertices[2]][max];
+	
+	if (d1v0 * d1v1 < 0){
+		t11 = p1v0 + (p1v1-p1v0) * (d1v0 / (d1v0 - d1v1));
+		if (d1v0 * d1v2 < 0){
+			t12 = p1v0 + (p1v2-p1v0) * (d1v0 / (d1v0 - d1v2));
+		}else{
+			t12 = p1v1 + (p1v2-p1v1) * (d1v1 / (d1v1 - d1v2));
+		}
+	}else{
+		t11 = p1v2 + (p1v0-p1v2) * (d1v2 / (d1v2 - d1v0));
+		t12 = p1v2 + (p1v1-p1v2) * (d1v2 / (d1v2 - d1v1));
 	}
+
+	
+	if (d2v0 * d2v1 < 0){
+		t21 = p1v0 + (p1v1-p1v0) * (d2v0 / (d2v0 - d2v1));
+		if (d2v0 * d2v2 < 0){
+			t22 = p1v0 + (p1v2-p1v0) * (d2v0 / (d2v0 - d2v2));
+		}else{
+			t22 = p1v1 + (p1v2-p1v1) * (d2v1 / (d2v1 - d2v2));
+		}
+	}else{
+		t21 = p1v2 + (p1v0-p1v2) * (d2v2 / (d2v2 - d2v0));
+		t22 = p1v2 + (p1v1-p1v2) * (d2v2 / (d2v2 - d2v1));
+	}
+	
+	if (Math.min(t21,t22)>Math.max(t11,t12) || Math.max(t21,t22)<Math.min(t11,t12)){
+		return 0;
+	}
+
 	return 1;
 }
 
@@ -549,7 +594,7 @@ function webGLStart() {
   gl.clearColor(0.0, 0.0, 0.0, 1.0);
   gl.enable(gl.DEPTH_TEST);
 //  use set interval for debugging cause requestAnimFrame(tick); is causing problems for firebug
-  if (debug) setInterval("tick()", 50);
+  if (debug) setInterval("tick()", debugtimeout);
   tick();
   setInterval(function(){
     document.getElementById("fps").innerHTML="<b>FPS:</b> "+fps+" <b>x:</b> "+xPos+" <b>y:</b> "+yPos+" <b>z:</b> "+zPos+" <b>pitch:</b> "+pitch+" <b>yaw:</b> "+yaw;
@@ -609,8 +654,8 @@ $.getJSON('faks.js', function(data){
 	  for (var i in object.materials){
 		  this.materials.push(object.materials[i]);
 	  }
-	  _.map(object.vertices, function(n){ return {x:n.x+vi, y:n.y+vi, z:n.z+vi}; });
-	  _.map(object.normals, function(n){ return {x:n.x+ni, y:n.y+ni, z:n.z+ni}; });
+//	  _.map(object.vertices, function(n){return {x:n.x+vi, y:n.y+vi, z:n.z+vi};);
+//	  _.map(object.normals, function(n){return {x:n.x+ni, y:n.y+ni, z:n.z+ni};);
 	  for (i in object.vertices){
 		  this.vertices.push(object.vertices);
 	  }

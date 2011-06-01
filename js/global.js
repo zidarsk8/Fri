@@ -5,7 +5,7 @@ $(document).ready(function(){
 	});
 	
 	$(document).keypress(function(e){
-	    console.log(e.which, "PRESSED");
+	    //console.log(e.which, "PRESSED");
 		if(e.which == 102){
 			$('#lesson05-canvas').toggleClass('fullscreen');
 		}

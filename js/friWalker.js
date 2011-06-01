@@ -28,8 +28,174 @@ var currentlyPressedKeys = {};
 var fps = 0;
 var faks = null;
 var fly;
-var debug = true;
-var debugtimeout = 50;
+var debug = false;
+var debugtimeout = 10000;
+
+
+/***********************************************************/
+/***********************************************************/
+
+
+/**
+ * normalize a vector. |a| = 1
+ */
+function normalize(vec){
+	var square = 0;
+	var vec2 = {};
+	for (var i in vec){
+		square += vec[i]*vec[i];
+		vec2[i] = vec[i];
+	}
+	var size = Math.sqrt(square);
+	//check skope of vars in javascript. netbeans says this is redeclaration of i - for (var i...
+	for (i in vec2){
+	  vec2[i] = vec2[i]/size;
+	}
+	return vec2;
+}
+/**
+ * compute a dot product of two normalized vectors
+ */
+function normalizedDotProduct(v1,v2){
+	return dotProduct(normalize(v1),normalize(v2));
+}
+/**
+ *compute dot product of two same sized vectors 
+ */
+function dotProduct(vec1,vec2){
+	var sum = 0;
+	for (var i in vec1){
+		sum += vec1[i]*vec2[i];
+	}
+	return sum;
+}
+/**
+ *compute dot product of two 3D vectors
+ */
+function dotProduct3d(vec1,vec2){
+	  return vec1[0]*vec2[0]+vec1[1]*vec2[1]+vec1[2]*vec2[2];
+}
+/**
+ * substract vec1 from vec2
+ */
+function subVec3d(vec1,vec2){
+	return [vec2[0]-vec1[0],
+			vec2[1]-vec1[1],
+			vec2[2]-vec1[2]];
+}
+/**
+* cross product of two 3D vectors
+*/
+function crossProduct(vec1, vec2){
+	return {x:vec1.y*vec2.z-vec2.y*vec1.z,
+			y:vec1.x*vec2.z-vec2.x*vec1.z,
+			z:vec1.x*vec2.y-vec2.x*vec1.y};
+}
+/**
+* absolute values of cross product of two 3D vectors
+*/
+function absCrossProduct(vec1, vec2){
+	return {x: Math.abs(vec1.y*vec2.z-vec2.y*vec1.z),
+			y: Math.abs(vec1.x*vec2.z-vec2.x*vec1.z),
+			z: Math.abs(vec1.x*vec2.y-vec2.x*vec1.y)};
+}
+
+function sameSide(planePoint,planeNormal,point1,point2){
+	return  dotProduct(planeNormal, subVec3d(planePoint, point1))*
+			dotProduct(planeNormal, subVec3d(planePoint, point2));
+}
+
+
+function minComponent(face, componenet){
+	return Math.min(faks.vertices[face.vertices[0]][componenet],
+			Math.min(faks.vertices[face.vertices[1]][componenet],
+					faks.vertices[face.vertices[2]][componenet]));
+}
+
+function maxComponent(face, componenet){
+	return Math.max(faks.vertices[face.vertices[0]][componenet],
+			Math.max(faks.vertices[face.vertices[1]][componenet],
+		 			faks.vertices[face.vertices[2]][componenet]));
+}
+
+function triangleIntersectionTest(face1,face2){
+	var normal1 = faks.normals[face1.normals[0]]; //face1.normals[1] face1.normals[2] should be the same 
+	var normal2 = faks.normals[face2.normals[0]]; //face1.normals[1] face1.normals[2] should be the same 
+	var d1 = -dotProduct(normal1, faks.vertices[face1.vertices[0]]);
+	var d2 = -dotProduct(normal2, faks.vertices[face2.vertices[0]]);
+	
+	//calculate distances of of all vertexes in face1 from the plane of face2
+	var d1v0 = dotProduct(normal2, faks.vertices[face1.vertices[0]]) + d2;
+	var d1v1 = dotProduct(normal2, faks.vertices[face1.vertices[1]]) + d2;
+	var d1v2 = dotProduct(normal2, faks.vertices[face1.vertices[2]]) + d2;
+	
+	if ((d1v0 > 0 && d1v1 > 0 && d1v2 >0) || (d1v0 < 0 && d1v1 < 0 && d1v2 < 0)){
+		return 0; // no collisoin possible, the triangle is above or below the plane
+	}
+	
+	if (d1v0 == 0 && d1v1 == 0 && d1v2 ==0){
+		return 1;// triangles are laying on the same plane
+	}
+	
+	//calculate distances of of all vertexes in face2 from the plane of face1
+	var d2v0 = dotProduct(normal1, faks.vertices[face2.vertices[0]]) + d1;
+	var d2v1 = dotProduct(normal1, faks.vertices[face2.vertices[1]]) + d1;
+	var d2v2 = dotProduct(normal1, faks.vertices[face2.vertices[2]]) + d1;
+
+	if ((d2v0 > 0 && d2v1 > 0 && d2v2 >0) || (d2v0 < 0 && d2v1 < 0 && d2v2 < 0)){
+		return 0; // no collisoin possible, the triangle is above or below the plane
+	}
+	
+	var L = absCrossProduct(normal1, normal2); //intersect vector of the two planes
+	var max = 'y';
+	if (L.x>L.y && L.x>L.z){ // x cord is the biggest
+		max = 'x';
+	}else if( L.z>L.y){ // z cord is the biggest
+		max = 'z';
+	}// y cord is the biggest
+	
+	var p1v0 = faks.vertices[face1.vertices[0]][max];
+	var p1v1 = faks.vertices[face1.vertices[1]][max];
+	var p1v2 = faks.vertices[face1.vertices[2]][max];
+	var p2v0 = faks.vertices[face2.vertices[0]][max];
+	var p2v1 = faks.vertices[face2.vertices[1]][max];
+	var p2v2 = faks.vertices[face2.vertices[2]][max];
+	
+	if (d1v0 * d1v1 < 0){
+		t11 = p1v0 + (p1v1-p1v0) * (d1v0 / (d1v0 - d1v1));
+		if (d1v0 * d1v2 < 0){
+			t12 = p1v0 + (p1v2-p1v0) * (d1v0 / (d1v0 - d1v2));
+		}else{
+			t12 = p1v1 + (p1v2-p1v1) * (d1v1 / (d1v1 - d1v2));
+		}
+	}else{
+		t11 = p1v2 + (p1v0-p1v2) * (d1v2 / (d1v2 - d1v0));
+		t12 = p1v2 + (p1v1-p1v2) * (d1v2 / (d1v2 - d1v1));
+	}
+	
+	if (d2v0 * d2v1 < 0){
+		t21 = p2v0 + (p2v1-p2v0) * (d2v0 / (d2v0 - d2v1));
+		if (d2v0 * d2v2 < 0){
+			t22 = p2v0 + (p2v2-p2v0) * (d2v0 / (d2v0 - d2v2));
+		}else{
+			t22 = p2v1 + (p2v2-p2v1) * (d2v1 / (d2v1 - d2v2));
+		}
+	}else{
+		t21 = p2v2 + (p2v0-p2v2) * (d2v2 / (d2v2 - d2v0));
+		t22 = p2v2 + (p2v1-p2v2) * (d2v2 / (d2v2 - d2v1));
+	}
+	
+	if (Math.min(t21,t22)>Math.max(t11,t12) || Math.max(t21,t22)<Math.min(t11,t12)){
+		return 0;
+	}
+
+	return 1;
+}
+
+/***********************************************************/
+/***********************************************************/
+/***********************************************************/
+>>>>>>> fixed collision detection
 
 
 function initGL(canvas) {
@@ -302,7 +468,6 @@ function drawScene() {
 }
 
 
-
 function handleKeyDown(event) {
   
   currentlyPressedKeys[event.keyCode] = true;
@@ -389,176 +554,12 @@ function tick() {
   // comment requestAnimFrame(tick); when debugging and use setInterval instead
   if (!debug) requestAnimFrame(tick);
   
-  console.log("fuuu : "+intersection(faks.faces[0],faks.faces[1]));
-  
   handleKeys();
   animate();
   drawScene();
   fps++;
 }
 
-/***********************************************************/
-/***********************************************************/
-
-
-/**
- * normalize a vector. |a| = 1
- */
-function normalize(vec){
-	var square = 0;
-	var vec2 = {};
-	for (var i in vec){
-		square += vec[i]*vec[i];
-		vec2[i] = vec[i];
-	}
-	var size = Math.sqrt(square);
-	//check skope of vars in javascript. netbeans says this is redeclaration of i - for (var i...
-	for (i in vec2){
-	  vec2[i] = vec2[i]/size;
-	}
-	return vec2;
-}
-/**
- * compute a dot product of two normalized vectors
- */
-function normalizedDotProduct(v1,v2){
-	return dotProduct(normalize(v1),normalize(v2));
-}
-/**
- *compute dot product of two same sized vectors 
- */
-function dotProduct(vec1,vec2){
-	var sum = 0;
-	for (var i in vec1){
-		sum += vec1[i]*vec2[i];
-	}
-	return sum;
-}
-/**
- *compute dot product of two 3D vectors
- */
-function dotProduct3d(vec1,vec2){
-	  return vec1[0]*vec2[0]+vec1[1]*vec2[1]+vec1[2]*vec2[2];
-}
-/**
- * substract vec1 from vec2
- */
-function subVec3d(vec1,vec2){
-	return [vec2[0]-vec1[0],
-			vec2[1]-vec1[1],
-			vec2[2]-vec1[2]];
-}
-/**
-* cross product of two 3D vectors
-*/
-function crossProduct(vec1, vec2){
-	return [vec1[2]*vec2[3]-vec2[2]*vec1[3],
-			vec1[1]*vec2[3]-vec2[1]*vec1[3],
-			vec1[1]*vec2[2]-vec2[1]*vec1[2]];
-}
- 
-
-function sameSide(planePoint,planeNormal,point1,point2){
-	return  dotProduct(planeNormal, subVec3d(planePoint, point1))*
-			dotProduct(planeNormal, subVec3d(planePoint, point2));
-}
-
-
-function minComponent(face, componenet){
-	return Math.min(faks.vertices[face.vertices[0]][componenet],
-			Math.min(faks.vertices[face.vertices[1]][componenet],
-					faks.vertices[face.vertices[2]][componenet]));
-}
-
-function maxComponent(face, componenet){
-	return Math.max(faks.vertices[face.vertices[0]][componenet],
-			Math.max(faks.vertices[face.vertices[1]][componenet],
-		 			faks.vertices[face.vertices[2]][componenet]));
-}
-
-function intersection(face1,face2){
-	var normal1 = faks.normals[face1.normals[0]]; //face1.normals[1] face1.normals[2] should be the same 
-	var normal2 = faks.normals[face2.normals[0]]; //face1.normals[1] face1.normals[2] should be the same 
-	var d1 = -dotProduct(normal1, faks.vertices[face1.vertices[0]]);
-	var d2 = -dotProduct(normal2, faks.vertices[face2.vertices[0]]);
-	
-	console.log("normal 2 ",normal2);
-	console.log("vertices 2 ",faks.vertices[face1.vertices[0]]);
-	//calculate distances of of all vertexes in face1 from the plane of face2
-	var d1v0 = dotProduct(normal2, faks.vertices[face1.vertices[0]]) + d2;
-	var d1v1 = dotProduct(normal2, faks.vertices[face1.vertices[1]]) + d2;
-	var d1v2 = dotProduct(normal2, faks.vertices[face1.vertices[2]]) + d2;
-	
-	console.log("visine 1 ",d1v0,d1v1,d1v2);
-	
-	if ((d1v0 > 0 && d1v1 > 0 && d1v2 >0) || (d1v0 < 0 && d1v1 < 0 && d1v2 < 0)){
-		return 0; // no collisoin possible, the triangle is above or below the plane
-	}
-	
-	if (d1v0 == 0 && d1v1 == 0 && d1v2 ==0){
-		return 0; // triangles are laying on the same plane
-	}
-	
-	//calculate distances of of all vertexes in face2 from the plane of face1
-	var d2v0 = dotProduct(normal1, faks.vertices[face2.vertices[0]]) + d1;
-	var d2v1 = dotProduct(normal1, faks.vertices[face2.vertices[1]]) + d1;
-	var d2v2 = dotProduct(normal1, faks.vertices[face2.vertices[2]]) + d1;
-	if ((d2v0 > 0 && d2v1 > 0 && d2v2 >0) || (d2v0 < 0 && d2v1 < 0 && d2v2 < 0)){
-		return 0; // no collisoin possible, the triangle is above or below the plane
-	}
-	
-	
-	
-	var L = crossProduct(normal1, normal2); //intersect vector of the two planes
-	var max = 'y';
-	if (L[0]>L[1] && L[0]>L[2]){ // x cord is the biggest
-		max = 'x';
-	}else if( L[2]>L[1]){ // z cord is the biggest
-		max = 'z';
-	}// y cord is the biggest
-	
-	var p1v0 = faks.vertices[face1.vertices[0]][max];
-	var p1v1 = faks.vertices[face1.vertices[1]][max];
-	var p1v2 = faks.vertices[face1.vertices[2]][max];
-	var p2v0 = faks.vertices[face2.vertices[0]][max];
-	var p2v1 = faks.vertices[face2.vertices[1]][max];
-	var p2v2 = faks.vertices[face2.vertices[2]][max];
-	
-	if (d1v0 * d1v1 < 0){
-		t11 = p1v0 + (p1v1-p1v0) * (d1v0 / (d1v0 - d1v1));
-		if (d1v0 * d1v2 < 0){
-			t12 = p1v0 + (p1v2-p1v0) * (d1v0 / (d1v0 - d1v2));
-		}else{
-			t12 = p1v1 + (p1v2-p1v1) * (d1v1 / (d1v1 - d1v2));
-		}
-	}else{
-		t11 = p1v2 + (p1v0-p1v2) * (d1v2 / (d1v2 - d1v0));
-		t12 = p1v2 + (p1v1-p1v2) * (d1v2 / (d1v2 - d1v1));
-	}
-
-	
-	if (d2v0 * d2v1 < 0){
-		t21 = p1v0 + (p1v1-p1v0) * (d2v0 / (d2v0 - d2v1));
-		if (d2v0 * d2v2 < 0){
-			t22 = p1v0 + (p1v2-p1v0) * (d2v0 / (d2v0 - d2v2));
-		}else{
-			t22 = p1v1 + (p1v2-p1v1) * (d2v1 / (d2v1 - d2v2));
-		}
-	}else{
-		t21 = p1v2 + (p1v0-p1v2) * (d2v2 / (d2v2 - d2v0));
-		t22 = p1v2 + (p1v1-p1v2) * (d2v2 / (d2v2 - d2v1));
-	}
-	
-	if (Math.min(t21,t22)>Math.max(t11,t12) || Math.max(t21,t22)<Math.min(t11,t12)){
-		return 0;
-	}
-
-	return 1;
-}
-
-/***********************************************************/
-/***********************************************************/
-/***********************************************************/
 
 function splitFaces(faks){
 //	for (var f in faks.faces){

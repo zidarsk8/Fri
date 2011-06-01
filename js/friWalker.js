@@ -549,7 +549,7 @@ function webGLStart() {
   gl.clearColor(0.0, 0.0, 0.0, 1.0);
   gl.enable(gl.DEPTH_TEST);
 //  use set interval for debugging cause requestAnimFrame(tick); is causing problems for firebug
-  //setInterval("tick()", 50);
+  setInterval("tick()", 50);
   tick();
   setInterval(function(){
     document.getElementById("fps").innerHTML="<b>FPS:</b> "+fps+" <b>x:</b> "+xPos+" <b>y:</b> "+yPos+" <b>z:</b> "+zPos+" <b>pitch:</b> "+pitch+" <b>yaw:</b> "+yaw;
@@ -602,5 +602,22 @@ $.getJSON('faks.js', function(data){
     }
     return ro;
   }
+  faks.addObject = function(object){
+	  var ni = this.normals.length; //normal index
+	  var vi = this.vertices.length; //vertex index
+	  
+	  for (var i in object.materials){
+		  this.materials.push(object.materials[i]);
+	  }
+	  _.map(object.vertices, function(n){ return {x:n.x+vi, y:n.y+vi, z:n.z+vi}; });
+	  _.map(object.normals, function(n){ return {x:n.x+ni, y:n.y+ni, z:n.z+ni}; });
+	  for (i in object.vertices){
+		  this.vertices.push(object.vertices);
+	  }
+	  for (i in object.normals){
+		  this.normals.push(object.normals);
+	  }
+  }
+  
   webGLStart();
 });

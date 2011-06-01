@@ -28,7 +28,7 @@ var currentlyPressedKeys = {};
 var fps = 0;
 var faks = null;
 var fly;
-
+var debug = true;
 
 
 function initGL(canvas) {
@@ -386,7 +386,7 @@ function animate() {
 
 function tick() {
   // comment requestAnimFrame(tick); when debugging and use setInterval instead
-  requestAnimFrame(tick);
+  if (!debug) requestAnimFrame(tick);
   handleKeys();
   animate();
   drawScene();
@@ -549,12 +549,12 @@ function webGLStart() {
   gl.clearColor(0.0, 0.0, 0.0, 1.0);
   gl.enable(gl.DEPTH_TEST);
 //  use set interval for debugging cause requestAnimFrame(tick); is causing problems for firebug
-  setInterval("tick()", 50);
+  if (debug) setInterval("tick()", 50);
   tick();
   setInterval(function(){
     document.getElementById("fps").innerHTML="<b>FPS:</b> "+fps+" <b>x:</b> "+xPos+" <b>y:</b> "+yPos+" <b>z:</b> "+zPos+" <b>pitch:</b> "+pitch+" <b>yaw:</b> "+yaw;
     fps = 0;
-  }, 500);
+  }, 1000);
 }
 
 $.getJSON('faks.js', function(data){

@@ -18,7 +18,7 @@ def parse_xyz(str):
 materials = []
 for l in m:
     if l.startswith('newmtl'):
-        material = {'name' : l[7:-1], 'alpha': 1}
+        material = {'name' : l[7:-1], 'alpha': 1, 'scale': 1.0, 'img': l[7:-1] + ".jpg" }
         for l1 in m:
             if l1[0] == 'd':
                 material['alpha'] = float(l1[2:])
@@ -29,11 +29,15 @@ materials = sorted(materials, key=lambda mat: mat['alpha'], reverse=True)
 obj = {'name': "", 'vertices': [], 'normals': [], 'faces':[],'materials': materials}
 output = ""
 material = ""
+material_index = 0
 for l in f:
     
     if l[0] == 'u':
         material = l[7:-1]
-              
+        for i in range(len(materials)):
+            if material == materials[i]['name']:
+                material_index = i       
+            
     
     if l[0] == 'o':
         obj["name"] = l[2:].strip()
@@ -48,7 +52,9 @@ for l in f:
         face = {'type':0, 'material': "", 'vertices': [], 'normals':[]}
         arr = l[2:].strip().split(' ')  
         face["type"] = len(arr)
-        face["material"] = material
+        
+        face["material"] = material_index
+        
         for i in arr:
             n = i.split('//')
             face["vertices"].append(int(n[0])-1)

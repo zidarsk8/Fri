@@ -132,7 +132,16 @@ brskalniku ni potrebno parsati .obj datoteke ob vsaki naložitvi strani.
 \subsection{Collision detection}
 \pagebreak
 \section{Problemi}
-\subsection{Blacklistane graficne}
+\subsection{Blacklisted GPUs}
+Še preden smo začeli z razvojem naše seminarske naloge, smo naleteli na probleme.
+Tako Googlov Chrome, kot Mozillin Firefox sta imela na črni listi grafične kartice,
+ki so bile v naših računalnikih, kar je pomenilo, da je bil WebGL onemogočen. 
+WebGLa ni bilo možno prisiliti k delovanju iz nastavitev znotraj brskalnika pa 
+čeprav smo šarili po nastavitvah za developerje (Chromov: \verb|about:flags| in FFjev: \verb|about:config|).
+Po nekaj dneh Googlanja smo le naleteli na sistemsko spremenljivko \verb|MOZ_GLX_IGNORE_BLACKLIST=1|,
+s katero smo omogočili WebGL znotraj FireFoxa in Chromovo \verb|--ignore-gpu-blacklist| zagonsko stikalo.\\\\
+Z najnovejšo različico Google Chromea nastavljanje zagonskega stikala ni več potrebno, 
+FireFox4 pa še vedno potrebuje nastavljeno sistemsko spremenljivko.
 \subsection{Lepljenje tekstur}
 \subsection{Nesreca enega clana ekipe}
 \pagebreak

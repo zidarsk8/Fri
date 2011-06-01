@@ -501,6 +501,8 @@ function intersection(face1,face2){
 		return 0; // no collisoin possible, the triangle is above or below the plane
 	}
 	
+	
+	
 	var L = crossProduct(normal1, normal2); //intersect vector of the two planes
 	if (L[0]>L[1] && L[0]>L[2]){ // x cord is the biggest
 		

@@ -92,6 +92,9 @@ Ker želimo, da bi bila naša aplikacija čim lažje dostopna, smo jo postavili 
 internet s pomočjo odprtokodne knjižnice WebGL. Potrudili smo se, da aplikacija 
 teče tekoče na sodobnih brskalnikih z WebGL podporo.
 \subsection{Uporabljene metode}
+\begin{center}
+\includegraphics{./WebGL.png}
+\end{center}
 \subsection*{Jeziki}
 \begin{itemize}
 	\item JavaScript - Delo z gl knjižnico
@@ -117,14 +120,16 @@ teče tekoče na sodobnih brskalnikih z WebGL podporo.
 	\item Phongov odbojni model
 	\item Collision detection
 \end{itemize}
-\begin{center}
-\includegraphics{./WebGL.png}
-\end{center}
 \pagebreak
 \section{Zabavni deli}
-\subsection{Collision detection}
 \subsection{Pretvarjanje iz .obj v json in parsanje}
+Za izrisovanja modelov iz Blenderja je potrebno prebrati datoteko v .obj formatu in iz zapisa
+izluščiti $vertexe$, $normale$, $face$ in različne materiale. Za ta namen smo 
+napisali preprosto python skripto, ki .obj datoteko prebere in prebrane podatke 
+zapiše v json formatu. Na ta način smo pohitrili začetek izrisovanja, saj spletnemu
+brskalniku ni potrebno parsati .obj datoteke ob vsaki naložitvi strani.
 \subsection{Phongov odbojni model}
+\subsection{Collision detection}
 \pagebreak
 \section{Problemi}
 \subsection{Blacklistane graficne}

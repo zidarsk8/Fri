@@ -54,7 +54,7 @@
       if (!uUseLighting) {
         vLightWeighting = vec3(1.0, 1.0, 1.0);
       } else {
-        vec3 transformedNormal = uNMatrix * aVertexNormal;
+        vec3 transformedNormal = aVertexNormal;
         float directionalLightWeighting = max(dot(transformedNormal, uLightingDirection), 0.0);
         vLightWeighting = uAmbientColor + uDirectionalColor * directionalLightWeighting;
       }

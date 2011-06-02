@@ -459,8 +459,8 @@ function drawScene() {
 
 
 function handleKeyDown(event) {
-  
-  currentlyPressedKeys[event.keyCode] = true;
+  if(prevent_default)
+    currentlyPressedKeys[event.keyCode] = true;
 }
 
 

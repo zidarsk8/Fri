@@ -3,14 +3,28 @@ $(document).ready(function(){
 		
 		$('#lesson05-canvas').addClass('fullscreen');
 	});
-	
-	$(document).keypress(function(e){
+	prevent_default = true;
+	$(document).keydown(function(e){
 	    //console.log(e.which, "PRESSED");
+	    
+	    if(prevent_default && e.which != 116){ //116 == F5
+	        e.preventDefault();    
+	        
+	    }
+	    else return;
+	    
 		if(e.which == 102){
 			$('#lesson05-canvas').toggleClass('fullscreen');
 		}
 		
 	});
+	$('input').blur(function(){
+        prevent_default = true;
+    }).focus(function() {                
+        prevent_default = false;
+    });
+        
+    
 	
 	$('#tag-submit').click(function(){
 	   var data = { 'name' : $('#tag-name').val(),

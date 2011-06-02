@@ -7,8 +7,8 @@ admin.autodiscover()
 urlpatterns = patterns('',
 
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^api/v1/tags/add', 'Fri.web.views.tag_add'),
-    url(r'^api/v1/tags/list', 'Fri.web.views.tags_get'),
-    url(r'^$', 'Fri.web.views.index'),
+    url(r'^api/v1/tags/add', 'web.views.tag_add'),
+    url(r'^api/v1/tags/list', 'web.views.tags_get'),
+    url(r'^$', 'web.views.index'),
 )
 urlpatterns += staticfiles_urlpatterns()

@@ -28,6 +28,7 @@ var currentlyPressedKeys = {};
 var fps = 0;
 var fly;
 var starPosition = [0,0,0];
+var starAnimation = 0;
 var debug = true;
 var debugtimeout = 50;
 
@@ -519,7 +520,14 @@ function drawScene() {
 	  gl.vertexAttribPointer(shaderProgram.textureCoordAttribute, buffers[mat].tex.itemSize, gl.FLOAT, false, 0, 0);
 
       if(mat == "star"){
+          mat4.identity(mvMatrix);
+          mat4.rotate(mvMatrix, degToRad(-pitch), [1, 0, 0]);
+          mat4.rotate(mvMatrix, degToRad(-yaw), [0, 1, 0]);
+          mat4.translate(mvMatrix, [0, starAnimation, -2]);
+          //  console.log(starPosition);
+
           
+          mat4.translate(mvMatrix, [-xPos, -yPos, -zPos]);
           mat4.translate(mvMatrix, starPosition);
       }
       else{
@@ -622,7 +630,7 @@ function handleMouseMove(event) {
   lastMouseY = newY;
 }
 
-
+incStarAnim = true;
 function animate() {
   var timeNow = new Date().getTime();
   if (lastTime != 0) {
@@ -638,6 +646,18 @@ function animate() {
       }
       yaw += yawRate * elapsed;
       pitch += pitchRate * elapsed;
+      
+       
+      if(starAnimation > 0.6) incStarAnim = false;
+      if(starAnimation < 0) incStarAnim = true;
+      if(incStarAnim) starAnimation = Math.sin(starAnimation + elapsed/1000);
+      else starAnimation =  Math.sin(starAnimation - elapsed/1000);
+      
+      
+        
+      //starAnimation = Math.sin(starAnimation + elapsed/1000) + Math.cos(starAnimation + elapsed/1000);
+      //if (starAnimation > 2) starAnimation *= -1;
+      //console.log(starAnimation);
   }
   lastTime = timeNow;
 }

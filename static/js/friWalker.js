@@ -42,62 +42,63 @@ var faks = {
 		vertices : []
 	},
 	getTriangleFaces : function(material){
-	var ro = {vec:[], fac:[], tex:[], nor:[]}; //return object
-	var vecCounter = 0;
-	for (var f in this.data.faces){
-		
-		var curentFace = this.data.faces[f];
-		
-		if (curentFace.material != material)
-			continue;
+		var ro = {vec:[], fac:[], tex:[], nor:[]}; //return object
+		var vecCounter = 0;
+		for (var f in this.data.faces){
 
-		if (curentFace.vertices.length == 3){
-		for (var i=0 ; i<3 ; i++){
-			//add distinct vertex vector for each face
-			if (! this.data.vertices[curentFace.vertices[i]]) {
+			var curentFace = this.data.faces[f];
+
+			if (curentFace.material != material)
 				continue;
-			}
-			ro.vec[vecCounter*3]= this.data.vertices[curentFace.vertices[i]].x;
-			ro.vec[vecCounter*3+1]= this.data.vertices[curentFace.vertices[i]].y;
-			ro.vec[vecCounter*3+2]= this.data.vertices[curentFace.vertices[i]].z;
-			//add distinct normal
-			if(curentFace.normals.length > 0){
-				
-				if (! this.data.normals[curentFace.normals[i]]) {
-					continue;
-				}
-				ro.nor[vecCounter*3]= this.data.normals[curentFace.normals[i]].x;
-				ro.nor[vecCounter*3+1]= this.data.normals[curentFace.normals[i]].y;
-				ro.nor[vecCounter*3+2]= this.data.normals[curentFace.normals[i]].z;
-				
-			//add texture coordinate for this vector
-				
-				if(Math.abs(ro.nor[vecCounter*3+1]) > 0.5){
-					ro.tex[vecCounter*2] = faks.data.materials[material].scale * this.data.vertices[curentFace.vertices[i]].x;
-					ro.tex[vecCounter*2+1] = faks.data.materials[material].scale * this.data.vertices[curentFace.vertices[i]].z;
-				}else if(Math.abs(ro.nor[vecCounter*3]) > 0.5){
-					ro.tex[vecCounter*2] = faks.data.materials[material].scale * this.data.vertices[curentFace.vertices[i]].z;
-					ro.tex[vecCounter*2+1] = faks.data.materials[material].scale * this.data.vertices[curentFace.vertices[i]].y;
-				}else{
-					ro.tex[vecCounter*2] = faks.data.materials[material].scale * this.data.vertices[curentFace.vertices[i]].x;
-					ro.tex[vecCounter*2+1] = faks.data.materials[material].scale * this.data.vertices[curentFace.vertices[i]].y;
-				}
-			}		
 
-			//push vector to faces array
-			ro.fac.push(vecCounter++);
+			if (curentFace.vertices.length == 3){
+				for (var i=0 ; i<3 ; i++){
+					//add distinct vertex vector for each face
+					if (! this.data.vertices[curentFace.vertices[i]]) {
+						continue;
+					}
+					ro.vec[vecCounter*3]= this.data.vertices[curentFace.vertices[i]].x;
+					ro.vec[vecCounter*3+1]= this.data.vertices[curentFace.vertices[i]].y;
+					ro.vec[vecCounter*3+2]= this.data.vertices[curentFace.vertices[i]].z;
+					//add distinct normal
+					if(curentFace.normals.length > 0){
+
+						if (! this.data.normals[curentFace.normals[i]]) {
+							continue;
+						}
+						ro.nor[vecCounter*3]= this.data.normals[curentFace.normals[i]].x;
+						ro.nor[vecCounter*3+1]= this.data.normals[curentFace.normals[i]].y;
+						ro.nor[vecCounter*3+2]= this.data.normals[curentFace.normals[i]].z;
+
+					//add texture coordinate for this vector
+
+						if(Math.abs(ro.nor[vecCounter*3+1]) > 0.5){
+							ro.tex[vecCounter*2] = faks.data.materials[material].scale * this.data.vertices[curentFace.vertices[i]].x;
+							ro.tex[vecCounter*2+1] = faks.data.materials[material].scale * this.data.vertices[curentFace.vertices[i]].z;
+						}else if(Math.abs(ro.nor[vecCounter*3]) > 0.5){
+							ro.tex[vecCounter*2] = faks.data.materials[material].scale * this.data.vertices[curentFace.vertices[i]].z;
+							ro.tex[vecCounter*2+1] = faks.data.materials[material].scale * this.data.vertices[curentFace.vertices[i]].y;
+						}else{
+							ro.tex[vecCounter*2] = faks.data.materials[material].scale * this.data.vertices[curentFace.vertices[i]].x;
+							ro.tex[vecCounter*2+1] = faks.data.materials[material].scale * this.data.vertices[curentFace.vertices[i]].y;
+						}
+					}		
+
+					//push vector to faces array
+					ro.fac.push(vecCounter++);
+				}
+			}
 		}
-		}
-	}
-	return ro;
+		return ro;
 	},
 	addObject : function(object){
 		var ni = this.data.normals.length; //normal index
 		var vi = this.data.vertices.length; //vertex index
 		var fi = this.data.vertices.length; //vertex index
+		var mi = this.data.materials.length; //vertex index
 		
 		for (var i in object.materials){
-			this.data.materials.push(object.materials[i]);
+			this.data.materials[parseInt(i)+mi] = (object.materials[i]);
 		}
 		
 		for (i in object.vertices){
@@ -116,6 +117,7 @@ var faks = {
 			for (j in object.faces[i].normals){
 				object.faces[i].vertices[j] += vi;
 			}
+			object.faces[i].material += mi; //commnet this line if you want more objects to appear
 			this.data.faces.push(object.faces[i]);
 		}
 	}
@@ -479,7 +481,7 @@ function drawScene() {
   gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-  mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, pMatrix);
+  mat4.perspective(35, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, pMatrix);
 
   mat4.identity(mvMatrix);
 
@@ -697,7 +699,5 @@ $.getJSON('static/faks.js', function(data){
   faks.setTranslate([1,5.8,8]);
   newStar = jQuery.extend(true, {}, star);
   faks.addObject(newStar);
-//  faks.data = data;
-  
   webGLStart();
 });

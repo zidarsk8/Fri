@@ -27,8 +27,8 @@ var cubeVertexIndexBuffer;
 var currentlyPressedKeys = {};
 var fps = 0;
 var fly;
-var debug = false;
-var debugtimeout = 10000;
+var debug = true;
+var debugtimeout = 50;
 
 var faks = {
 	translateVector : [0,0,0],
@@ -516,6 +516,14 @@ function drawScene() {
 	  gl.bindBuffer(gl.ARRAY_BUFFER, buffers[mat].tex);
 	  gl.vertexAttribPointer(shaderProgram.textureCoordAttribute, buffers[mat].tex.itemSize, gl.FLOAT, false, 0, 0);
 
+      if(mat == "star"){
+          //mat4.identity(mvMatrix);
+
+          //mat4.rotate(mvMatrix, degToRad(-pitch), [1, 0, 0]);
+          //mat4.rotate(mvMatrix, degToRad(-pitch), [1, 0, 0]);
+          //mat4.rotate(mvMatrix, degToRad(-yaw), [0, 1, 0]);
+          mat4.translate(mvMatrix, [Math.random()*0.5, Math.random()*0.5, Math.random()*0.5]);
+      }
 
 	  
 	  setMatrixUniforms();

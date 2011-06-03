@@ -1,13 +1,15 @@
-{
+star = {
     "materials": [
         {
             "alpha": 1.0, 
-            "name": "star"
+            "scale": 1.0, 
+            "name": "star", 
+            "img": "star.jpg"
         }
     ], 
     "faces": [
         {
-            "material": "star", 
+            "material": 0, 
             "type": 3, 
             "vertices": [
                 0, 
@@ -21,7 +23,7 @@
             ]
         }, 
         {
-            "material": "star", 
+            "material": 0, 
             "type": 3, 
             "vertices": [
                 3, 
@@ -35,7 +37,7 @@
             ]
         }, 
         {
-            "material": "star", 
+            "material": 0, 
             "type": 3, 
             "vertices": [
                 0, 
@@ -49,7 +51,7 @@
             ]
         }, 
         {
-            "material": "star", 
+            "material": 0, 
             "type": 3, 
             "vertices": [
                 3, 
@@ -63,7 +65,7 @@
             ]
         }, 
         {
-            "material": "star", 
+            "material": 0, 
             "type": 3, 
             "vertices": [
                 0, 
@@ -77,7 +79,7 @@
             ]
         }, 
         {
-            "material": "star", 
+            "material": 0, 
             "type": 3, 
             "vertices": [
                 3, 
@@ -91,7 +93,7 @@
             ]
         }, 
         {
-            "material": "star", 
+            "material": 0, 
             "type": 3, 
             "vertices": [
                 0, 
@@ -105,7 +107,7 @@
             ]
         }, 
         {
-            "material": "star", 
+            "material": 0, 
             "type": 3, 
             "vertices": [
                 3, 
@@ -119,7 +121,7 @@
             ]
         }, 
         {
-            "material": "star", 
+            "material": 0, 
             "type": 3, 
             "vertices": [
                 0, 
@@ -133,7 +135,7 @@
             ]
         }, 
         {
-            "material": "star", 
+            "material": 0, 
             "type": 3, 
             "vertices": [
                 3, 
@@ -147,7 +149,7 @@
             ]
         }, 
         {
-            "material": "star", 
+            "material": 0, 
             "type": 3, 
             "vertices": [
                 0, 
@@ -161,7 +163,7 @@
             ]
         }, 
         {
-            "material": "star", 
+            "material": 0, 
             "type": 3, 
             "vertices": [
                 3, 
@@ -175,7 +177,7 @@
             ]
         }, 
         {
-            "material": "star", 
+            "material": 0, 
             "type": 3, 
             "vertices": [
                 0, 
@@ -189,7 +191,7 @@
             ]
         }, 
         {
-            "material": "star", 
+            "material": 0, 
             "type": 3, 
             "vertices": [
                 3, 
@@ -203,7 +205,7 @@
             ]
         }, 
         {
-            "material": "star", 
+            "material": 0, 
             "type": 3, 
             "vertices": [
                 0, 
@@ -217,7 +219,7 @@
             ]
         }, 
         {
-            "material": "star", 
+            "material": 0, 
             "type": 3, 
             "vertices": [
                 3, 
@@ -231,7 +233,7 @@
             ]
         }, 
         {
-            "material": "star", 
+            "material": 0, 
             "type": 3, 
             "vertices": [
                 0, 
@@ -245,7 +247,7 @@
             ]
         }, 
         {
-            "material": "star", 
+            "material": 0, 
             "type": 3, 
             "vertices": [
                 3, 
@@ -259,7 +261,7 @@
             ]
         }, 
         {
-            "material": "star", 
+            "material": 0, 
             "type": 3, 
             "vertices": [
                 0, 
@@ -273,7 +275,7 @@
             ]
         }, 
         {
-            "material": "star", 
+            "material": 0, 
             "type": 3, 
             "vertices": [
                 3, 
@@ -287,7 +289,7 @@
             ]
         }, 
         {
-            "material": "star", 
+            "material": 0, 
             "type": 3, 
             "vertices": [
                 0, 
@@ -301,7 +303,7 @@
             ]
         }, 
         {
-            "material": "star", 
+            "material": 0, 
             "type": 3, 
             "vertices": [
                 3, 
@@ -315,7 +317,7 @@
             ]
         }, 
         {
-            "material": "star", 
+            "material": 0, 
             "type": 3, 
             "vertices": [
                 0, 
@@ -329,7 +331,7 @@
             ]
         }, 
         {
-            "material": "star", 
+            "material": 0, 
             "type": 3, 
             "vertices": [
                 3, 
@@ -343,7 +345,7 @@
             ]
         }, 
         {
-            "material": "star", 
+            "material": 0, 
             "type": 3, 
             "vertices": [
                 0, 
@@ -357,7 +359,7 @@
             ]
         }, 
         {
-            "material": "star", 
+            "material": 0, 
             "type": 3, 
             "vertices": [
                 3, 
@@ -371,7 +373,7 @@
             ]
         }, 
         {
-            "material": "star", 
+            "material": 0, 
             "type": 3, 
             "vertices": [
                 0, 
@@ -385,7 +387,7 @@
             ]
         }, 
         {
-            "material": "star", 
+            "material": 0, 
             "type": 3, 
             "vertices": [
                 3, 
@@ -399,7 +401,7 @@
             ]
         }, 
         {
-            "material": "star", 
+            "material": 0, 
             "type": 3, 
             "vertices": [
                 0, 
@@ -413,7 +415,7 @@
             ]
         }, 
         {
-            "material": "star", 
+            "material": 0, 
             "type": 3, 
             "vertices": [
                 3, 
@@ -427,7 +429,7 @@
             ]
         }, 
         {
-            "material": "star", 
+            "material": 0, 
             "type": 3, 
             "vertices": [
                 0, 
@@ -441,7 +443,7 @@
             ]
         }, 
         {
-            "material": "star", 
+            "material": 0, 
             "type": 3, 
             "vertices": [
                 3, 

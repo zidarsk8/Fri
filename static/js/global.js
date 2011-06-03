@@ -50,7 +50,7 @@ $(document).ready(function(){
 	    
 	    $.get('/api/v1/tags/list',data, function(d){
 	        $('#tag-list').html("");
-	        console.log(d);
+	        //console.log(d);
 	        $.each(d, function(i, e){
 	            $('#tag-list').append('<li>' + e.name + '</li>');
 	        });

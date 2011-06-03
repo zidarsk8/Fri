@@ -510,18 +510,6 @@ function drawScene() {
 
 }
 
-
-function handleKeyDown(event) {
-  if(prevent_default)
-    currentlyPressedKeys[event.keyCode] = true;
-}
-
-
-function handleKeyUp(event) {
-  currentlyPressedKeys[event.keyCode] = false;
-}
-
-
 function handleKeys() {
   speed = 0;
   pitchRate = 0;
@@ -548,29 +536,6 @@ function handleKeys() {
   } else if (currentlyPressedKeys[32]) { // Control
     fly = -movingSpeed;
   }
-}
-
-function handleMouseDown(event) {
-  mouseDown = true;
-  lastMouseX = event.clientX;
-  lastMouseY = event.clientY;
-}
-function handleMouseUp(event) {
-  mouseDown = false;
-}
-function handleMouseMove(event) {
-  if (!mouseDown) {
-      return;
-  }
-  var newX = event.clientX;
-  var newY = event.clientY;
-  var deltaX = newX - lastMouseX
-  var deltaY = newY - lastMouseY;
-  lastMouseX = newX
-  lastMouseY = newY;
-  pitch -= deltaY / 3
-  yaw -= deltaX / 3
-  console.log("mouse",xRot,yRot);
 }
 
 incStarAnim = true;
@@ -635,12 +600,6 @@ function webGLStart() {
   initShaders();
   initBuffers();
   initTexture();
-  
-  canvas.onmousedown = handleMouseDown;
-  document.onmouseup = handleMouseUp;
-  document.onmousemove = handleMouseMove;
-  document.onkeydown = handleKeyDown;
-  document.onkeyup = handleKeyUp;
 
   gl.clearColor(0.0, 0.0, 0.0, 1.0);
   gl.enable(gl.DEPTH_TEST);

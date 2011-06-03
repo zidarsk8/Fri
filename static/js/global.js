@@ -1,25 +1,4 @@
 $(document).ready(function(){
-    prevent_default = true;
-	
-	$('#fullscreen').click(function(){
-		$('#fri_walker_canvas').addClass('fullscreen');
-	});
-	
-	$(document).keydown(function(e){
-	    if(prevent_default && e.which != 116){ //116 == F5
-	        e.preventDefault();    
-	    }
-		if(e.which == 102){
-			$('#fri_walker_canvas').toggleClass('fullscreen');
-		}
-	});
-	
-	$('input').blur(function(){
-        prevent_default = true;
-    }).focus(function() {                
-        prevent_default = false;
-    });
-        
     
 	
 	$('#tag-submit').click(function(){

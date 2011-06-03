@@ -686,8 +686,17 @@ function webGLStart() {
 
 $.getJSON('static/faks.js', function(data){
   faks.addObject(data);
+  faks.setTranslate([3,5.8,5]);
+  var newStar = jQuery.extend(true, {}, star);
+  faks.addObject(newStar);
+  
+  faks.setTranslate([-1,5.8,5]);
+  newStar = jQuery.extend(true, {}, star);
+  faks.addObject(newStar);
+  
   faks.setTranslate([1,5.8,8]);
-  faks.addObject(star);
+  newStar = jQuery.extend(true, {}, star);
+  faks.addObject(newStar);
 //  faks.data = data;
   
   webGLStart();

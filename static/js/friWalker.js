@@ -31,6 +31,10 @@ var debug = false;
 var debugtimeout = 10000;
 
 var faks = {
+	translateVector : [0,0,0],
+	setTranslate : function(vec){
+		this.translateVector = vec;
+	},
 	data: {
 		faces: [],
 		materials : [],
@@ -97,6 +101,9 @@ var faks = {
 		}
 		
 		for (i in object.vertices){
+			object.vertices[i].x += this.translateVector[0];
+			object.vertices[i].y += this.translateVector[1];
+			object.vertices[i].z += this.translateVector[2];
 			this.data.vertices[parseInt(i)+vi] = object.vertices[i];
 		}
 		for (i in object.normals){
@@ -679,6 +686,8 @@ function webGLStart() {
 
 $.getJSON('static/faks.js', function(data){
   faks.addObject(data);
+  faks.setTranslate([1,5.8,8]);
+  faks.addObject(star);
 //  faks.data = data;
   
   webGLStart();

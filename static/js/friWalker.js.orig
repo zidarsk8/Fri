@@ -573,7 +573,7 @@ function splitFaces(faks){
 
 function webGLStart() {
   splitFaces(faks);
-  var canvas = document.getElementById("lesson05-canvas");
+  var canvas = document.getElementById("fri_walker_canvas");
   for(i in faks.materials){
     if(faks.materials[i].name == "Material"){
         faks.materials[i].scale = 2;

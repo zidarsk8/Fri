@@ -1,23 +1,19 @@
 $(document).ready(function(){
+    prevent_default = true;
+	
 	$('#fullscreen').click(function(){
-		
-		$('#lesson05-canvas').addClass('fullscreen');
+		$('#fri_walker_canvas').addClass('fullscreen');
 	});
-	prevent_default = true;
+	
 	$(document).keydown(function(e){
-	    //console.log(e.which, "PRESSED");
-	    
 	    if(prevent_default && e.which != 116){ //116 == F5
 	        e.preventDefault();    
-	        
 	    }
-	    else return;
-	    
 		if(e.which == 102){
-			$('#lesson05-canvas').toggleClass('fullscreen');
+			$('#fri_walker_canvas').toggleClass('fullscreen');
 		}
-		
 	});
+	
 	$('input').blur(function(){
         prevent_default = true;
     }).focus(function() {                
@@ -29,7 +25,9 @@ $(document).ready(function(){
 	$('#tag-submit').click(function(){
 	   var data = { 'name' : $('#tag-name').val(),
 	                'description' : $('#tag-description').val(), 
-	                'x' : xPos, 'y' : yPos, 'z': zPos 
+	                'x' : xPos, 
+					'y' : yPos, 
+					'z': zPos 
 	   };
 	   
 	   $.get('/api/v1/tags/add', data, function(d){
@@ -41,12 +39,11 @@ $(document).ready(function(){
 	});
 	
 	$('#tag-search').keyup(function(){
-	    
 	    getTags();
 	});   
 	
 	function getTags(){	    
-	    data = {'name':$('#tag-search').val()}
+	    var data = {'name':$('#tag-search').val()}
 	    
 	    $.get('/api/v1/tags/list',data, function(d){
 	        $('#tag-list').html("");
@@ -59,8 +56,31 @@ $(document).ready(function(){
 	        $('.tagy').click(function(e){
 	            starPosition =  $.parseJSON($(e.currentTarget).attr('xyz'));
 	        });
-	    });
+		}); 
 	}
+	
 	getTags();
 	
+var tooltip = $('<div></div>')
+      .text('Your message here')
+      .css({
+            position: 'absolute',
+            display: 'none',
+            border: '1px solid black',
+            background: 'blue',
+            color: 'white'
+      });
+$('tag-submit').mouseenter(function(){
+      tooltip
+            .css({
+                  top: $(this).position().top,
+                  left: $(this).position().left
+            })
+            .fadeIn('slow');
+})
+.mouseleave(function(){
+      tooltip.fadeOut('slow');
+});
+
+
 });

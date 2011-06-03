@@ -86,7 +86,7 @@
   <div class="container_12" id = "content">     
   
           <div><button id='fullscreen'>Fullscreen</button><span id = "fps"></span></div>
-  <canvas id="lesson05-canvas"width="960" height="500"  style="border: none;" ></canvas>
+  <canvas id="fri_walker_canvas"width="960" height="500"  style="border: none;" ></canvas>
   </div>
 </section>
 

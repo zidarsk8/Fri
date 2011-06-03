@@ -28,9 +28,14 @@ var currentlyPressedKeys = {};
 var fps = 0;
 var fly;
 var starPosition = [0,0,0];
-var starAnimation = 0;
+var starAnimation = 2;
 var debug = true;
 var debugtimeout = 50;
+var mat_textures = {};
+var floor;
+var bricky;
+var glassy;
+var flyMode = true;
 
 
 var faks = {
@@ -129,30 +134,6 @@ var faks = {
 /***********************************************************/
 /***********************************************************/
 
-
-/**
- * normalize a vector. |a| = 1
- */
-function normalize(vec){
-	var square = 0;
-	var vec2 = {};
-	for (var i in vec){
-		square += vec[i]*vec[i];
-		vec2[i] = vec[i];
-	}
-	var size = Math.sqrt(square);
-	//check skope of vars in javascript. netbeans says this is redeclaration of i - for (var i...
-	for (i in vec2){
-	  vec2[i] = vec2[i]/size;
-	}
-	return vec2;
-}
-/**
- * compute a dot product of two normalized vectors
- */
-function normalizedDotProduct(v1,v2){
-	return dotProduct(normalize(v1),normalize(v2));
-}
 /**
  *compute dot product of two same sized vectors 
  */
@@ -162,20 +143,6 @@ function dotProduct(vec1,vec2){
 		sum += vec1[i]*vec2[i];
 	}
 	return sum;
-}
-/**
- *compute dot product of two 3D vectors
- */
-function dotProduct3d(vec1,vec2){
-	  return vec1[0]*vec2[0]+vec1[1]*vec2[1]+vec1[2]*vec2[2];
-}
-/**
- * substract vec1 from vec2
- */
-function subVec3d(vec1,vec2){
-	return [vec2[0]-vec1[0],
-			vec2[1]-vec1[1],
-			vec2[2]-vec1[2]];
 }
 /**
 * cross product of two 3D vectors
@@ -192,24 +159,6 @@ function absCrossProduct(vec1, vec2){
 	return {x: Math.abs(vec1.y*vec2.z-vec2.y*vec1.z),
 			y: Math.abs(vec1.x*vec2.z-vec2.x*vec1.z),
 			z: Math.abs(vec1.x*vec2.y-vec2.x*vec1.y)};
-}
-
-function sameSide(planePoint,planeNormal,point1,point2){
-	return  dotProduct(planeNormal, subVec3d(planePoint, point1))*
-			dotProduct(planeNormal, subVec3d(planePoint, point2));
-}
-
-
-function minComponent(face, componenet){
-	return Math.min(faks.data.vertices[face.vertices[0]][componenet],
-			Math.min(faks.data.vertices[face.vertices[1]][componenet],
-					faks.data.vertices[face.vertices[2]][componenet]));
-}
-
-function maxComponent(face, componenet){
-	return Math.max(faks.data.vertices[face.vertices[0]][componenet],
-			Math.max(faks.data.vertices[face.vertices[1]][componenet],
-		 			faks.data.vertices[face.vertices[2]][componenet]));
 }
 
 function triangleIntersectionTest(face1,face2){
@@ -292,15 +241,16 @@ function triangleIntersectionTest(face1,face2){
 
 
 function initGL(canvas) {
-  try {
-    gl = canvas.getContext("experimental-webgl");
-    gl.viewportWidth = canvas.width;
-    gl.viewportHeight = canvas.height;
-  } catch (e) {
-  }
-  if (!gl) {
-    alert("Could not initialise WebGL, sorry :-(");
-  }
+	try {
+		gl = canvas.getContext("experimental-webgl");
+		gl.viewportWidth = canvas.width;
+		gl.viewportHeight = canvas.height;
+	} catch (e) {
+		console.log(e);
+	}
+	if (!gl) {
+		alert("Could not initialise WebGL, sorry :-(");
+	}
 }
 
 function getShader(gl, id) {
@@ -334,47 +284,46 @@ function getShader(gl, id) {
     alert(gl.getShaderInfoLog(shader));
     return null;
   }
-
+  
   return shader;
 }
 
 function initShaders() {
-  var fragmentShader = getShader(gl, "shader-fs");
-  var vertexShader = getShader(gl, "shader-vs");
+	var fragmentShader = getShader(gl, "shader-fs");
+	var vertexShader = getShader(gl, "shader-vs");
 
-  shaderProgram = gl.createProgram();
-  gl.attachShader(shaderProgram, vertexShader);
-  gl.attachShader(shaderProgram, fragmentShader);
-  gl.linkProgram(shaderProgram);
+	shaderProgram = gl.createProgram();
+	gl.attachShader(shaderProgram, vertexShader);
+	gl.attachShader(shaderProgram, fragmentShader);
+	gl.linkProgram(shaderProgram);
 
-  if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
-    alert("Could not initialise shaders");
-  }
+	if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
+		alert("Could not initialise shaders");
+	}
 
-  gl.useProgram(shaderProgram);
+	gl.useProgram(shaderProgram);
 
-  shaderProgram.vertexPositionAttribute = gl.getAttribLocation(shaderProgram, "aVertexPosition");
-  gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
+	shaderProgram.vertexPositionAttribute = gl.getAttribLocation(shaderProgram, "aVertexPosition");
+	gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
 
-  shaderProgram.textureCoordAttribute = gl.getAttribLocation(shaderProgram, "aTextureCoord");
-  gl.enableVertexAttribArray(shaderProgram.textureCoordAttribute);
-  
-  shaderProgram.vertexNormalAttribute = gl.getAttribLocation(shaderProgram, "aVertexNormal");
-  gl.enableVertexAttribArray(shaderProgram.vertexNormalAttribute);
-        
-  shaderProgram.pMatrixUniform = gl.getUniformLocation(shaderProgram, "uPMatrix");
-  shaderProgram.mvMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
-  shaderProgram.samplerUniform = gl.getUniformLocation(shaderProgram, "uSampler");
-  shaderProgram.nMatrixUniform = gl.getUniformLocation(shaderProgram, "uNMatrix");
-  shaderProgram.useLightingUniform = gl.getUniformLocation(shaderProgram, "uUseLighting");
-  shaderProgram.ambientColorUniform = gl.getUniformLocation(shaderProgram, "uAmbientColor");
-  shaderProgram.lightingDirectionUniform = gl.getUniformLocation(shaderProgram, "uLightingDirection");
-  shaderProgram.directionalColorUniform = gl.getUniformLocation(shaderProgram, "uDirectionalColor");
-  shaderProgram.alphaUniform = gl.getUniformLocation(shaderProgram, "uAlpha");
+	shaderProgram.textureCoordAttribute = gl.getAttribLocation(shaderProgram, "aTextureCoord");
+	gl.enableVertexAttribArray(shaderProgram.textureCoordAttribute);
+
+	shaderProgram.vertexNormalAttribute = gl.getAttribLocation(shaderProgram, "aVertexNormal");
+	gl.enableVertexAttribArray(shaderProgram.vertexNormalAttribute);
+
+	shaderProgram.pMatrixUniform = gl.getUniformLocation(shaderProgram, "uPMatrix");
+	shaderProgram.mvMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
+	shaderProgram.samplerUniform = gl.getUniformLocation(shaderProgram, "uSampler");
+	shaderProgram.nMatrixUniform = gl.getUniformLocation(shaderProgram, "uNMatrix");
+	shaderProgram.useLightingUniform = gl.getUniformLocation(shaderProgram, "uUseLighting");
+	shaderProgram.ambientColorUniform = gl.getUniformLocation(shaderProgram, "uAmbientColor");
+	shaderProgram.lightingDirectionUniform = gl.getUniformLocation(shaderProgram, "uLightingDirection");
+	shaderProgram.directionalColorUniform = gl.getUniformLocation(shaderProgram, "uDirectionalColor");
+	shaderProgram.alphaUniform = gl.getUniformLocation(shaderProgram, "uAlpha");
 }
 
 function handleLoadedTexture(texture) {
-	
 	gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
 	gl.bindTexture(gl.TEXTURE_2D, texture);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, texture.image);
@@ -383,10 +332,7 @@ function handleLoadedTexture(texture) {
     gl.generateMipmap(gl.TEXTURE_2D);
     gl.bindTexture(gl.TEXTURE_2D, null);
 }
-var mat_textures = {};
-var floor;
-var bricky;
-var glassy;
+
 function initTexture() {
   var images = new Array();	
   for (mat in faks.data.materials){
@@ -506,8 +452,7 @@ function drawScene() {
   gl.uniform3fv(shaderProgram.lightingDirectionUniform, adjustedLD);
   
   gl.uniform3f( shaderProgram.directionalColorUniform, 0.4, 0.4, 0.4 );
-
-  var i = 0;
+  
   for (var mat in buffers){
 
 	  gl.bindBuffer(gl.ARRAY_BUFFER, buffers[mat].vec);
@@ -524,9 +469,6 @@ function drawScene() {
           mat4.rotate(mvMatrix, degToRad(-pitch), [1, 0, 0]);
           mat4.rotate(mvMatrix, degToRad(-yaw), [0, 1, 0]);
           mat4.translate(mvMatrix, [0, starAnimation, -2]);
-          //  console.log(starPosition);
-
-          
           mat4.translate(mvMatrix, [-xPos, -yPos, -zPos]);
           mat4.translate(mvMatrix, starPosition);
       }
@@ -624,10 +566,11 @@ function handleMouseMove(event) {
   var newY = event.clientY;
   var deltaX = newX - lastMouseX
   var deltaY = newY - lastMouseY;
-  xRot += deltaX / 3;
-  yRot += deltaY / 3;
   lastMouseX = newX
   lastMouseY = newY;
+  pitch -= deltaY / 3
+  yaw -= deltaX / 3
+  console.log("mouse",xRot,yRot);
 }
 
 incStarAnim = true;
@@ -638,6 +581,9 @@ function animate() {
       if (speed != 0 && elapsed != 0) {
           xPos -= Math.sin(degToRad(yaw)) * speed * elapsed;
           zPos -= Math.cos(degToRad(yaw)) * speed * elapsed;
+		  if (flyMode && mouseDown){
+			  yPos += Math.sin(degToRad(pitch)) * speed * elapsed;
+		  }
 //          joggingAngle += elapsed * 0.6; // 0.6 "fiddle factor" - makes it feel more realistic :-)
 //          yPos = Math.sin(degToRad(joggingAngle)) / 20 + 0.4
       }
@@ -653,11 +599,6 @@ function animate() {
       if(incStarAnim) starAnimation = Math.sin(starAnimation + elapsed/1000);
       else starAnimation =  Math.sin(starAnimation - elapsed/1000);
       
-      
-        
-      //starAnimation = Math.sin(starAnimation + elapsed/1000) + Math.cos(starAnimation + elapsed/1000);
-      //if (starAnimation > 2) starAnimation *= -1;
-      //console.log(starAnimation);
   }
   lastTime = timeNow;
 }
@@ -676,15 +617,9 @@ function tick() {
 }
 
 
-function splitFaces(faks){
-//	for (var f in faks.data.faces){
-//		
-//	}
-}
-
 function webGLStart() {
-  splitFaces(faks.data);
-  var canvas = document.getElementById("lesson05-canvas");
+
+  var canvas = document.getElementById("fri_walker_canvas");
   for(i in faks.data.materials){
     if(faks.data.materials[i].name == "Material"){
         faks.data.materials[i].scale = 2;
@@ -723,14 +658,5 @@ $.getJSON('static/faks.js', function(data){
   faks.setTranslate(starPosition);
   var newStar = jQuery.extend(true, {}, star);
   faks.addObject(newStar);
-  /*
-  faks.setTranslate([0,0,0]);
-  newStar = jQuery.extend(true, {}, star);
-  faks.addObject(newStar);
-  
-  faks.setTranslate([0,0,0]);
-  newStar = jQuery.extend(true, {}, star);
-  faks.addObject(newStar);
-  */
   webGLStart();
 });

@@ -100,7 +100,10 @@ article {
     text-align: justify;
     line-height: 1.5em;
 }
- 
+
+.tagy{
+	cursor: pointer; 
+}
 
 /* Some Headings for You */
 h1 { font-size: 2.8em; }

@@ -10,8 +10,11 @@
   <script type="text/javascript" src="/static/js/jquery-1.5.2.min.js"></script>
   <script type="text/javascript" src="/static/js/glMatrix-0.9.5.min.js"></script>
   <script type="text/javascript" src="/static/js/webgl-utils.js"></script>
-  <script type="text/javascript" src="/static/js/global.js"></script>
   <script type="text/javascript" src="/static/star.js"></script>
+  <script type="text/javascript" src="static/js/friWalker.js"></script>
+  
+  <script type="text/javascript" src="/static/js/global.js"></script>
+  
   <script id="shader-fs" type="x-shader/x-fragment">
     #ifdef GL_ES
     precision highp float;
@@ -63,7 +66,6 @@
     }
   </script>
 
-  <script type="text/javascript" src="static/js/friWalker.js"></script>
 </head>
 <body >
 
@@ -81,7 +83,7 @@
               <input type="text" id="tag-description" placeholder="Tag description..." />
               <button id="tag-submit">Add</button></div>
           <div><button id='fullscreen'>Fullscreen</button><span id = "fps"></span></div>
-  <canvas id="lesson05-canvas"width="960" height="500"  style="border: none;" ></canvas>
+  <canvas id="fri_walker_canvas"width="960" height="500"  style="border: none;" ></canvas>
   <div>
     <h1>Tags</h1>
     <input type="text" id="tag-search" placeholder = "search..." />

@@ -3,9 +3,9 @@ var pitch = 0;
 var pitchRate = 0;
 var yaw = 0;
 var yawRate = 0;
-var xPos = 1.0;
-var yPos = 5.8;
-var zPos = 8;
+var xPos = 0;//1.0;
+var yPos = 0;//5.8;
+var zPos = 5;//8;
 var movingSpeed = 0.005;
 var speed = 0;
 var lastTime = 0;
@@ -110,13 +110,26 @@ var faks = {
 		for (var i in object.materials){
 			this.data.materials[parseInt(i)+mi] = (object.materials[i]);
 		}
+		var min_val = {x: Number.MAX_VALUE, y: Number.MAX_VALUE, z: Number.MAX_VALUE};
+		var max_val = {x: Number.MIN_VALUE, y: Number.MIN_VALUE, z: Number.MIN_VALUE};
 		
 		for (i in object.vertices){
 			object.vertices[i].x += this.translateVector[0];
 			object.vertices[i].y += this.translateVector[1];
 			object.vertices[i].z += this.translateVector[2];
 			this.data.vertices[parseInt(i)+vi] = object.vertices[i];
+			
+			for(var j in min_val){
+			    if(min_val[j] > object.vertices[i][j]) min_val[j] = object.vertices[i][j];
+			    if(max_val[j] < object.vertices[i][j]) max_val[j] = object.vertices[i][j];
+			    
+			}
+			console.log(min_val, max_val);
 		}
+		this.center = [(max_val.x+Math.abs(min_val.x))/2, 
+		                (max_val.y + Math.abs(min_val.y))/2, 
+		                (max_val.z + Math.abs(min_val.z))/2];
+		console.log(this.center);
 		for (i in object.normals){
 			this.data.normals[parseInt(i)+ni] = object.normals[i];
 		}
@@ -356,8 +369,15 @@ function drawScene() {
 
       if(mat == "star"){
           mat4.identity(mvMatrix);
-          mat4.rotate(mvMatrix, degToRad(-pitch), [1, 0, 0]);
-          mat4.rotate(mvMatrix, degToRad(-yaw), [0, 1, 0]);
+          //Move to center
+          console.log(faks.center);
+          mat4.translate(mvMatrix, [5,0,5]);
+          mat4.rotate(mvMatrix, degToRad(90), [0, 1, 0]);
+          mat4.translate(mvMatrix, [-5,0,5]);
+          ///Rotate
+          //mat4.rotate(mvMatrix, degToRad(-pitch), [1, 0, 0]);
+          //mat4.rotate(mvMatrix, degToRad(-pitch), [1, 0, 0]);
+          //mat4.rotate(mvMatrix, degToRad(-yaw), [0, 1, 0]);
           mat4.translate(mvMatrix, [0, starAnimation, -2]);
           mat4.translate(mvMatrix, [-xPos, -yPos, -zPos]);
           mat4.translate(mvMatrix, starPosition);
@@ -503,8 +523,10 @@ function webGLStart() {
 }
 
 $.getJSON('static/faks.js', function(data){
+    console.log("FAKS");
   faks.addObject(data);
   faks.setTranslate(starPosition);
+    console.log("STAR");
   var newStar = jQuery.extend(true, {}, star);
   faks.addObject(newStar);
   webGLStart();

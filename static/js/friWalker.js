@@ -26,11 +26,71 @@ var cubeVertexTextureCoordBuffer;
 var cubeVertexIndexBuffer;
 var currentlyPressedKeys = {};
 var fps = 0;
-var faks = null;
 var fly;
 var debug = false;
 var debugtimeout = 10000;
 
+var faks = {
+	getTriangleFaces : function(material){
+    var ro = {vec:[], fac:[], tex:[], nor:[]}; //return object
+    var vecCounter = 0;
+    for (var f in this.data.faces){
+      
+      var curentFace = this.data.faces[f];
+      
+      if (curentFace.material != material)
+    	  continue;
+
+      if (curentFace.vertices.length == 3){
+        for (var i=0 ; i<3 ; i++){
+          //add distinct vertex vector for each face
+          ro.vec[vecCounter*3]= this.data.vertices[curentFace.vertices[i]].x;
+          ro.vec[vecCounter*3+1]= this.data.vertices[curentFace.vertices[i]].y;
+          ro.vec[vecCounter*3+2]= this.data.vertices[curentFace.vertices[i]].z;
+          //add distinct normal
+          if(curentFace.normals.length > 0){
+        	  ro.nor[vecCounter*3]= this.data.normals[curentFace.normals[i]].x;
+        	  ro.nor[vecCounter*3+1]= this.data.normals[curentFace.normals[i]].y;
+        	  ro.nor[vecCounter*3+2]= this.data.normals[curentFace.normals[i]].z;
+        	  
+        	//add texture coordinate for this vector
+              
+              if(Math.abs(ro.nor[vecCounter*3+1]) > 0.5){
+            	  ro.tex[vecCounter*2] = faks.data.materials[material].scale * this.data.vertices[curentFace.vertices[i]].x;
+            	  ro.tex[vecCounter*2+1] = faks.data.materials[material].scale * this.data.vertices[curentFace.vertices[i]].z;
+              }else if(Math.abs(ro.nor[vecCounter*3]) > 0.5){
+            	  ro.tex[vecCounter*2] = faks.data.materials[material].scale * this.data.vertices[curentFace.vertices[i]].z;
+            	  ro.tex[vecCounter*2+1] = faks.data.materials[material].scale * this.data.vertices[curentFace.vertices[i]].y;
+              }else{
+            	  ro.tex[vecCounter*2] = faks.data.materials[material].scale * this.data.vertices[curentFace.vertices[i]].x;
+            	  ro.tex[vecCounter*2+1] = faks.data.materials[material].scale * this.data.vertices[curentFace.vertices[i]].y;
+              }
+          }      
+
+          //push vector to faces array
+          ro.fac.push(vecCounter++);
+        }
+      }
+    }
+    return ro;
+  },
+  addObject : function(object){
+	  var ni = this.data.normals.length; //normal index
+	  var vi = this.data.vertices.length; //vertex index
+	  
+	  for (var i in object.materials){
+		  this.data.materials.push(object.materials[i]);
+	  }
+//	  _.map(object.vertices, function(n){return {x:n.x+vi, y:n.y+vi, z:n.z+vi};);
+//	  _.map(object.normals, function(n){return {x:n.x+ni, y:n.y+ni, z:n.z+ni};);
+	  for (i in object.vertices){
+		  this.data.vertices.push(object.vertices);
+	  }
+	  for (i in object.normals){
+		  this.data.normals.push(object.normals);
+	  }
+  }
+};
 
 /***********************************************************/
 /***********************************************************/
@@ -107,27 +167,27 @@ function sameSide(planePoint,planeNormal,point1,point2){
 
 
 function minComponent(face, componenet){
-	return Math.min(faks.vertices[face.vertices[0]][componenet],
-			Math.min(faks.vertices[face.vertices[1]][componenet],
-					faks.vertices[face.vertices[2]][componenet]));
+	return Math.min(faks.data.vertices[face.vertices[0]][componenet],
+			Math.min(faks.data.vertices[face.vertices[1]][componenet],
+					faks.data.vertices[face.vertices[2]][componenet]));
 }
 
 function maxComponent(face, componenet){
-	return Math.max(faks.vertices[face.vertices[0]][componenet],
-			Math.max(faks.vertices[face.vertices[1]][componenet],
-		 			faks.vertices[face.vertices[2]][componenet]));
+	return Math.max(faks.data.vertices[face.vertices[0]][componenet],
+			Math.max(faks.data.vertices[face.vertices[1]][componenet],
+		 			faks.data.vertices[face.vertices[2]][componenet]));
 }
 
 function triangleIntersectionTest(face1,face2){
-	var normal1 = faks.normals[face1.normals[0]]; //face1.normals[1] face1.normals[2] should be the same 
-	var normal2 = faks.normals[face2.normals[0]]; //face1.normals[1] face1.normals[2] should be the same 
-	var d1 = -dotProduct(normal1, faks.vertices[face1.vertices[0]]);
-	var d2 = -dotProduct(normal2, faks.vertices[face2.vertices[0]]);
+	var normal1 = faks.data.normals[face1.normals[0]]; //face1.normals[1] face1.normals[2] should be the same 
+	var normal2 = faks.data.normals[face2.normals[0]]; //face1.normals[1] face1.normals[2] should be the same 
+	var d1 = -dotProduct(normal1, faks.data.vertices[face1.vertices[0]]);
+	var d2 = -dotProduct(normal2, faks.data.vertices[face2.vertices[0]]);
 	
 	//calculate distances of of all vertexes in face1 from the plane of face2
-	var d1v0 = dotProduct(normal2, faks.vertices[face1.vertices[0]]) + d2;
-	var d1v1 = dotProduct(normal2, faks.vertices[face1.vertices[1]]) + d2;
-	var d1v2 = dotProduct(normal2, faks.vertices[face1.vertices[2]]) + d2;
+	var d1v0 = dotProduct(normal2, faks.data.vertices[face1.vertices[0]]) + d2;
+	var d1v1 = dotProduct(normal2, faks.data.vertices[face1.vertices[1]]) + d2;
+	var d1v2 = dotProduct(normal2, faks.data.vertices[face1.vertices[2]]) + d2;
 	
 	if ((d1v0 > 0 && d1v1 > 0 && d1v2 >0) || (d1v0 < 0 && d1v1 < 0 && d1v2 < 0)){
 		return 0; // no collisoin possible, the triangle is above or below the plane
@@ -138,9 +198,9 @@ function triangleIntersectionTest(face1,face2){
 	}
 	
 	//calculate distances of of all vertexes in face2 from the plane of face1
-	var d2v0 = dotProduct(normal1, faks.vertices[face2.vertices[0]]) + d1;
-	var d2v1 = dotProduct(normal1, faks.vertices[face2.vertices[1]]) + d1;
-	var d2v2 = dotProduct(normal1, faks.vertices[face2.vertices[2]]) + d1;
+	var d2v0 = dotProduct(normal1, faks.data.vertices[face2.vertices[0]]) + d1;
+	var d2v1 = dotProduct(normal1, faks.data.vertices[face2.vertices[1]]) + d1;
+	var d2v2 = dotProduct(normal1, faks.data.vertices[face2.vertices[2]]) + d1;
 
 	if ((d2v0 > 0 && d2v1 > 0 && d2v2 >0) || (d2v0 < 0 && d2v1 < 0 && d2v2 < 0)){
 		return 0; // no collisoin possible, the triangle is above or below the plane
@@ -154,12 +214,12 @@ function triangleIntersectionTest(face1,face2){
 		max = 'z';
 	}// y cord is the biggest
 	
-	var p1v0 = faks.vertices[face1.vertices[0]][max];
-	var p1v1 = faks.vertices[face1.vertices[1]][max];
-	var p1v2 = faks.vertices[face1.vertices[2]][max];
-	var p2v0 = faks.vertices[face2.vertices[0]][max];
-	var p2v1 = faks.vertices[face2.vertices[1]][max];
-	var p2v2 = faks.vertices[face2.vertices[2]][max];
+	var p1v0 = faks.data.vertices[face1.vertices[0]][max];
+	var p1v1 = faks.data.vertices[face1.vertices[1]][max];
+	var p1v2 = faks.data.vertices[face1.vertices[2]][max];
+	var p2v0 = faks.data.vertices[face2.vertices[0]][max];
+	var p2v1 = faks.data.vertices[face2.vertices[1]][max];
+	var p2v2 = faks.data.vertices[face2.vertices[2]][max];
 	
 	if (d1v0 * d1v1 < 0){
 		t11 = p1v0 + (p1v1-p1v0) * (d1v0 / (d1v0 - d1v1));
@@ -295,24 +355,24 @@ var bricky;
 var glassy;
 function initTexture() {
   var images = new Array();	
-  for (mat in faks.materials){
+  for (mat in faks.data.materials){
 	  
 	  (function(){
 		   
 		  var texty = gl.createTexture();
 		  texty.image = new Image();
-		  texty.image.onload = //handleLoadedTexture(mat_textures[faks.materials[mat]]);
+		  texty.image.onload = //handleLoadedTexture(mat_textures[faks.data.materials[mat]]);
 		  
 		  function () {
 			  handleLoadedTexture(texty);
 			  //alert("OnLoad: " + texty.image.src);
 		  };
-		  texty.image.src = "static/" + faks.materials[mat].img;
-		  mat_textures[faks.materials[mat].name] = texty;
+		  texty.image.src = "static/" + faks.data.materials[mat].img;
+		  mat_textures[faks.data.materials[mat].name] = texty;
 	  })();
 	  
 	  images.push(floor);
-	  //mat_textures[faks.materials[mat]] = floor;
+	  //mat_textures[faks.data.materials[mat]] = floor;
   }
 }
 
@@ -351,7 +411,7 @@ var buffers = [];
 function initBuffers() {
   
 
-  $.each(faks.materials, function(mat, material){
+  $.each(faks.data.materials, function(mat, material){
 	var bo = faks.getTriangleFaces(mat);
 	
 	
@@ -544,7 +604,7 @@ function tick() {
   // comment requestAnimFrame(tick); when debugging and use setInterval instead
   if (!debug) requestAnimFrame(tick);
   
-  //console.log("fuuu : "+intersection(faks.faces[0],faks.faces[1]));
+  //console.log("fuuu : "+intersection(faks.data.faces[0],faks.data.faces[1]));
   
   handleKeys();
   animate();
@@ -554,23 +614,23 @@ function tick() {
 
 
 function splitFaces(faks){
-//	for (var f in faks.faces){
+//	for (var f in faks.data.faces){
 //		
 //	}
 }
 
 function webGLStart() {
-  splitFaces(faks);
+  splitFaces(faks.data);
   var canvas = document.getElementById("lesson05-canvas");
-  for(i in faks.materials){
-    if(faks.materials[i].name == "Material"){
-        faks.materials[i].scale = 2;
+  for(i in faks.data.materials){
+    if(faks.data.materials[i].name == "Material"){
+        faks.data.materials[i].scale = 2;
     }
-    else if(faks.materials[i].name == "wood-floor"){
-        faks.materials[i].scale = 4;
+    else if(faks.data.materials[i].name == "wood-floor"){
+        faks.data.materials[i].scale = 4;
     }
-    else if(faks.materials[i].name == "horizon"){
-        faks.materials[i].scale = 0.06;
+    else if(faks.data.materials[i].name == "horizon"){
+        faks.data.materials[i].scale = 0.06;
     }
   }
   initGL(canvas);
@@ -596,66 +656,7 @@ function webGLStart() {
 }
 
 $.getJSON('static/faks.js', function(data){
-  faks = data;
-  faks.getTriangleFaces = function(material){
-    var ro = {vec:[], fac:[], tex:[], nor:[]}; //return object
-    var vecCounter = 0;
-    for (var f in this.faces){
-      
-      var curentFace = this.faces[f];
-      
-      if (curentFace.material != material)
-    	  continue;
-
-      if (curentFace.vertices.length == 3){
-        for (var i=0 ; i<3 ; i++){
-          //add distinct vertex vector for each face
-          ro.vec[vecCounter*3]= this.vertices[curentFace.vertices[i]].x;
-          ro.vec[vecCounter*3+1]= this.vertices[curentFace.vertices[i]].y;
-          ro.vec[vecCounter*3+2]= this.vertices[curentFace.vertices[i]].z;
-          //add distinct normal
-          if(curentFace.normals.length > 0){
-        	  ro.nor[vecCounter*3]= this.normals[curentFace.normals[i]].x;
-        	  ro.nor[vecCounter*3+1]= this.normals[curentFace.normals[i]].y;
-        	  ro.nor[vecCounter*3+2]= this.normals[curentFace.normals[i]].z;
-        	  
-        	//add texture coordinate for this vector
-              
-              if(Math.abs(ro.nor[vecCounter*3+1]) > 0.5){
-            	  ro.tex[vecCounter*2] = faks.materials[material].scale * this.vertices[curentFace.vertices[i]].x;
-            	  ro.tex[vecCounter*2+1] = faks.materials[material].scale * this.vertices[curentFace.vertices[i]].z;
-              }else if(Math.abs(ro.nor[vecCounter*3]) > 0.5){
-            	  ro.tex[vecCounter*2] = faks.materials[material].scale * this.vertices[curentFace.vertices[i]].z;
-            	  ro.tex[vecCounter*2+1] = faks.materials[material].scale * this.vertices[curentFace.vertices[i]].y;
-              }else{
-            	  ro.tex[vecCounter*2] = faks.materials[material].scale * this.vertices[curentFace.vertices[i]].x;
-            	  ro.tex[vecCounter*2+1] = faks.materials[material].scale * this.vertices[curentFace.vertices[i]].y;
-              }
-          }      
-
-          //push vector to faces array
-          ro.fac.push(vecCounter++);
-        }
-      }
-    }
-    return ro;
-  }
-  faks.addObject = function(object){
-	  var ni = this.normals.length; //normal index
-	  var vi = this.vertices.length; //vertex index
-	  
-	  for (var i in object.materials){
-		  this.materials.push(object.materials[i]);
-	  }
-//	  _.map(object.vertices, function(n){return {x:n.x+vi, y:n.y+vi, z:n.z+vi};);
-//	  _.map(object.normals, function(n){return {x:n.x+ni, y:n.y+ni, z:n.z+ni};);
-	  for (i in object.vertices){
-		  this.vertices.push(object.vertices);
-	  }
-	  for (i in object.normals){
-		  this.normals.push(object.normals);
-	  }
-  }
+  faks.data = data;
   
   webGLStart();
 });

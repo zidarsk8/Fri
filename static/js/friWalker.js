@@ -27,8 +27,10 @@ var cubeVertexIndexBuffer;
 var currentlyPressedKeys = {};
 var fps = 0;
 var fly;
+var starPosition = [0,0,0];
 var debug = true;
 var debugtimeout = 50;
+
 
 var faks = {
 	translateVector : [0,0,0],
@@ -517,14 +519,16 @@ function drawScene() {
 	  gl.vertexAttribPointer(shaderProgram.textureCoordAttribute, buffers[mat].tex.itemSize, gl.FLOAT, false, 0, 0);
 
       if(mat == "star"){
-          //mat4.identity(mvMatrix);
-
-          //mat4.rotate(mvMatrix, degToRad(-pitch), [1, 0, 0]);
-          //mat4.rotate(mvMatrix, degToRad(-pitch), [1, 0, 0]);
-          //mat4.rotate(mvMatrix, degToRad(-yaw), [0, 1, 0]);
-          mat4.translate(mvMatrix, [Math.random()*0.5, Math.random()*0.5, Math.random()*0.5]);
+          
+          mat4.translate(mvMatrix, starPosition);
       }
+      else{
+          mat4.identity(mvMatrix);
 
+          mat4.rotate(mvMatrix, degToRad(-pitch), [1, 0, 0]);
+          mat4.rotate(mvMatrix, degToRad(-yaw), [0, 1, 0]);
+          mat4.translate(mvMatrix, [-xPos, -yPos, -zPos]);
+      }
 	  
 	  setMatrixUniforms();
 	  gl.activeTexture(gl.TEXTURE0);
@@ -696,16 +700,17 @@ function webGLStart() {
 
 $.getJSON('static/faks.js', function(data){
   faks.addObject(data);
-  faks.setTranslate([3,5.8,5]);
+  faks.setTranslate(starPosition);
   var newStar = jQuery.extend(true, {}, star);
   faks.addObject(newStar);
-  
-  faks.setTranslate([-1,5.8,5]);
+  /*
+  faks.setTranslate([0,0,0]);
   newStar = jQuery.extend(true, {}, star);
   faks.addObject(newStar);
   
-  faks.setTranslate([1,5.8,8]);
+  faks.setTranslate([0,0,0]);
   newStar = jQuery.extend(true, {}, star);
   faks.addObject(newStar);
+  */
   webGLStart();
 });

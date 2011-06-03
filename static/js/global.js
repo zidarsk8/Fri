@@ -52,7 +52,12 @@ $(document).ready(function(){
 	        $('#tag-list').html("");
 	        //console.log(d);
 	        $.each(d, function(i, e){
-	            $('#tag-list').append('<li>' + e.name + '</li>');
+	            var position = "["+e.x+","+e.y+","+e.z+"]"
+	            $('#tag-list').append('<li class="tagy" xyz = "'+position+'" id = "tag-'+ e.name +'">' + e.name + '</li>');
+	        });
+	        
+	        $('.tagy').click(function(e){
+	            starPosition =  $.parseJSON($(e.currentTarget).attr('xyz'));
 	        });
 	    });
 	}

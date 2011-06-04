@@ -242,7 +242,7 @@ function initTexture() {
 			  handleLoadedTexture(texty);
 			  //alert("OnLoad: " + texty.image.src);
 		  };
-		  texty.image.src = "static/" + faks.data.materials[mat].img;
+		  texty.image.src = "static/textures/" + faks.data.materials[mat].img;
 		  mat_textures[faks.data.materials[mat].name] = texty;
 	  })();
 	  

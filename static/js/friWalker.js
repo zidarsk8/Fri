@@ -451,6 +451,10 @@ var rTri = 0;
 incStarAnim = true;
 function animate() {
   var timeNow = new Date().getTime();
+  var oldx = xPos;
+  var oldy = yPos;
+  var oldz = zPos;
+  
   if (lastTime != 0) {
       var elapsed = timeNow - lastTime;
       if (speed != 0 && elapsed != 0) {
@@ -476,6 +480,9 @@ function animate() {
       
   }
   lastTime = timeNow;
+  
+  
+  
 }
 
 

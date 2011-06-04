@@ -359,20 +359,13 @@ function drawScene() {
 
       if(mat == "star"){
           mat4.identity(mvMatrix);
-          //Move to center
-          
-          
-          //mat4.translate(mvMatrix, faks.center);
-          //mat4.translate(mvMatrix, faks.center.map(function(e){return e*-1}));
-          
-          ///Rotate
-          //mat4.rotate(mvMatrix, degToRad(-pitch), [1, 0, 0]);
-          //mat4.rotate(mvMatrix, degToRad(-pitch), [1, 0, 0]);
-          //mat4.rotate(mvMatrix, degToRad(-yaw), [0, 1, 0]);
-          mat4.translate(mvMatrix, [0, starAnimation, -2]);
+
+          mat4.rotate(mvMatrix, degToRad(-pitch), [1, 0, 0]);
+          mat4.rotate(mvMatrix, degToRad(-yaw), [0, 1, 0]);
           mat4.translate(mvMatrix, [-xPos, -yPos, -zPos]);
           mat4.translate(mvMatrix, starPosition);
           mat4.rotate(mvMatrix, degToRad(rTri), [0, 1, 0]);
+          
       }
       else{
           mat4.identity(mvMatrix);

@@ -1,4 +1,4 @@
-{
+faks = {
     "materials": [
         {
             "scale": 1.0, 

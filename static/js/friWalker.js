@@ -40,7 +40,7 @@ var vertexIndices = [];
 var buffers = [];
 
 
-var faks = {
+var object = {
 	translateVector : [0,0,0],
 	setTextureScale : function(material, scale){
 		for(var i in this.data.materials){
@@ -250,24 +250,24 @@ function handleLoadedTexture(texture) {
 
 function initTexture() {
   var images = new Array();	
-  for (mat in faks.data.materials){
+  for (mat in object.data.materials){
 	  
 	  (function(){
 		   
 		  var texty = gl.createTexture();
 		  texty.image = new Image();
-		  texty.image.onload = //handleLoadedTexture(mat_textures[faks.data.materials[mat]]);
+		  texty.image.onload = //handleLoadedTexture(mat_textures[object.data.materials[mat]]);
 		  
 		  function () {
 			  handleLoadedTexture(texty);
 			  //alert("OnLoad: " + texty.image.src);
 		  };
-		  texty.image.src = "static/textures/" + faks.data.materials[mat].img;
-		  mat_textures[faks.data.materials[mat].name] = texty;
+		  texty.image.src = "static/textures/" + object.data.materials[mat].img;
+		  mat_textures[object.data.materials[mat].name] = texty;
 	  })();
 	  
 	  images.push(floor);
-	  //mat_textures[faks.data.materials[mat]] = floor;
+	  //mat_textures[object.data.materials[mat]] = floor;
   }
 }
 
@@ -303,8 +303,8 @@ function degToRad(degrees) {
 
 function initBuffers() {
 	
-	$.each(faks.data.materials, function(mat, material){
-		var bo = faks.getTriangleFaces(mat);
+	$.each(object.data.materials, function(mat, material){
+		var bo = object.getTriangleFaces(mat);
 
 		var buff = {
 			 vec : gl.createBuffer(),
@@ -329,6 +329,7 @@ function initBuffers() {
 
 
 		}
+		console.log(buff);
 		buffers[material.name] = buff;
 		vertexIndices[material.name] = bo.fac;
 	});
@@ -381,7 +382,7 @@ function drawScene() {
           mat4.rotate(mvMatrix, degToRad(-yaw), [0, 1, 0]);
           mat4.translate(mvMatrix, [-xPos, -yPos, -zPos]);
           mat4.translate(mvMatrix, starPosition);
-          mat4.rotate(mvMatrix, degToRad(rTri), [0, 1, 0]);          
+          //mat4.rotate(mvMatrix, degToRad(rTri), [0, 1, 0]);          
       }
       
 	  
@@ -507,7 +508,7 @@ function tick() {
   // comment requestAnimFrame(tick); when debugging and use setInterval instead
   if (!debug) requestAnimFrame(tick);
   
-  //console.log("fuuu : "+intersection(faks.data.faces[0],faks.data.faces[1]));
+  //console.log("fuuu : "+intersection(object.data.faces[0],object.data.faces[1]));
   
   handleKeys();
   animate();
@@ -518,11 +519,21 @@ function tick() {
 
 function webGLStart() {
 
+    object.addObject(faks);
+    object.setTranslate(starPosition);
+
+    var newStar = jQuery.extend(true, {}, star);
+    object.addObject(newStar);
+
+    var newArrow = jQuery.extend(true, {}, arrow);
+    object.setTranslate(starPosition);
+    object.addObject(arrow);
+
 	var canvas = document.getElementById("fri_walker_canvas");
-	faks.setTextureScale("Material", 4);
-	faks.setTextureScale("wood-floor", 2);
-	faks.setTextureScale("horizon", 0.06);
-	faks.setTextureOfset("horizon", 0, -5.33);
+	object.setTextureScale("Material", 4);
+	object.setTextureScale("wood-floor", 2);
+	object.setTextureScale("horizon", 0.06);
+	object.setTextureOfset("horizon", 0, -5.33);
 
 	initGL(canvas);
 	initShaders();
@@ -548,7 +559,7 @@ function webGLStart() {
 //		}
 //	);
 	
-	console.log("sekata",cross);
+	//console.log("sekata",cross);
 	
 	gl.clearColor(0.0, 0.0, 0.0, 1.0);
 	gl.enable(gl.DEPTH_TEST);
@@ -561,12 +572,3 @@ function webGLStart() {
 	}, 1000);
 }
 
-$.getJSON('static/faks.js', function(data){
-    //console.log("FAKS");
-  faks.addObject(data);
-  faks.setTranslate(starPosition);
-    //console.log("STAR");
-  var newStar = jQuery.extend(true, {}, star);
-  faks.addObject(newStar);
-  webGLStart();
-});

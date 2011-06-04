@@ -518,32 +518,47 @@ function tick() {
 
 function webGLStart() {
 
-  var canvas = document.getElementById("fri_walker_canvas");
-  faks.setTextureScale("Material", 4);
-  faks.setTextureScale("wood-floor", 2);
-  faks.setTextureScale("horizon", 0.06);
-  faks.setTextureOfset("horizon", 0, -5.33);
-  
-  initGL(canvas);
-  initShaders();
-  initBuffers();
-  initTexture();
-  
-//  triangleIntersectionTest(
-//  {
-//	  'normal' : {x: 1 ,y:0 ,z:0}
-//  }, 
-//  {});
-  
-  gl.clearColor(0.0, 0.0, 0.0, 1.0);
-  gl.enable(gl.DEPTH_TEST);
-//  use set interval for debugging cause requestAnimFrame(tick); is causing problems for firebug
-  if (debug) setInterval("tick()", debugtimeout);
-  tick();
-  setInterval(function(){
-    document.getElementById("fps").innerHTML="<b>FPS:</b> "+fps+" <b>x:</b> "+xPos+" <b>y:</b> "+yPos+" <b>z:</b> "+zPos+" <b>pitch:</b> "+pitch+" <b>yaw:</b> "+yaw;
-    fps = 0;
-  }, 1000);
+	var canvas = document.getElementById("fri_walker_canvas");
+	faks.setTextureScale("Material", 4);
+	faks.setTextureScale("wood-floor", 2);
+	faks.setTextureScale("horizon", 0.06);
+	faks.setTextureOfset("horizon", 0, -5.33);
+
+	initGL(canvas);
+	initShaders();
+	initBuffers();
+	initTexture();
+
+//	var cross = triangleIntersectionTest(
+//		{
+//			'normal' : {x: 1 ,y:0 ,z:0},
+//			'vertices' : [
+//				{x: 1 ,y:1 ,z:0},
+//				{x: 1 ,y:0 ,z:1},
+//				{x: 1 ,y:1 ,z:1}
+//			]
+//		},
+//		{
+//			'normal' : {x: 1 ,y:0 ,z:0},
+//			'vertices' : [
+//				{x: 0 ,y:1 ,z:0},
+//				{x: 0 ,y:0 ,z:1},
+//				{x: 0 ,y:1 ,z:1}
+//			]
+//		}
+//	);
+	
+	console.log("sekata",cross);
+	
+	gl.clearColor(0.0, 0.0, 0.0, 1.0);
+	gl.enable(gl.DEPTH_TEST);
+	//  use set interval for debugging cause requestAnimFrame(tick); is causing problems for firebug
+	if (debug) setInterval("tick()", debugtimeout);
+	tick();
+	setInterval(function(){
+	document.getElementById("fps").innerHTML="<b>FPS:</b> "+fps+" <b>x:</b> "+xPos+" <b>y:</b> "+yPos+" <b>z:</b> "+zPos+" <b>pitch:</b> "+pitch+" <b>yaw:</b> "+yaw;
+	fps = 0;
+	}, 1000);
 }
 
 $.getJSON('static/faks.js', function(data){

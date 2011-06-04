@@ -29,7 +29,7 @@ var fps = 0;
 var fly;
 var starPosition = [0,0,0];
 var starAnimation = 2;
-var debug = true;
+var debug = false;
 var debugtimeout = 50;
 var mat_textures = {};
 var floor;
@@ -38,6 +38,7 @@ var glassy;
 var flyMode = true;
 var vertexIndices = [];
 var buffers = [];
+var faksBoxes;
 
 
 var faks = {
@@ -467,57 +468,182 @@ function handleMouseMove(event) {
 var rTri = 0;
 incStarAnim = true;
 function animate() {
-  var timeNow = new Date().getTime();
-  var oldx = xPos;
-  var oldy = yPos;
-  var oldz = zPos;
-  
-  if (lastTime != 0) {
-      var elapsed = timeNow - lastTime;
-      if (speed != 0 && elapsed != 0) {
-          xPos -= Math.sin(degToRad(yaw)) * speed * elapsed;
-          zPos -= Math.cos(degToRad(yaw)) * speed * elapsed;
-		  if (flyMode && mouseDown){
-			  yPos += Math.sin(degToRad(pitch)) * speed * elapsed;
-		  }
-//          joggingAngle += elapsed * 0.6; // 0.6 "fiddle factor" - makes it feel more realistic :-)
-//          yPos = Math.sin(degToRad(joggingAngle)) / 20 + 0.4
-      }
-      if (fly != 0 && elapsed != 0) {
-          yPos -= fly * elapsed;
-      }
-      yaw += yawRate * elapsed;
-      pitch += pitchRate * elapsed;
-      rTri += (90 * elapsed) / 1000.0;
-       
-      if(starAnimation > 0.6) incStarAnim = false;
-      if(starAnimation < 0) incStarAnim = true;
-      if(incStarAnim) starAnimation = Math.sin(starAnimation + elapsed/1000);
-      else starAnimation =  Math.sin(starAnimation - elapsed/1000);
-      
-  }
-  lastTime = timeNow;
-  
-  
-  
+	var timeNow = new Date().getTime();
+	var newx = xPos;
+	var newy = yPos;
+	var newz = zPos;
+
+	if (lastTime != 0) {
+		var elapsed = timeNow - lastTime;
+		if (speed != 0 && elapsed != 0) {
+			newx -= Math.sin(degToRad(yaw)) * speed * elapsed;
+			newz -= Math.cos(degToRad(yaw)) * speed * elapsed;
+			if (flyMode && mouseDown){
+				newy += Math.sin(degToRad(pitch)) * speed * elapsed;
+			}
+			// joggingAngle += elapsed * 0.6; // 0.6 "fiddle factor" - makes it feel more realistic :-)
+			// yPos = Math.sin(degToRad(joggingAngle)) / 20 + 0.4
+		}
+		if (fly != 0 && elapsed != 0) {
+			newy -= fly * elapsed;
+		}
+		yaw += yawRate * elapsed;
+		pitch += pitchRate * elapsed;
+		rTri += (90 * elapsed) / 1000.0;
+
+		if(starAnimation > 0.6) incStarAnim = false;
+		if(starAnimation < 0) incStarAnim = true;
+		if(incStarAnim) starAnimation = Math.sin(starAnimation + elapsed/1000);
+		else starAnimation =  Math.sin(starAnimation - elapsed/1000);
+	}
+	
+	lastTime = timeNow;
+	
+	if (!testCollision(newx,newx,newz)){
+		xPos = newx;
+		yPos = newy;
+		zPos = newz;
+	}
 }
 
+function testCollision(newx,newy,newz){
+	var face1 = {
+			'normal' : {x: 0 ,y:0 ,z:1},
+			'vertices' : [
+				{x: -0.2 + newx , y:-0.2 + newy ,z:0.0 + newz},
+				{x: 0.0 + newx, y:0.2 + newy ,z:0.0 + newz},
+				{x: 0.2 + newx, y:-0.2 + newy ,z:0.0 + newz}
+			]
+		};
+	var face2 = {
+			'normal' : {x: 1 ,y:0 ,z:0},
+			'vertices' : [
+				{x: 0.0 + newx, y:-0.2 + newy ,z:-0.2 + newz},
+				{x: 0.0 + newx, y:0.2 + newy ,z:0.0 + newz},
+				{x: 0.0 + newx, y:-0.2 + newy ,z:0.2 + newz}
+			]
+		};
+	try {
+	for (var i in faksBoxes[Math.floor(newx)][Math.floor(newy)][Math.floor(newz)]){
+		if (faks.data.faces[i].vertices.length==3 &&
+			faks.data.vertices[faks.data.faces[i].vertices[0]] != faks.data.vertices[faks.data.faces[i].vertices[1]] &&
+			faks.data.vertices[faks.data.faces[i].vertices[0]] != faks.data.vertices[faks.data.faces[i].vertices[2]]
+			){
+		    var curFace = {
+					'normal' : faks.data.normals[faks.data.faces[i].normals[0]],
+					'vertices' : [
+						faks.data.vertices[faks.data.faces[i].vertices[0]],
+						faks.data.vertices[faks.data.faces[i].vertices[1]],
+						faks.data.vertices[faks.data.faces[i].vertices[2]]
+					]
+				};
+			if (curFace.normal.x+curFace.normal.y+curFace.normal.z >0.0 && 
+				(triangleIntersectionTest(face1, curFace ) || triangleIntersectionTest(face2, curFace ))){
+
+				console.log("collision");
+				console.log(face1);
+				console.log({
+					'normal' : faks.data.normals[faks.data.faces[i].normals[0]],
+					'vertices' : [
+						faks.data.vertices[faks.data.faces[i].vertices[0]],
+						faks.data.vertices[faks.data.faces[i].vertices[1]],
+						faks.data.vertices[faks.data.faces[i].vertices[2]]
+					]
+				});
+				console.log(i,curFace);
+				console.log(face1);
+				console.log(face2);
+				
+				return true;
+			}
+		}
+	}
+	}catch (e){
+		console.log(Math.floor(newx));
+		console.log(Math.floor(newy));
+		console.log(Math.floor(newz));
+		console.log(faksBoxes[Math.floor(newx)]);
+		console.log(faksBoxes[Math.floor(newx)][Math.floor(newy)]);
+		console.log(faksBoxes[Math.floor(newx)][Math.floor(newy)][Math.floor(newz)]);
+	}
+	return false;
+}
 
 function tick() {
   // comment requestAnimFrame(tick); when debugging and use setInterval instead
   if (!debug) requestAnimFrame(tick);
   
-  //console.log("fuuu : "+intersection(faks.data.faces[0],faks.data.faces[1]));
-  
   handleKeys();
   animate();
   drawScene();
   fps++;
+  //console.log("fuuu : "+intersection(faks.data.faces[0],faks.data.faces[1]));
+  
 }
 
+function splitBoxes(){
+	var minx = 0,maxx = 0,miny = 0,maxy = 0,minz = 0,maxz = 0;
+	for (var i in faks.data.vertices){
+		if (faks.data.vertices[i].x < minx) minx = Math.floor(faks.data.vertices[i].x); 
+		if (faks.data.vertices[i].x > maxx) maxx = Math.ceil(faks.data.vertices[i].x); 
+		if (faks.data.vertices[i].y < miny) miny = Math.floor(faks.data.vertices[i].y); 
+		if (faks.data.vertices[i].y > maxy) maxy = Math.ceil(faks.data.vertices[i].y); 
+		if (faks.data.vertices[i].z < minz) minz = Math.floor(faks.data.vertices[i].z); 
+		if (faks.data.vertices[i].z > maxz) maxz = Math.ceil(faks.data.vertices[i].z); 
+	}
+	console.log(minx,maxx,miny,maxy,minz,maxz);
+	faksBoxes = [];
+	var counter = 0;
+	for (var x = minx ; x< maxx ; x++){
+		faksBoxes [x] = [];
+		for (var y = miny ; y< maxy ; y++){
+			faksBoxes [x][y] = [];
+			for (var z = minz ; z< maxz ; z++){
+				faksBoxes[x][y][z]=[];
+				counter++;
+			}
+		}
+	}
+	console.log("counter ",counter);
+	for(i in faks.data.faces){
+		if (faks.data.faces[i].type == 3){
+			minx = Math.floor(Math.min(faks.data.vertices[faks.data.faces[i].vertices[0]].x,
+							faks.data.vertices[faks.data.faces[i].vertices[1]].x,
+							faks.data.vertices[faks.data.faces[i].vertices[2]].x));
+			maxx = Math.ceil(Math.max(faks.data.vertices[faks.data.faces[i].vertices[0]].x,
+							faks.data.vertices[faks.data.faces[i].vertices[1]].x,
+							faks.data.vertices[faks.data.faces[i].vertices[2]].x));
+			miny = Math.floor(Math.min(faks.data.vertices[faks.data.faces[i].vertices[0]].y,
+							faks.data.vertices[faks.data.faces[i].vertices[1]].y,
+							faks.data.vertices[faks.data.faces[i].vertices[2]].y));
+			maxy = Math.ceil(Math.max(faks.data.vertices[faks.data.faces[i].vertices[0]].y,
+							faks.data.vertices[faks.data.faces[i].vertices[1]].y,
+							faks.data.vertices[faks.data.faces[i].vertices[2]].y));
+			minz = Math.floor(Math.min(faks.data.vertices[faks.data.faces[i].vertices[0]].z,
+							faks.data.vertices[faks.data.faces[i].vertices[1]].z,
+							faks.data.vertices[faks.data.faces[i].vertices[2]].z));
+			maxz = Math.ceil(Math.max(faks.data.vertices[faks.data.faces[i].vertices[0]].z,
+							faks.data.vertices[faks.data.faces[i].vertices[1]].z,
+							faks.data.vertices[faks.data.faces[i].vertices[2]].z));
+			
+			for (x = minx ; x< maxx ; x++){
+				for (y = miny ; y< maxy ; y++){
+					for (z = minz ; z< maxz ; z++){
+						faksBoxes[x][y][z].push(i);
+					}
+				}
+			}
+		}
+	}
+}
 
 function webGLStart() {
-
+	
+	splitBoxes();
+	
+	//console.log("aa",faksBoxes);
+	
+	//return;
 	var canvas = document.getElementById("fri_walker_canvas");
 	faks.setTextureScale("Material", 4);
 	faks.setTextureScale("wood-floor", 2);
@@ -529,26 +655,7 @@ function webGLStart() {
 	initBuffers();
 	initTexture();
 
-//	var cross = triangleIntersectionTest(
-//		{
-//			'normal' : {x: 1 ,y:0 ,z:0},
-//			'vertices' : [
-//				{x: 1 ,y:1 ,z:0},
-//				{x: 1 ,y:0 ,z:1},
-//				{x: 1 ,y:1 ,z:1}
-//			]
-//		},
-//		{
-//			'normal' : {x: 1 ,y:0 ,z:0},
-//			'vertices' : [
-//				{x: 0 ,y:1 ,z:0},
-//				{x: 0 ,y:0 ,z:1},
-//				{x: 0 ,y:1 ,z:1}
-//			]
-//		}
-//	);
 	
-	console.log("sekata",cross);
 	
 	gl.clearColor(0.0, 0.0, 0.0, 1.0);
 	gl.enable(gl.DEPTH_TEST);
@@ -568,5 +675,7 @@ $.getJSON('static/faks.js', function(data){
     //console.log("STAR");
   var newStar = jQuery.extend(true, {}, star);
   faks.addObject(newStar);
+  
+	
   webGLStart();
 });

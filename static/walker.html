@@ -45,6 +45,9 @@
     uniform mat3 uNMatrix;
 
     uniform vec3 uAmbientColor;
+    
+    uniform vec3 uPointLightingLocation;
+    uniform vec3 uPointLightingColor;
 
     uniform vec3 uLightingDirection;
     uniform vec3 uDirectionalColor;
@@ -55,15 +58,18 @@
     varying vec3 vLightWeighting;
 
     void main(void) {
-      gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+      vec4 mvPosition = uMVMatrix * vec4(aVertexPosition, 1.0);
+      gl_Position = uPMatrix * mvPosition;
       vTextureCoord = aTextureCoord;
 
       if (!uUseLighting) {
         vLightWeighting = vec3(1.0, 1.0, 1.0);
       } else {
-        vec3 transformedNormal = aVertexNormal;
-        float directionalLightWeighting = max(dot(transformedNormal, uLightingDirection), 0.0);
-        vLightWeighting = uAmbientColor + uDirectionalColor * directionalLightWeighting;
+        vec3 lightDirection = normalize(uPointLightingLocation - mvPosition.xyz);
+        vec3 transformedNormal = uNMatrix * aVertexNormal;
+        float directionalLightWeighting = max(dot(transformedNormal, lightDirection), 0.0);
+        vLightWeighting = uAmbientColor + uPointLightingColor * directionalLightWeighting;
+
       }
     }
   </script>

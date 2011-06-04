@@ -219,6 +219,8 @@ function initShaders() {
 	shaderProgram.lightingDirectionUniform = gl.getUniformLocation(shaderProgram, "uLightingDirection");
 	shaderProgram.directionalColorUniform = gl.getUniformLocation(shaderProgram, "uDirectionalColor");
 	shaderProgram.alphaUniform = gl.getUniformLocation(shaderProgram, "uAlpha");
+	shaderProgram.pointLightingLocationUniform = gl.getUniformLocation(shaderProgram, "uPointLightingLocation");
+    shaderProgram.pointLightingColorUniform = gl.getUniformLocation(shaderProgram, "uPointLightingColor");
 }
 
 function handleLoadedTexture(texture) {
@@ -334,17 +336,25 @@ function drawScene() {
   //lightning stuff:
   gl.uniform1i(shaderProgram.useLightingUniform, true);
   //light color:
-  gl.uniform3f( shaderProgram.ambientColorUniform, 0.5, 0.5, 0.5 );
+  gl.uniform3f( shaderProgram.ambientColorUniform, 0.1, 0.1, 0.1 );
   //direction:
   var lightingDirection = [ 10, 25 ,-3];
 
-  var adjustedLD = vec3.create();
-  vec3.normalize(lightingDirection, adjustedLD);
-  vec3.scale(adjustedLD, 1);
+
   
-  gl.uniform3fv(shaderProgram.lightingDirectionUniform, adjustedLD);
+  gl.uniform3f(
+        shaderProgram.pointLightingLocationUniform,
+        -19,
+        10,
+        8
+      );
   
-  gl.uniform3f( shaderProgram.directionalColorUniform, 0.4, 0.4, 0.4 );
+  gl.uniform3f(
+        shaderProgram.pointLightingColorUniform,
+        1,
+        1,
+        1
+      );
   
   for (var mat in buffers){
 

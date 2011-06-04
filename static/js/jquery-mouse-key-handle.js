@@ -1,6 +1,8 @@
 $(document).ready(function(){
 	
-    prevent_default = true;
+    var prevent_default = true;
+	var lastMouseX;
+	var lastMouseY;
 	
 	$('#fullscreen').click(function(){
 		$('#fri_walker_canvas').addClass('fullscreen');
@@ -37,11 +39,9 @@ $(document).ready(function(){
 	  mouseDown = true;
 	  lastMouseX = event.clientX;
 	  lastMouseY = event.clientY;
-	  console.log("mouseDown");
 	});
 	
 	$(document).mouseup(function (event) {
-	  console.log("mouseUp");
 	  mouseDown = false;
 	});
 	

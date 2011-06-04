@@ -36,8 +36,8 @@ var floor;
 var bricky;
 var glassy;
 var flyMode = true;
-var vertexIndices = [];
-var buffers = [];
+var vertexIndices = {};
+var buffers = {};
 
 
 var object = {
@@ -272,6 +272,7 @@ function initTexture() {
 	      //mat_textures[object.materials[mat]] = floor;
       }
   });
+  
 
 }
 
@@ -309,7 +310,7 @@ function initBuffers() {
     
 	$.each(objects, function(index, object){
 	    buffers[index] = {};
-	    vertexIndices[index] = [];
+	    vertexIndices[index] = {};
 	    $.each(object.materials, function(mat, material){
 		    var bo = object.getTriangleFaces(mat);
            
@@ -340,6 +341,8 @@ function initBuffers() {
 		    vertexIndices[index][material.name] = bo.fac;
 	    });  	
 	});	
+	console.log(buffers);
+	
 
 }
 
@@ -351,10 +354,7 @@ function drawScene() {
 
     mat4.perspective(35, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, pMatrix);
 
-    mat4.identity(mvMatrix);
-    mat4.rotate(mvMatrix, degToRad(-pitch), [1, 0, 0]);
-    mat4.rotate(mvMatrix, degToRad(-yaw), [0, 1, 0]);
-    mat4.translate(mvMatrix, [-xPos, -yPos, -zPos]);
+
 
     //lightning stuff:
     gl.uniform1i(shaderProgram.useLightingUniform, true);
@@ -371,6 +371,7 @@ function drawScene() {
 
     gl.uniform3f( shaderProgram.directionalColorUniform, 0.4, 0.4, 0.4 );
     $.each(buffers, function(index, buf){
+    
         for (var mat in buf){
             
             gl.bindBuffer(gl.ARRAY_BUFFER, buf[mat].vec);
@@ -382,16 +383,20 @@ function drawScene() {
             gl.bindBuffer(gl.ARRAY_BUFFER, buf[mat].tex);
             gl.vertexAttribPointer(shaderProgram.textureCoordAttribute, buf[mat].tex.itemSize, gl.FLOAT, false, 0, 0);
 
-            if(mat == "star"){
+            if(index == "star"){
               mat4.identity(mvMatrix);
-
               mat4.rotate(mvMatrix, degToRad(-pitch), [1, 0, 0]);
               mat4.rotate(mvMatrix, degToRad(-yaw), [0, 1, 0]);
               mat4.translate(mvMatrix, [-xPos, -yPos, -zPos]);
               mat4.translate(mvMatrix, starPosition);
-              //mat4.rotate(mvMatrix, degToRad(rTri), [0, 1, 0]);          
+              mat4.rotate(mvMatrix, degToRad(rTri), [0, 1, 0]);          
             }
-
+            else{
+                mat4.identity(mvMatrix);
+                mat4.rotate(mvMatrix, degToRad(-pitch), [1, 0, 0]);
+                mat4.rotate(mvMatrix, degToRad(-yaw), [0, 1, 0]);
+                mat4.translate(mvMatrix, [-xPos, -yPos, -zPos]);
+            }
 
             setMatrixUniforms();
             gl.activeTexture(gl.TEXTURE0);
@@ -527,11 +532,11 @@ function tick() {
 var objects;
 function webGLStart() {
     
-    objects = [
-        jQuery.extend(faks, object),
-        jQuery.extend(star, object),
-        jQuery.extend(arrow, object)        
-    ];
+    objects = {
+        faks: jQuery.extend(faks, object),
+        star: jQuery.extend(star, object),
+        arrow: jQuery.extend(arrow, object)        
+    };
 
     
 	var canvas = document.getElementById("fri_walker_canvas");

@@ -59,5 +59,4 @@ $(document).ready(function(){
 	  yaw -= deltaX / 3
 	});
 	
-	
 });

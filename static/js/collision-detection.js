@@ -1,3 +1,19 @@
+function addVector(vec1, vec2){
+	return {
+		x: vec1.x+vec2.x,
+		y: vec1.y+vec2.y,
+		z: vec1.z+vec2.z
+	}
+}
+
+function subVector(vec1, vec2){
+	return {
+		x: vec1.x-vec2.x,
+		y: vec1.y-vec2.y,
+		z: vec1.z-vec2.z
+	}
+}
+
 
 /**
  *compute dot product of two same sized vectors 
@@ -112,6 +128,7 @@ function faks_triangleIntersectionTest(face1,face2){
  */
 
 function triangleIntersectionTest(face1,face2){
+	var t11,t12,t21,t22;
 	var d1 = -dotProduct(face1.normal, face1.vertices[0]);
 	var d2 = -dotProduct(face2.normal, face2.vertices[0]);
 	
@@ -151,7 +168,6 @@ function triangleIntersectionTest(face1,face2){
 	var p2v0 = face2.vertices[0][max];
 	var p2v1 = face2.vertices[1][max];
 	var p2v2 = face2.vertices[2][max];
-	
 	if (d1v0 * d1v1 < 0){
 		t11 = p1v0 + (p1v1-p1v0) * (d1v0 / (d1v0 - d1v1));
 		if (d1v0 * d1v2 < 0){

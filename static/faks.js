@@ -1,52 +1,68 @@
 {
     "materials": [
         {
-            "alpha": 1.0, 
             "scale": 1.0, 
             "name": "Material", 
-            "img": "Material.jpg"
+            "img": "Material.jpg", 
+            "ofsetX": 0, 
+            "ofsetY": 0, 
+            "alpha": 1.0
         }, 
         {
-            "alpha": 1.0, 
             "scale": 1.0, 
             "name": "chrome", 
-            "img": "chrome.jpg"
+            "img": "chrome.jpg", 
+            "ofsetX": 0, 
+            "ofsetY": 0, 
+            "alpha": 1.0
         }, 
         {
-            "alpha": 1.0, 
             "scale": 1.0, 
             "name": "ground", 
-            "img": "ground.jpg"
+            "img": "ground.jpg", 
+            "ofsetX": 0, 
+            "ofsetY": 0, 
+            "alpha": 1.0
         }, 
         {
-            "alpha": 1.0, 
             "scale": 1.0, 
             "name": "horizon", 
-            "img": "horizon.jpg"
+            "img": "horizon.jpg", 
+            "ofsetX": 0, 
+            "ofsetY": 0, 
+            "alpha": 1.0
         }, 
         {
-            "alpha": 1.0, 
             "scale": 1.0, 
             "name": "light-wood", 
-            "img": "light-wood.jpg"
+            "img": "light-wood.jpg", 
+            "ofsetX": 0, 
+            "ofsetY": 0, 
+            "alpha": 1.0
         }, 
         {
-            "alpha": 1.0, 
             "scale": 1.0, 
             "name": "wood-floor", 
-            "img": "wood-floor.jpg"
+            "img": "wood-floor.jpg", 
+            "ofsetX": 0, 
+            "ofsetY": 0, 
+            "alpha": 1.0
         }, 
         {
-            "alpha": 1.0, 
             "scale": 1.0, 
             "name": "wood-table", 
-            "img": "wood-table.jpg"
+            "img": "wood-table.jpg", 
+            "ofsetX": 0, 
+            "ofsetY": 0, 
+            "alpha": 1.0
         }, 
         {
-            "alpha": 0.430108, 
             "scale": 1.0, 
             "name": "glass", 
-            "img": "glass.jpg"
+            "img": "glass.jpg", 
+            "ofsetX": 0, 
+            "ofsetY": 0, 
+            "alpha": 0.430108
         }
     ], 
     "faces": [

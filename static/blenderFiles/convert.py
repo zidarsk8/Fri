@@ -18,7 +18,7 @@ def parse_xyz(str):
 materials = []
 for l in m:
     if l.startswith('newmtl'):
-        material = {'name' : l[7:-1], 'alpha': 1, 'scale': 1.0, 'img': l[7:-1] + ".jpg" }
+        material = {'name' : l[7:-1], 'alpha': 1, 'scale': 1.0, 'img': l[7:-1] + ".jpg" , 'ofsetX': 0, 'ofsetY': 0 }
         for l1 in m:
             if l1[0] == 'd':
                 material['alpha'] = float(l1[2:])

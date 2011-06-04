@@ -1,10 +1,12 @@
 star = {
     "materials": [
         {
-            "alpha": 1.0, 
             "scale": 1.0, 
             "name": "star", 
-            "img": "star.jpg"
+            "img": "star.jpg", 
+            "ofsetX": 0, 
+            "ofsetY": 0, 
+            "alpha": 1.0
         }
     ], 
     "faces": [

@@ -42,6 +42,21 @@ var buffers = [];
 
 var faks = {
 	translateVector : [0,0,0],
+	setTextureScale : function(material, scale){
+		for(var i in this.data.materials){
+			if (this.data.materials[i].name == material){
+				this.data.materials[i].scale = scale;
+			}
+		}
+	},
+	setTextureOfset : function(material, x,y){
+		for(var i in this.data.materials){
+			if (this.data.materials[i].name == material){
+				this.data.materials[i].ofsetX = x;
+				this.data.materials[i].ofsetY = y;
+			}
+		}
+	},
 	setTranslate : function(vec){
 		this.translateVector = vec;
 	},
@@ -80,17 +95,19 @@ var faks = {
 						ro.nor[vecCounter*3+1]= this.data.normals[curentFace.normals[i]].y;
 						ro.nor[vecCounter*3+2]= this.data.normals[curentFace.normals[i]].z;
 
-					//add texture coordinate for this vector
-
+						//add texture coordinate for this vector
+						var scale = this.data.materials[material].scale ;
+						var ofsetX = this.data.materials[material].ofsetX ;
+						var ofsetY = this.data.materials[material].ofsetY ;
 						if(Math.abs(ro.nor[vecCounter*3+1]) > 0.5){
-							ro.tex[vecCounter*2] = faks.data.materials[material].scale * this.data.vertices[curentFace.vertices[i]].x;
-							ro.tex[vecCounter*2+1] = faks.data.materials[material].scale * this.data.vertices[curentFace.vertices[i]].z;
+							ro.tex[vecCounter*2] = scale * (ofsetX + this.data.vertices[curentFace.vertices[i]].x);
+							ro.tex[vecCounter*2+1] = scale * (ofsetY + this.data.vertices[curentFace.vertices[i]].z);
 						}else if(Math.abs(ro.nor[vecCounter*3]) > 0.5){
-							ro.tex[vecCounter*2] = faks.data.materials[material].scale * this.data.vertices[curentFace.vertices[i]].z;
-							ro.tex[vecCounter*2+1] = faks.data.materials[material].scale * this.data.vertices[curentFace.vertices[i]].y;
+							ro.tex[vecCounter*2] = scale * (ofsetX + this.data.vertices[curentFace.vertices[i]].z);
+							ro.tex[vecCounter*2+1] = scale * (ofsetY + this.data.vertices[curentFace.vertices[i]].y);
 						}else{
-							ro.tex[vecCounter*2] = faks.data.materials[material].scale * this.data.vertices[curentFace.vertices[i]].x;
-							ro.tex[vecCounter*2+1] = faks.data.materials[material].scale * this.data.vertices[curentFace.vertices[i]].y;
+							ro.tex[vecCounter*2] = scale * (ofsetX + this.data.vertices[curentFace.vertices[i]].x);
+							ro.tex[vecCounter*2+1] = scale * (ofsetY + this.data.vertices[curentFace.vertices[i]].y);
 						}
 					}		
 
@@ -502,22 +519,22 @@ function tick() {
 function webGLStart() {
 
   var canvas = document.getElementById("fri_walker_canvas");
-  for(i in faks.data.materials){
-    if(faks.data.materials[i].name == "Material"){
-        faks.data.materials[i].scale = 2;
-    }
-    else if(faks.data.materials[i].name == "wood-floor"){
-        faks.data.materials[i].scale = 4;
-    }
-    else if(faks.data.materials[i].name == "horizon"){
-        faks.data.materials[i].scale = 0.06;
-    }
-  }
+  faks.setTextureScale("Material", 4);
+  faks.setTextureScale("wood-floor", 2);
+  faks.setTextureScale("horizon", 0.06);
+  faks.setTextureOfset("horizon", 0, -5.33);
+  
   initGL(canvas);
   initShaders();
   initBuffers();
   initTexture();
-
+  
+//  triangleIntersectionTest(
+//  {
+//	  'normal' : {x: 1 ,y:0 ,z:0}
+//  }, 
+//  {});
+  
   gl.clearColor(0.0, 0.0, 0.0, 1.0);
   gl.enable(gl.DEPTH_TEST);
 //  use set interval for debugging cause requestAnimFrame(tick); is causing problems for firebug

@@ -43,17 +43,17 @@ var buffers = [];
 var object = {
 	translateVector : [0,0,0],
 	setTextureScale : function(material, scale){
-		for(var i in this.data.materials){
-			if (this.data.materials[i].name == material){
-				this.data.materials[i].scale = scale;
+		for(var i in this.materials){
+			if (this.materials[i].name == material){
+				this.materials[i].scale = scale;
 			}
 		}
 	},
 	setTextureOfset : function(material, x,y){
-		for(var i in this.data.materials){
-			if (this.data.materials[i].name == material){
-				this.data.materials[i].ofsetX = x;
-				this.data.materials[i].ofsetY = y;
+		for(var i in this.materials){
+			if (this.materials[i].name == material){
+				this.materials[i].ofsetX = x;
+				this.materials[i].ofsetY = y;
 			}
 		}
 	},
@@ -69,9 +69,9 @@ var object = {
 	getTriangleFaces : function(material){
 		var ro = {vec:[], fac:[], tex:[], nor:[]}; //return object
 		var vecCounter = 0;
-		for (var f in this.data.faces){
+		for (var f in this.faces){
 
-			var curentFace = this.data.faces[f];
+			var curentFace = this.faces[f];
 
 			if (curentFace.material != material)
 				continue;
@@ -79,35 +79,35 @@ var object = {
 			if (curentFace.vertices.length == 3){
 				for (var i=0 ; i<3 ; i++){
 					//add distinct vertex vector for each face
-					if (! this.data.vertices[curentFace.vertices[i]]) {
+					if (! this.vertices[curentFace.vertices[i]]) {
 						continue;
 					}
-					ro.vec[vecCounter*3]= this.data.vertices[curentFace.vertices[i]].x;
-					ro.vec[vecCounter*3+1]= this.data.vertices[curentFace.vertices[i]].y;
-					ro.vec[vecCounter*3+2]= this.data.vertices[curentFace.vertices[i]].z;
+					ro.vec[vecCounter*3]= this.vertices[curentFace.vertices[i]].x;
+					ro.vec[vecCounter*3+1]= this.vertices[curentFace.vertices[i]].y;
+					ro.vec[vecCounter*3+2]= this.vertices[curentFace.vertices[i]].z;
 					//add distinct normal
 					if(curentFace.normals.length > 0){
 
-						if (! this.data.normals[curentFace.normals[i]]) {
+						if (! this.normals[curentFace.normals[i]]) {
 							continue;
 						}
-						ro.nor[vecCounter*3]= this.data.normals[curentFace.normals[i]].x;
-						ro.nor[vecCounter*3+1]= this.data.normals[curentFace.normals[i]].y;
-						ro.nor[vecCounter*3+2]= this.data.normals[curentFace.normals[i]].z;
+						ro.nor[vecCounter*3]= this.normals[curentFace.normals[i]].x;
+						ro.nor[vecCounter*3+1]= this.normals[curentFace.normals[i]].y;
+						ro.nor[vecCounter*3+2]= this.normals[curentFace.normals[i]].z;
 
 						//add texture coordinate for this vector
-						var scale = this.data.materials[material].scale ;
-						var ofsetX = this.data.materials[material].ofsetX ;
-						var ofsetY = this.data.materials[material].ofsetY ;
+						var scale = this.materials[material].scale ;
+						var ofsetX = this.materials[material].ofsetX ;
+						var ofsetY = this.materials[material].ofsetY ;
 						if(Math.abs(ro.nor[vecCounter*3+1]) > 0.5){
-							ro.tex[vecCounter*2] = scale * (ofsetX + this.data.vertices[curentFace.vertices[i]].x);
-							ro.tex[vecCounter*2+1] = scale * (ofsetY + this.data.vertices[curentFace.vertices[i]].z);
+							ro.tex[vecCounter*2] = scale * (ofsetX + this.vertices[curentFace.vertices[i]].x);
+							ro.tex[vecCounter*2+1] = scale * (ofsetY + this.vertices[curentFace.vertices[i]].z);
 						}else if(Math.abs(ro.nor[vecCounter*3]) > 0.5){
-							ro.tex[vecCounter*2] = scale * (ofsetX + this.data.vertices[curentFace.vertices[i]].z);
-							ro.tex[vecCounter*2+1] = scale * (ofsetY + this.data.vertices[curentFace.vertices[i]].y);
+							ro.tex[vecCounter*2] = scale * (ofsetX + this.vertices[curentFace.vertices[i]].z);
+							ro.tex[vecCounter*2+1] = scale * (ofsetY + this.vertices[curentFace.vertices[i]].y);
 						}else{
-							ro.tex[vecCounter*2] = scale * (ofsetX + this.data.vertices[curentFace.vertices[i]].x);
-							ro.tex[vecCounter*2+1] = scale * (ofsetY + this.data.vertices[curentFace.vertices[i]].y);
+							ro.tex[vecCounter*2] = scale * (ofsetX + this.vertices[curentFace.vertices[i]].x);
+							ro.tex[vecCounter*2+1] = scale * (ofsetY + this.vertices[curentFace.vertices[i]].y);
 						}
 					}		
 
@@ -119,13 +119,13 @@ var object = {
 		return ro;
 	},
 	addObject : function(object){
-		var ni = this.data.normals.length; //normal index
-		var vi = this.data.vertices.length; //vertex index
-		var fi = this.data.vertices.length; //vertex index
-		var mi = this.data.materials.length; //vertex index
+		var ni = this.normals.length; //normal index
+		var vi = this.vertices.length; //vertex index
+		var fi = this.vertices.length; //vertex index
+		var mi = this.materials.length; //vertex index
 		
 		for (var i in object.materials){
-			this.data.materials[parseInt(i)+mi] = (object.materials[i]);
+			this.materials[parseInt(i)+mi] = (object.materials[i]);
 		}
 
 		
@@ -133,12 +133,12 @@ var object = {
 			object.vertices[i].x += this.translateVector[0];
 			object.vertices[i].y += this.translateVector[1];
 			object.vertices[i].z += this.translateVector[2];
-			this.data.vertices[parseInt(i)+vi] = object.vertices[i];
+			this.vertices[parseInt(i)+vi] = object.vertices[i];
 
 		}
 
 		for (i in object.normals){
-			this.data.normals[parseInt(i)+ni] = object.normals[i];
+			this.normals[parseInt(i)+ni] = object.normals[i];
 		}
 		for (i in object.faces){
 			for (var j in object.faces[i].normals){
@@ -148,7 +148,7 @@ var object = {
 				object.faces[i].vertices[j] += vi;
 			}
 			object.faces[i].material += mi; //commnet this line if you want more objects to appear
-			this.data.faces.push(object.faces[i]);
+			this.faces.push(object.faces[i]);
 		}
 	}
 };
@@ -250,25 +250,29 @@ function handleLoadedTexture(texture) {
 
 function initTexture() {
   var images = new Array();	
-  for (mat in object.data.materials){
-	  
-	  (function(){
-		   
-		  var texty = gl.createTexture();
-		  texty.image = new Image();
-		  texty.image.onload = //handleLoadedTexture(mat_textures[object.data.materials[mat]]);
-		  
-		  function () {
-			  handleLoadedTexture(texty);
-			  //alert("OnLoad: " + texty.image.src);
-		  };
-		  texty.image.src = "static/textures/" + object.data.materials[mat].img;
-		  mat_textures[object.data.materials[mat].name] = texty;
-	  })();
-	  
-	  images.push(floor);
-	  //mat_textures[object.data.materials[mat]] = floor;
-  }
+  $.each(objects, function(index,object){
+      mat_textures[index] = {};
+      for (mat in object.materials){
+	      
+	      (function(){
+		       
+		      var texty = gl.createTexture();
+		      texty.image = new Image();
+		      texty.image.onload = //handleLoadedTexture(mat_textures[object.materials[mat]]);
+		      
+		      function () {
+			      handleLoadedTexture(texty);
+			      //alert("OnLoad: " + texty.image.src);
+		      };
+		      texty.image.src = "static/textures/" + object.materials[mat].img;
+		      mat_textures[index][object.materials[mat].name] = texty;
+	      })();
+	      
+	      images.push(floor);
+	      //mat_textures[object.materials[mat]] = floor;
+      }
+  });
+
 }
 
 
@@ -302,117 +306,121 @@ function degToRad(degrees) {
 }
 
 function initBuffers() {
-	
-	$.each(object.data.materials, function(mat, material){
-		var bo = object.getTriangleFaces(mat);
+    
+	$.each(objects, function(index, object){
+	    buffers[index] = {};
+	    vertexIndices[index] = [];
+	    $.each(object.materials, function(mat, material){
+		    var bo = object.getTriangleFaces(mat);
+           
+		    var buff = {
+			     vec : gl.createBuffer(),
+			     nor : gl.createBuffer(),
+			     tex : gl.createBuffer(),
+			     fac : gl.createBuffer()
+		    };	 
 
-		var buff = {
-			 vec : gl.createBuffer(),
-			 nor : gl.createBuffer(),
-			 tex : gl.createBuffer(),
-			 fac : gl.createBuffer()
-		};	 
+		    var item_size = {'vec':3, 'nor':3, 'tex':2, 'fac':1};
 
-		var item_size = {'vec':3, 'nor':3, 'tex':2, 'fac':1};
-
-		for(var key in buff){
-			buff[key].itemSize = item_size[key];
-			buff[key].numItems = bo[key].length/buff[key].itemSize;
-			if (buff[key].itemSize == 1){
-				gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buff[key]);
-				gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(bo[key]), gl.STATIC_DRAW);		
-			}
-			else{
-				gl.bindBuffer(gl.ARRAY_BUFFER, buff[key]);
-				gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(bo[key]), gl.STATIC_DRAW);
-			}
+		    for(var key in buff){
+			    buff[key].itemSize = item_size[key];
+			    buff[key].numItems = bo[key].length/buff[key].itemSize;
+			    if (buff[key].itemSize == 1){
+				    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buff[key]);
+				    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(bo[key]), gl.STATIC_DRAW);		
+			    }
+			    else{
+				    gl.bindBuffer(gl.ARRAY_BUFFER, buff[key]);
+				    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(bo[key]), gl.STATIC_DRAW);
+			    }
 
 
-		}
-		console.log(buff);
-		buffers[material.name] = buff;
-		vertexIndices[material.name] = bo.fac;
-	});
-	
+		    }
+		    buffers[index][material.name] = buff;
+		    vertexIndices[index][material.name] = bo.fac;
+	    });  	
+	});	
+
 }
 
 
 function drawScene() {
-  gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
-  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-  mat4.perspective(35, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, pMatrix);
+    gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-  mat4.identity(mvMatrix);
+    mat4.perspective(35, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, pMatrix);
 
-  mat4.rotate(mvMatrix, degToRad(-pitch), [1, 0, 0]);
-  mat4.rotate(mvMatrix, degToRad(-yaw), [0, 1, 0]);
-  mat4.translate(mvMatrix, [-xPos, -yPos, -zPos]);
+    mat4.identity(mvMatrix);
+    mat4.rotate(mvMatrix, degToRad(-pitch), [1, 0, 0]);
+    mat4.rotate(mvMatrix, degToRad(-yaw), [0, 1, 0]);
+    mat4.translate(mvMatrix, [-xPos, -yPos, -zPos]);
 
-  //lightning stuff:
-  gl.uniform1i(shaderProgram.useLightingUniform, true);
-  //light color:
-  gl.uniform3f( shaderProgram.ambientColorUniform, 0.5, 0.5, 0.5 );
-  //direction:
-  var lightingDirection = [ 10, 25 ,-3];
+    //lightning stuff:
+    gl.uniform1i(shaderProgram.useLightingUniform, true);
+    //light color:
+    gl.uniform3f( shaderProgram.ambientColorUniform, 0.5, 0.5, 0.5 );
+    //direction:
+    var lightingDirection = [ 10, 25 ,-3];
 
-  var adjustedLD = vec3.create();
-  vec3.normalize(lightingDirection, adjustedLD);
-  vec3.scale(adjustedLD, 1);
-  
-  gl.uniform3fv(shaderProgram.lightingDirectionUniform, adjustedLD);
-  
-  gl.uniform3f( shaderProgram.directionalColorUniform, 0.4, 0.4, 0.4 );
-  
-  for (var mat in buffers){
+    var adjustedLD = vec3.create();
+    vec3.normalize(lightingDirection, adjustedLD);
+    vec3.scale(adjustedLD, 1);
 
-	  gl.bindBuffer(gl.ARRAY_BUFFER, buffers[mat].vec);
-	  gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, buffers[mat].vec.itemSize, gl.FLOAT, false, 0, 0);
-	  
-	  gl.bindBuffer(gl.ARRAY_BUFFER, buffers[mat].nor);
-	  gl.vertexAttribPointer(shaderProgram.vertexNormalAttribute, buffers[mat].nor.itemSize, gl.FLOAT, false, 0, 0);
-	  
-	  gl.bindBuffer(gl.ARRAY_BUFFER, buffers[mat].tex);
-	  gl.vertexAttribPointer(shaderProgram.textureCoordAttribute, buffers[mat].tex.itemSize, gl.FLOAT, false, 0, 0);
+    gl.uniform3fv(shaderProgram.lightingDirectionUniform, adjustedLD);
 
-      if(mat == "star"){
-          mat4.identity(mvMatrix);
+    gl.uniform3f( shaderProgram.directionalColorUniform, 0.4, 0.4, 0.4 );
+    $.each(buffers, function(index, buf){
+        for (var mat in buf){
+            
+            gl.bindBuffer(gl.ARRAY_BUFFER, buf[mat].vec);
+            gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, buf[mat].vec.itemSize, gl.FLOAT, false, 0, 0);
 
-          mat4.rotate(mvMatrix, degToRad(-pitch), [1, 0, 0]);
-          mat4.rotate(mvMatrix, degToRad(-yaw), [0, 1, 0]);
-          mat4.translate(mvMatrix, [-xPos, -yPos, -zPos]);
-          mat4.translate(mvMatrix, starPosition);
-          //mat4.rotate(mvMatrix, degToRad(rTri), [0, 1, 0]);          
-      }
-      
-	  
-	  setMatrixUniforms();
-	  gl.activeTexture(gl.TEXTURE0);
-	  
-	  //Draw the floors:
-	
+            gl.bindBuffer(gl.ARRAY_BUFFER, buf[mat].nor);
+            gl.vertexAttribPointer(shaderProgram.vertexNormalAttribute, buf[mat].nor.itemSize, gl.FLOAT, false, 0, 0);
 
-	  
-	  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffers[mat].fac);
+            gl.bindBuffer(gl.ARRAY_BUFFER, buf[mat].tex);
+            gl.vertexAttribPointer(shaderProgram.textureCoordAttribute, buf[mat].tex.itemSize, gl.FLOAT, false, 0, 0);
 
-	  gl.uniform1i(shaderProgram.samplerUniform, 0);
-	  
-	  if (mat == "glass") {
-		  gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
-		  gl.enable(gl.BLEND);
-		  //gl.disable(gl.DEPTH_TEST);
-		  gl.uniform1f(shaderProgram.alphaUniform, 0.2);
-	  } else {
-		  gl.disable(gl.BLEND);
-		  gl.enable(gl.DEPTH_TEST);
-		  gl.uniform1f(shaderProgram.alphaUniform, 1);
-	  }
-	  
-	  gl.bindTexture(gl.TEXTURE_2D, mat_textures[mat]);
-	  //console.log(mat_textures[mat]);
-	  gl.drawElements(gl.TRIANGLES, buffers[mat].fac.numItems, gl.UNSIGNED_SHORT, vertexIndices[mat]);
+            if(mat == "star"){
+              mat4.identity(mvMatrix);
 
-  }
+              mat4.rotate(mvMatrix, degToRad(-pitch), [1, 0, 0]);
+              mat4.rotate(mvMatrix, degToRad(-yaw), [0, 1, 0]);
+              mat4.translate(mvMatrix, [-xPos, -yPos, -zPos]);
+              mat4.translate(mvMatrix, starPosition);
+              //mat4.rotate(mvMatrix, degToRad(rTri), [0, 1, 0]);          
+            }
+
+
+            setMatrixUniforms();
+            gl.activeTexture(gl.TEXTURE0);
+
+            //Draw the floors:
+
+
+
+            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buf[mat].fac);
+
+            gl.uniform1i(shaderProgram.samplerUniform, 0);
+
+            if (mat == "glass") {
+              gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
+              gl.enable(gl.BLEND);
+              //gl.disable(gl.DEPTH_TEST);
+              gl.uniform1f(shaderProgram.alphaUniform, 0.2);
+            } else {
+              gl.disable(gl.BLEND);
+              gl.enable(gl.DEPTH_TEST);
+              gl.uniform1f(shaderProgram.alphaUniform, 1);
+            }
+
+            gl.bindTexture(gl.TEXTURE_2D, mat_textures[index][mat]);
+            //console.log(mat_textures[mat]);
+            gl.drawElements(gl.TRIANGLES, buf[mat].fac.numItems, gl.UNSIGNED_SHORT, vertexIndices[mat]);
+
+        }
+    });
 
 }
 
@@ -508,7 +516,7 @@ function tick() {
   // comment requestAnimFrame(tick); when debugging and use setInterval instead
   if (!debug) requestAnimFrame(tick);
   
-  //console.log("fuuu : "+intersection(object.data.faces[0],object.data.faces[1]));
+  //console.log("fuuu : "+intersection(object.faces[0],object.faces[1]));
   
   handleKeys();
   animate();
@@ -516,24 +524,21 @@ function tick() {
   fps++;
 }
 
-
+var objects;
 function webGLStart() {
+    
+    objects = [
+        jQuery.extend(faks, object),
+        jQuery.extend(star, object),
+        jQuery.extend(arrow, object)        
+    ];
 
-    object.addObject(faks);
-    object.setTranslate(starPosition);
-
-    var newStar = jQuery.extend(true, {}, star);
-    object.addObject(newStar);
-
-    var newArrow = jQuery.extend(true, {}, arrow);
-    object.setTranslate(starPosition);
-    object.addObject(arrow);
-
+    
 	var canvas = document.getElementById("fri_walker_canvas");
-	object.setTextureScale("Material", 4);
-	object.setTextureScale("wood-floor", 2);
-	object.setTextureScale("horizon", 0.06);
-	object.setTextureOfset("horizon", 0, -5.33);
+	faks.setTextureScale("Material", 4);
+	faks.setTextureScale("wood-floor", 2);
+	faks.setTextureScale("horizon", 0.06);
+	faks.setTextureOfset("horizon", 0, -5.33);
 
 	initGL(canvas);
 	initShaders();

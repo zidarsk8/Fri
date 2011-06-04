@@ -364,16 +364,9 @@ function drawScene() {
           mat4.rotate(mvMatrix, degToRad(-yaw), [0, 1, 0]);
           mat4.translate(mvMatrix, [-xPos, -yPos, -zPos]);
           mat4.translate(mvMatrix, starPosition);
-          mat4.rotate(mvMatrix, degToRad(rTri), [0, 1, 0]);
-          
+          mat4.rotate(mvMatrix, degToRad(rTri), [0, 1, 0]);          
       }
-      else{
-          mat4.identity(mvMatrix);
-
-          mat4.rotate(mvMatrix, degToRad(-pitch), [1, 0, 0]);
-          mat4.rotate(mvMatrix, degToRad(-yaw), [0, 1, 0]);
-          mat4.translate(mvMatrix, [-xPos, -yPos, -zPos]);
-      }
+      
 	  
 	  setMatrixUniforms();
 	  gl.activeTexture(gl.TEXTURE0);

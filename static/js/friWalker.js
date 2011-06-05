@@ -700,7 +700,11 @@ function webGLStart() {
     objects = {
         faks: jQuery.extend(faks, object),
         arrow: jQuery.extend(true,arrow, object),       
-        star: jQuery.extend(true,star, object)
+        star: jQuery.extend(true,star, object),
+        vrata_desno1: jQuery.extend(vrata_desno1, object),
+        vrata_desno2: jQuery.extend(vrata_desno2, object),
+        vrata_levo1: jQuery.extend(vrata_levo1, object),
+        vrata_levo2: jQuery.extend(vrata_levo2, object)
     };
     splitBoxes();
     objects.arrow.translateVector = objects.arrow.calculateCenter();

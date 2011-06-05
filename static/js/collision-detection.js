@@ -193,8 +193,9 @@ function triangleIntersectionTest(face1,face2){
 	}
 	
 	if (Math.min(t21,t22)>Math.max(t11,t12) || Math.max(t21,t22)<Math.min(t11,t12)){
+		//console.log("miss");
 		return 0;
 	}
-
+	//console.log("collision");
 	return 1;
 }

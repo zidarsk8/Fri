@@ -24,6 +24,7 @@ $(document).ready(function(){
     });
     
 	$(document).keydown(function(event) {
+//		console.log(event.keyCode);
 		if(prevent_default){
 			currentlyPressedKeys[event.keyCode] = true;
 		}

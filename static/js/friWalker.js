@@ -39,6 +39,7 @@ var flyMode = true;
 var vertexIndices = [];
 var buffers = [];
 var faksBoxes;
+var debigCapture = false;
 
 
 var faks = {
@@ -436,10 +437,12 @@ function handleKeys() {
   } else if (currentlyPressedKeys[40] || currentlyPressedKeys[83]) { // Down cursor key
     speed = -movingSpeed;
   }
-  
-  if (currentlyPressedKeys[17]) { // Space
+  if (currentlyPressedKeys[70] ) { // F
+    debigCapture = true;
+  }  
+  if (currentlyPressedKeys[16]) { // Shift
     fly = movingSpeed;
-  } else if (currentlyPressedKeys[32]) { // Control
+  } else if (currentlyPressedKeys[32]) { // Space
     fly = -movingSpeed;
   }
 }
@@ -469,15 +472,14 @@ var rTri = 0;
 incStarAnim = true;
 function animate() {
 	var timeNow = new Date().getTime();
-	var newx = xPos;
+	var newx = 0;
 	var newy = yPos;
-	var newz = zPos;
-
+	var newz = 0;
 	if (lastTime != 0) {
 		var elapsed = timeNow - lastTime;
 		if (speed != 0 && elapsed != 0) {
-			newx -= Math.sin(degToRad(yaw)) * speed * elapsed;
-			newz -= Math.cos(degToRad(yaw)) * speed * elapsed;
+			newx = Math.sin(degToRad(yaw)) * speed * elapsed;
+			newz = Math.cos(degToRad(yaw)) * speed * elapsed;
 			if (flyMode && mouseDown){
 				newy += Math.sin(degToRad(pitch)) * speed * elapsed;
 			}
@@ -498,33 +500,49 @@ function animate() {
 	}
 	
 	lastTime = timeNow;
-	
-	if (!testCollision(newx,newx,newz)){
-		xPos = newx;
+	var coll = testCollision(xPos-newx,newy,zPos-newz);
+	if (!coll.collision){
+		xPos -= newx;
 		yPos = newy;
-		zPos = newz;
+		zPos -= newz;
+	}else{
+		console.log(coll.normal);
+		xPos -= newx*(1-Math.abs(coll.normal.x));
+		yPos = newy;
+		zPos -= newz*(1-Math.abs(coll.normal.z));
 	}
 }
 
 function testCollision(newx,newy,newz){
+	var coll = {collision:false, normal:{x:0,y:0,z:0}};
 	var face1 = {
-			'normal' : {x: 0 ,y:0 ,z:1},
+			'normal' : {x: 0 ,y:1 ,z:0},
 			'vertices' : [
-				{x: -0.2 + newx , y:-0.2 + newy ,z:0.0 + newz},
-				{x: 0.0 + newx, y:0.2 + newy ,z:0.0 + newz},
-				{x: 0.2 + newx, y:-0.2 + newy ,z:0.0 + newz}
+				{x: -0.2 + newx , y:0.0 + newy ,z:-0.2 + newz},
+				{x: -0.2 + newx, y:0.0 + newy ,z:0.2 + newz},
+				{x: 0.2 + newx, y:0.0 + newy ,z:0.2+ newz}
 			]
 		};
 	var face2 = {
-			'normal' : {x: 1 ,y:0 ,z:0},
+			'normal' : {x:0 ,y:1 ,z:0},
 			'vertices' : [
-				{x: 0.0 + newx, y:-0.2 + newy ,z:-0.2 + newz},
-				{x: 0.0 + newx, y:0.2 + newy ,z:0.0 + newz},
-				{x: 0.0 + newx, y:-0.2 + newy ,z:0.2 + newz}
+				{x: -0.2 + newx , y:0.0 + newy ,z:-0.2 + newz},
+				{x: 0.2 + newx, y:0.0 + newy ,z:-0.2 + newz},
+				{x: 0.2 + newx, y:0.0 + newy ,z:0.2+ newz}
 			]
 		};
-	try {
-	for (var i in faksBoxes[Math.floor(newx)][Math.floor(newy)][Math.floor(newz)]){
+	if (debigCapture){
+		console.log();
+		console.log();
+		console.log();
+		console.log();
+		console.log(newx,newy,newz);
+		console.log(Math.floor(newx),Math.floor(newy),Math.floor(newz));
+		console.log(faksBoxes[Math.floor(newx)][Math.floor(newy)][Math.floor(newz)]);
+	}
+	
+	for (var i in faks.data.faces){
+//	for (var i in faksBoxes[Math.floor(newx)][Math.floor(newy)][Math.floor(newz)]){
 		if (faks.data.faces[i].vertices.length==3 &&
 			faks.data.vertices[faks.data.faces[i].vertices[0]] != faks.data.vertices[faks.data.faces[i].vertices[1]] &&
 			faks.data.vertices[faks.data.faces[i].vertices[0]] != faks.data.vertices[faks.data.faces[i].vertices[2]]
@@ -537,36 +555,38 @@ function testCollision(newx,newy,newz){
 						faks.data.vertices[faks.data.faces[i].vertices[2]]
 					]
 				};
+			if (debigCapture){
+				console.log("curentFace");
+				console.log(curFace);
+				console.log("Face");
+				console.log(face1);
+			}
 			if (curFace.normal.x+curFace.normal.y+curFace.normal.z >0.0 && 
 				(triangleIntersectionTest(face1, curFace ) || triangleIntersectionTest(face2, curFace ))){
-
-				console.log("collision");
-				console.log(face1);
-				console.log({
-					'normal' : faks.data.normals[faks.data.faces[i].normals[0]],
-					'vertices' : [
-						faks.data.vertices[faks.data.faces[i].vertices[0]],
-						faks.data.vertices[faks.data.faces[i].vertices[1]],
-						faks.data.vertices[faks.data.faces[i].vertices[2]]
-					]
-				});
-				console.log(i,curFace);
-				console.log(face1);
-				console.log(face2);
-				
-				return true;
+//
+//				console.log("collision");
+//				console.log(face1);
+//				console.log({
+//					'normal' : faks.data.normals[faks.data.faces[i].normals[0]],
+//					'vertices' : [
+//						faks.data.vertices[faks.data.faces[i].vertices[0]],
+//						faks.data.vertices[faks.data.faces[i].vertices[1]],
+//						faks.data.vertices[faks.data.faces[i].vertices[2]]
+//					]
+//				});
+//				console.log(i,curFace);
+//				console.log(face1);
+//				console.log(face2);
+//				
+				coll.collision = true;
+				coll.normal.x = Math.min (1, coll.normal.x+curFace.normal.x);
+				coll.normal.y = Math.min (1, coll.normal.y+curFace.normal.y);
+				coll.normal.z = Math.min (1, coll.normal.z+curFace.normal.z);
 			}
 		}
 	}
-	}catch (e){
-		console.log(Math.floor(newx));
-		console.log(Math.floor(newy));
-		console.log(Math.floor(newz));
-		console.log(faksBoxes[Math.floor(newx)]);
-		console.log(faksBoxes[Math.floor(newx)][Math.floor(newy)]);
-		console.log(faksBoxes[Math.floor(newx)][Math.floor(newy)][Math.floor(newz)]);
-	}
-	return false;
+	debigCapture = false;
+	return coll;
 }
 
 function tick() {

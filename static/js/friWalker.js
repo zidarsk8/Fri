@@ -29,7 +29,7 @@ var fps = 0;
 var fly;
 var starPosition = [0,0,0];
 var starAnimation = 2;
-var debug = true;
+var debug = false;
 var debugtimeout = 50;
 var mat_textures = {};
 var floor;
@@ -38,6 +38,8 @@ var glassy;
 var flyMode = true;
 var vertexIndices = {};
 var buffers = {};
+var faksBoxes;
+var debigCapture = false;
 
 
 var object = {
@@ -363,7 +365,7 @@ function initBuffers() {
 		    vertexIndices[index][material.name] = bo.fac;
 	    });  	
 	});	
-	console.log(buffers);
+	//console.log(buffers);
 	
 
 }
@@ -465,10 +467,12 @@ function handleKeys() {
   } else if (currentlyPressedKeys[40] || currentlyPressedKeys[83]) { // Down cursor key
     speed = -movingSpeed;
   }
-  
-  if (currentlyPressedKeys[17]) { // Space
+  if (currentlyPressedKeys[70] ) { // F
+    debigCapture = true;
+  }  
+  if (currentlyPressedKeys[16]) { // Shift
     fly = movingSpeed;
-  } else if (currentlyPressedKeys[32]) { // Control
+  } else if (currentlyPressedKeys[32]) { // Space
     fly = -movingSpeed;
   }
 }
@@ -497,41 +501,128 @@ function handleMouseMove(event) {
 var rTri = 0;
 incStarAnim = true;
 function animate() {
-  var timeNow = new Date().getTime();
-  var oldx = xPos;
-  var oldy = yPos;
-  var oldz = zPos;
-  
-  if (lastTime != 0) {
-      var elapsed = timeNow - lastTime;
-      if (speed != 0 && elapsed != 0) {
-          xPos -= Math.sin(degToRad(yaw)) * speed * elapsed;
-          zPos -= Math.cos(degToRad(yaw)) * speed * elapsed;
-		  if (flyMode && mouseDown){
-			  yPos += Math.sin(degToRad(pitch)) * speed * elapsed;
-		  }
-//          joggingAngle += elapsed * 0.6; // 0.6 "fiddle factor" - makes it feel more realistic :-)
-//          yPos = Math.sin(degToRad(joggingAngle)) / 20 + 0.4
-      }
-      if (fly != 0 && elapsed != 0) {
-          yPos -= fly * elapsed;
-      }
-      yaw += yawRate * elapsed;
-      pitch += pitchRate * elapsed;
-      rTri += (90 * elapsed) / 1000.0;
-       
-      if(starAnimation > 0.6) incStarAnim = false;
-      if(starAnimation < 0) incStarAnim = true;
-      if(incStarAnim) starAnimation = Math.sin(starAnimation + elapsed/1000);
-      else starAnimation =  Math.sin(starAnimation - elapsed/1000);
-      
-  }
-  lastTime = timeNow;
-  
-  
-  
+	var timeNow = new Date().getTime();
+	var newx = 0;
+	var newy = yPos;
+	var newz = 0;
+	if (lastTime != 0) {
+		var elapsed = timeNow - lastTime;
+		if (speed != 0 && elapsed != 0) {
+			newx = Math.sin(degToRad(yaw)) * speed * elapsed;
+			newz = Math.cos(degToRad(yaw)) * speed * elapsed;
+			if (flyMode && mouseDown){
+				newy += Math.sin(degToRad(pitch)) * speed * elapsed;
+			}
+			// joggingAngle += elapsed * 0.6; // 0.6 "fiddle factor" - makes it feel more realistic :-)
+			// yPos = Math.sin(degToRad(joggingAngle)) / 20 + 0.4
+		}
+		if (fly != 0 && elapsed != 0) {
+			newy -= fly * elapsed;
+		}
+		yaw += yawRate * elapsed;
+		pitch += pitchRate * elapsed;
+		rTri += (90 * elapsed) / 1000.0;
+
+		if(starAnimation > 0.6) incStarAnim = false;
+		if(starAnimation < 0) incStarAnim = true;
+		if(incStarAnim) starAnimation = Math.sin(starAnimation + elapsed/1000);
+		else starAnimation =  Math.sin(starAnimation - elapsed/1000);
+	}
+	
+	lastTime = timeNow;
+	var coll = testCollision(xPos-newx,newy,zPos-newz);
+	if (!coll.collision){
+		xPos -= newx;
+		yPos = newy;
+		zPos -= newz;
+	}else{
+		//console.log(coll.normal);
+//		xPos -= newx*(1-Math.abs(coll.normal.x));
+//		yPos = newy;
+//		zPos -= newz*(1-Math.abs(coll.normal.z));
+	}
 }
 
+function testCollision(newx,newy,newz){
+	var coll = {collision:false, normal:{x:0,y:0,z:0}};
+	var face1 = {
+			'normal' : {x: 0 ,y:1 ,z:0},
+			'vertices' : [
+				{x: -0.1 + newx , y:0.0 + newy ,z:-0.1 + newz},
+				{x: -0.1 + newx, y:0.0 + newy ,z:0.1 + newz},
+				{x: 0.1 + newx, y:0.0 + newy ,z:0.1+ newz}
+			]
+		};
+	var face2 = {
+			'normal' : {x:0 ,y:1 ,z:0},
+			'vertices' : [
+				{x: -0.1 + newx , y:0.0 + newy ,z:-0.1 + newz},
+				{x: 0.1 + newx, y:0.0 + newy ,z:-0.1 + newz},
+				{x: 0.1 + newx, y:0.0 + newy ,z:0.1+ newz}
+			]
+		};
+	var face3 = {
+			'normal' : {x:1 ,y:0 ,z:0},
+			'vertices' : [
+				{x: 0.0 + newx , y:-0.15 + newy ,z:-0.15 + newz},
+				{x: 0.0 + newx, y:0.15 + newy ,z:-0.15 + newz},
+				{x: 0.0 + newx, y:0.15 + newy ,z:0.15+ newz}
+			]
+		};
+		
+	if (debigCapture){
+		console.log();
+		console.log();
+		console.log();
+		console.log();
+		console.log(newx,newy,newz);
+		console.log(Math.floor(newx),Math.floor(newy),Math.floor(newz));
+		console.log("boxes ",faksBoxes[Math.floor(newx)][Math.floor(newy)][Math.floor(newz)]);
+	}
+	
+//	for (var i in objects.faks.faces){
+	var fx = Math.floor(newx);
+	var fy = Math.floor(newy);
+	var fz = Math.floor(newz);
+	for (var f in faksBoxes[fx][fy][fz]){
+		var i = faksBoxes[fx][fy][fz][f];
+		if (objects.faks.faces[i].vertices.length==3 &&
+			objects.faks.vertices[objects.faks.faces[i].vertices[0]] != objects.faks.vertices[objects.faks.faces[i].vertices[1]] &&
+			objects.faks.vertices[objects.faks.faces[i].vertices[0]] != objects.faks.vertices[objects.faks.faces[i].vertices[2]]
+			){
+		    var curFace = {
+					'normal' : objects.faks.normals[objects.faks.faces[i].normals[0]],
+					'vertices' : [
+						objects.faks.vertices[objects.faks.faces[i].vertices[0]],
+						objects.faks.vertices[objects.faks.faces[i].vertices[1]],
+						objects.faks.vertices[objects.faks.faces[i].vertices[2]]
+					]
+				};
+			if (debigCapture){
+				if (i>10 ){
+					console.log("wtf");
+				}
+				console.log("curentFace",i);
+				console.log(curFace);
+				console.log("compare face ",face1);
+			}
+			if (Math.abs(curFace.normal.x+curFace.normal.y+curFace.normal.z) >0.0 && 
+				(triangleIntersectionTest(face1, curFace ) || 
+				triangleIntersectionTest(face2, curFace ) ||
+				triangleIntersectionTest(face3, curFace ))){
+				console.log(i);
+				coll.collision = true;
+				coll.normal.x = Math.min (1, coll.normal.x+curFace.normal.x);
+				coll.normal.y = Math.min (1, coll.normal.y+curFace.normal.y);
+				coll.normal.z = Math.min (1, coll.normal.z+curFace.normal.z);
+			}else{
+				if (debigCapture) console.log("noIntersection");
+			}
+		}
+	}
+	debigCapture = false;
+	return coll;
+}
 
 function tick() {
   // comment requestAnimFrame(tick); when debugging and use setInterval instead
@@ -543,9 +634,67 @@ function tick() {
   animate();
   drawScene();
   fps++;
+  //console.log("fuuu : "+intersection(objects.faks.faces[0],objects.faks.faces[1]));
+  
 }
 
-var objects;
+function splitBoxes(){
+	var minx = 0,maxx = 0,miny = 0,maxy = 0,minz = 0,maxz = 0;
+	for (var i in objects.faks.vertices){
+		if (objects.faks.vertices[i].x < minx) minx = Math.floor(objects.faks.vertices[i].x); 
+		if (objects.faks.vertices[i].x > maxx) maxx = Math.ceil(objects.faks.vertices[i].x); 
+		if (objects.faks.vertices[i].y < miny) miny = Math.floor(objects.faks.vertices[i].y); 
+		if (objects.faks.vertices[i].y > maxy) maxy = Math.ceil(objects.faks.vertices[i].y); 
+		if (objects.faks.vertices[i].z < minz) minz = Math.floor(objects.faks.vertices[i].z); 
+		if (objects.faks.vertices[i].z > maxz) maxz = Math.ceil(objects.faks.vertices[i].z); 
+	}
+	console.log(minx,maxx,miny,maxy,minz,maxz);
+	faksBoxes = [];
+	var counter = 0;
+	for (var x = minx-1 ; x<= maxx ; x++){
+		faksBoxes [x] = [];
+		for (var y = miny-1 ; y<= maxy ; y++){
+			faksBoxes [x][y] = [];
+			for (var z = minz-1 ; z<= maxz ; z++){
+				faksBoxes[x][y][z]=[];
+				counter++;
+			}
+		}
+	}
+	console.log("counter ",counter);
+	for(i in objects.faks.faces){
+		if (objects.faks.faces[i].type == 3){
+			minx = Math.floor(Math.min(objects.faks.vertices[objects.faks.faces[i].vertices[0]].x,
+							objects.faks.vertices[objects.faks.faces[i].vertices[1]].x,
+							objects.faks.vertices[objects.faks.faces[i].vertices[2]].x))-1;
+			maxx = Math.ceil(Math.max(objects.faks.vertices[objects.faks.faces[i].vertices[0]].x,
+							objects.faks.vertices[objects.faks.faces[i].vertices[1]].x,
+							objects.faks.vertices[objects.faks.faces[i].vertices[2]].x));
+			miny = Math.floor(Math.min(objects.faks.vertices[objects.faks.faces[i].vertices[0]].y,
+							objects.faks.vertices[objects.faks.faces[i].vertices[1]].y,
+							objects.faks.vertices[objects.faks.faces[i].vertices[2]].y))-1;
+			maxy = Math.ceil(Math.max(objects.faks.vertices[objects.faks.faces[i].vertices[0]].y,
+							objects.faks.vertices[objects.faks.faces[i].vertices[1]].y,
+							objects.faks.vertices[objects.faks.faces[i].vertices[2]].y));
+			minz = Math.floor(Math.min(objects.faks.vertices[objects.faks.faces[i].vertices[0]].z,
+							objects.faks.vertices[objects.faks.faces[i].vertices[1]].z,
+							objects.faks.vertices[objects.faks.faces[i].vertices[2]].z))-1;
+			maxz = Math.ceil(Math.max(objects.faks.vertices[objects.faks.faces[i].vertices[0]].z,
+							objects.faks.vertices[objects.faks.faces[i].vertices[1]].z,
+							objects.faks.vertices[objects.faks.faces[i].vertices[2]].z));
+			
+			for (x = minx ; x<= maxx ; x++){
+				for (y = miny ; y<= maxy ; y++){
+					for (z = minz ; z<= maxz ; z++){
+						faksBoxes[x][y][z].push(i);
+					}
+				}
+			}
+		}
+	}
+	console.log(faksBoxes);
+}
+
 function webGLStart() {
     
     objects = {
@@ -553,7 +702,7 @@ function webGLStart() {
         arrow: jQuery.extend(true,arrow, object),       
         star: jQuery.extend(true,star, object)
     };
-    
+    splitBoxes();
     objects.arrow.translateVector = objects.arrow.calculateCenter();
     //console.log(objects.star.translateVector);
 	var canvas = document.getElementById("fri_walker_canvas");
@@ -596,24 +745,6 @@ function webGLStart() {
 	initBuffers();
 	initTexture();
 
-//	var cross = triangleIntersectionTest(
-//		{
-//			'normal' : {x: 1 ,y:0 ,z:0},
-//			'vertices' : [
-//				{x: 1 ,y:1 ,z:0},
-//				{x: 1 ,y:0 ,z:1},
-//				{x: 1 ,y:1 ,z:1}
-//			]
-//		},
-//		{
-//			'normal' : {x: 1 ,y:0 ,z:0},
-//			'vertices' : [
-//				{x: 0 ,y:1 ,z:0},
-//				{x: 0 ,y:0 ,z:1},
-//				{x: 0 ,y:1 ,z:1}
-//			]
-//		}
-//	);
 	
 	//console.log("sekata",cross);
 	

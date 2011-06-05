@@ -384,7 +384,7 @@ function drawScene() {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     mat4.perspective(35, gl.viewportWidth / gl.viewportHeight, 0.1, 1000.0, pMatrix);
-
+    
 
 
     //lightning stuff:
@@ -475,8 +475,9 @@ function handleKeys() {
   } else if (currentlyPressedKeys[40] || currentlyPressedKeys[83]) { // Down cursor key
     speed = -movingSpeed;
   }
-  if (currentlyPressedKeys[70] ) { // F
+  if (currentlyPressedKeys[73] ) { // F
     debigCapture = true;
+    $('#lesson05-canvas').toggleClass('fullscreen');
   }  
   if (currentlyPressedKeys[71] ) { // G
     if(timeOutD){
@@ -787,8 +788,10 @@ function webGLStart() {
 	}
 	
 	objects.arrow.drawScene = function(){	
+        
+        if(!document.getElementById("tag-arrow").checked) return;
         mat4.identity(mvMatrix);
-
+        
         
 //mat4.translate(mvMatrix, [-1, -5.8, -8]);
         mat4.translate(mvMatrix, [0,0.2,-1.6]);
@@ -799,7 +802,7 @@ function webGLStart() {
                             [0,0,1]
                         )
                       );
-                        
+                 
         mat4.rotate(mvMatrix, my_yaw-degToRad(yaw)-3.14, [0, 1, 0]);   
   
 	}
@@ -858,7 +861,7 @@ function webGLStart() {
 	if (debug) setInterval("tick()", debugtimeout);
 	tick();
 	setInterval(function(){
-	document.getElementById("fps").innerHTML="<b>FPS:</b> "+fps+" <b>x:</b> "+xPos+" <b>y:</b> "+yPos+" <b>z:</b> "+zPos+" <b>pitch:</b> "+pitch+" <b>yaw:</b> "+yaw;
+	if(debug)document.getElementById("fps").innerHTML="<b>FPS:</b> "+fps+" <b>x:</b> "+xPos+" <b>y:</b> "+yPos+" <b>z:</b> "+zPos+" <b>pitch:</b> "+pitch+" <b>yaw:</b> "+yaw;
 	fps = 0;
 	}, 1000);
 }

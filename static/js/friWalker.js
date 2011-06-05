@@ -730,7 +730,28 @@ function splitBoxes(){
 	}
 	console.log(faksBoxes);
 }
+function dotProduct3d(vec1,vec2){
+	  return vec1[0]*vec2[0]+vec1[1]*vec2[1]+vec1[2]*vec2[2];
+}
 
+function normalizedDotProduct(v1,v2){
+	return dotProduct(normalize(v1),normalize(v2));
+}
+
+function normalize(vec){
+	var square = 0;
+	var vec2 = {};
+	for (var i in vec){
+		square += vec[i]*vec[i];
+		vec2[i] = vec[i];
+	}
+	var size = Math.sqrt(square);
+	//check skope of vars in javascript. netbeans says this is redeclaration of i - for (var i...
+	for (i in vec2){
+	  vec2[i] = vec2[i]/size;
+	}
+	return vec2;
+}
 function webGLStart() {
     
     objects = {
@@ -769,11 +790,17 @@ function webGLStart() {
         mat4.identity(mvMatrix);
 
         
-        mat4.rotate(mvMatrix, degToRad(-pitch), [1, 0, 0]);
-        mat4.rotate(mvMatrix, degToRad(-yaw), [0, 1, 0]);
-        mat4.translate(mvMatrix, [-xPos, -yPos, -zPos]);
-        mat4.translate(mvMatrix, starPosition);
-        mat4.rotate(mvMatrix, degToRad(rTri), [1, 1, 1]);   
+//mat4.translate(mvMatrix, [-1, -5.8, -8]);
+        mat4.translate(mvMatrix, [0,0.2,-1.6]);
+        mat4.scale(mvMatrix, [0.5,0.5,0.5]);
+         var my_yaw = Math.acos(
+                        dotProduct3d(
+                            normalize([xPos-starPosition[0],1,zPos-starPosition[2]]),
+                            [0,0,1]
+                        )
+                      );
+                        
+        mat4.rotate(mvMatrix, my_yaw-3.14, [0, 1, 0]);   
   
 	}
 	objects.vrata_desno1.drawScene = function(){

@@ -128,6 +128,7 @@ function faks_triangleIntersectionTest(face1,face2){
  */
 
 function triangleIntersectionTest(face1,face2){
+	if (debigCapture) console.log("collision detecton started");
 	var t11,t12,t21,t22;
 	var d1 = -dotProduct(face1.normal, face1.vertices[0]);
 	var d2 = -dotProduct(face2.normal, face2.vertices[0]);
@@ -138,10 +139,12 @@ function triangleIntersectionTest(face1,face2){
 	var d1v2 = dotProduct(face2.normal, face1.vertices[2]) + d2;
 	
 	if ((d1v0 > 0 && d1v1 > 0 && d1v2 >0) || (d1v0 < 0 && d1v1 < 0 && d1v2 < 0)){
+		if (debigCapture) console.log("plane Miss 1");
 		return 0; // no collisoin possible, the triangle is above or below the plane
 	}
 	
 	if (d1v0 == 0 && d1v1 == 0 && d1v2 ==0){
+		if (debigCapture) console.log("plane paralel");
 		return 1;// triangles are laying on the same plane
 	}
 	
@@ -151,6 +154,7 @@ function triangleIntersectionTest(face1,face2){
 	var d2v2 = dotProduct(face1.normal, face2.vertices[2]) + d1;
 
 	if ((d2v0 > 0 && d2v1 > 0 && d2v2 >0) || (d2v0 < 0 && d2v1 < 0 && d2v2 < 0)){
+		if (debigCapture) console.log("plane Miss 2");
 		return 0; // no collisoin possible, the triangle is above or below the plane
 	}
 	
@@ -193,9 +197,9 @@ function triangleIntersectionTest(face1,face2){
 	}
 	
 	if (Math.min(t21,t22)>Math.max(t11,t12) || Math.max(t21,t22)<Math.min(t11,t12)){
-		//console.log("miss");
+		if (debigCapture) console.log("miss");
 		return 0;
 	}
-	//console.log("collision");
+	if (debigCapture) console.log("collision");
 	return 1;
 }

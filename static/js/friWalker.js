@@ -556,32 +556,22 @@ function testCollision(newx,newy,newz){
 					]
 				};
 			if (debigCapture){
-				console.log("curentFace");
+				if (i>10 ){
+					console.log("wtf");
+				}
+				console.log("curentFace",i);
 				console.log(curFace);
-				console.log("Face");
-				console.log(face1);
+				console.log("compare face ",face1);
 			}
-			if (curFace.normal.x+curFace.normal.y+curFace.normal.z >0.0 && 
+			if (Math.abs(curFace.normal.x+curFace.normal.y+curFace.normal.z) >0.0 && 
 				(triangleIntersectionTest(face1, curFace ) || triangleIntersectionTest(face2, curFace ))){
-//
-//				console.log("collision");
-//				console.log(face1);
-//				console.log({
-//					'normal' : faks.data.normals[faks.data.faces[i].normals[0]],
-//					'vertices' : [
-//						faks.data.vertices[faks.data.faces[i].vertices[0]],
-//						faks.data.vertices[faks.data.faces[i].vertices[1]],
-//						faks.data.vertices[faks.data.faces[i].vertices[2]]
-//					]
-//				});
-//				console.log(i,curFace);
-//				console.log(face1);
-//				console.log(face2);
-//				
+				
 				coll.collision = true;
 				coll.normal.x = Math.min (1, coll.normal.x+curFace.normal.x);
 				coll.normal.y = Math.min (1, coll.normal.y+curFace.normal.y);
 				coll.normal.z = Math.min (1, coll.normal.z+curFace.normal.z);
+			}else{
+				if (debigCapture) console.log("noIntersection");
 			}
 		}
 	}
@@ -614,11 +604,11 @@ function splitBoxes(){
 	console.log(minx,maxx,miny,maxy,minz,maxz);
 	faksBoxes = [];
 	var counter = 0;
-	for (var x = minx ; x< maxx ; x++){
+	for (var x = minx-1 ; x<= maxx ; x++){
 		faksBoxes [x] = [];
-		for (var y = miny ; y< maxy ; y++){
+		for (var y = miny-1 ; y<= maxy ; y++){
 			faksBoxes [x][y] = [];
-			for (var z = minz ; z< maxz ; z++){
+			for (var z = minz-1 ; z<= maxz ; z++){
 				faksBoxes[x][y][z]=[];
 				counter++;
 			}
@@ -629,19 +619,19 @@ function splitBoxes(){
 		if (faks.data.faces[i].type == 3){
 			minx = Math.floor(Math.min(faks.data.vertices[faks.data.faces[i].vertices[0]].x,
 							faks.data.vertices[faks.data.faces[i].vertices[1]].x,
-							faks.data.vertices[faks.data.faces[i].vertices[2]].x));
+							faks.data.vertices[faks.data.faces[i].vertices[2]].x))-1;
 			maxx = Math.ceil(Math.max(faks.data.vertices[faks.data.faces[i].vertices[0]].x,
 							faks.data.vertices[faks.data.faces[i].vertices[1]].x,
 							faks.data.vertices[faks.data.faces[i].vertices[2]].x));
 			miny = Math.floor(Math.min(faks.data.vertices[faks.data.faces[i].vertices[0]].y,
 							faks.data.vertices[faks.data.faces[i].vertices[1]].y,
-							faks.data.vertices[faks.data.faces[i].vertices[2]].y));
+							faks.data.vertices[faks.data.faces[i].vertices[2]].y))-1;
 			maxy = Math.ceil(Math.max(faks.data.vertices[faks.data.faces[i].vertices[0]].y,
 							faks.data.vertices[faks.data.faces[i].vertices[1]].y,
 							faks.data.vertices[faks.data.faces[i].vertices[2]].y));
 			minz = Math.floor(Math.min(faks.data.vertices[faks.data.faces[i].vertices[0]].z,
 							faks.data.vertices[faks.data.faces[i].vertices[1]].z,
-							faks.data.vertices[faks.data.faces[i].vertices[2]].z));
+							faks.data.vertices[faks.data.faces[i].vertices[2]].z))-1;
 			maxz = Math.ceil(Math.max(faks.data.vertices[faks.data.faces[i].vertices[0]].z,
 							faks.data.vertices[faks.data.faces[i].vertices[1]].z,
 							faks.data.vertices[faks.data.faces[i].vertices[2]].z));
@@ -691,10 +681,17 @@ function webGLStart() {
 $.getJSON('static/faks.js', function(data){
     //console.log("FAKS");
   faks.addObject(data);
-  faks.setTranslate(starPosition);
-    //console.log("STAR");
-  var newStar = jQuery.extend(true, {}, star);
-  faks.addObject(newStar);
+  
+//  for (var i in faks.data.faces){
+//	  if (i!= 6){
+//		  delete faks.data.faces[i];
+//	  }
+//  }
+  
+//  faks.setTranslate(starPosition);
+//    //console.log("STAR");
+//  var newStar = jQuery.extend(true, {}, star);
+//  faks.addObject(newStar);
   
 	
   webGLStart();

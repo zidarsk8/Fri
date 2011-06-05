@@ -600,7 +600,7 @@ function testCollision(newx,newy,newz){
 	var face3 = {
 			'normal' : {x:1 ,y:0 ,z:0},
 			'vertices' : [
-				{x: 0.0 + newx , y:-0.15 + newy ,z:-0.15 + newz},
+				{x: 0.0 + newx , y:-0.35 + newy ,z:-0.15 + newz},
 				{x: 0.0 + newx, y:0.15 + newy ,z:-0.15 + newz},
 				{x: 0.0 + newx, y:0.15 + newy ,z:0.15+ newz}
 			]

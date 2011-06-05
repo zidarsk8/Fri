@@ -558,7 +558,7 @@ function animate() {
         if(!doorToggleL && doorPosL > 0.0){
             doorPosL -= elapsed/1000;
         }
-        console.log(doorPosL)
+        //console.log(doorPosL)
 		if(starAnimation > 0.6) incStarAnim = false;
 		if(starAnimation < 0) incStarAnim = true;
 		if(incStarAnim) starAnimation = Math.sin(starAnimation + elapsed/1000);
@@ -783,7 +783,7 @@ function webGLStart() {
         mat4.rotate(mvMatrix, degToRad(-yaw), [0, 1, 0]);
         mat4.translate(mvMatrix, [-xPos, -yPos, -zPos]);
         mat4.translate(mvMatrix, starPosition);
-        mat4.rotate(mvMatrix, degToRad(rTri), [1, 0, 1]);   
+        mat4.rotate(mvMatrix, degToRad(rTri), [0, 1, 0]);   
 	}
 	
 	objects.arrow.drawScene = function(){	
@@ -800,7 +800,7 @@ function webGLStart() {
                         )
                       );
                         
-        mat4.rotate(mvMatrix, my_yaw-3.14, [0, 1, 0]);   
+        mat4.rotate(mvMatrix, my_yaw-degToRad(yaw)-3.14, [0, 1, 0]);   
   
 	}
 	objects.vrata_desno1.drawScene = function(){

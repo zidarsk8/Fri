@@ -401,8 +401,8 @@ function drawScene() {
     gl.uniform3fv(shaderProgram.lightingDirectionUniform, adjustedLD);
 
     gl.uniform3f( shaderProgram.directionalColorUniform, 0.4, 0.4, 0.4 );
-    $.each(buffers, function(index, buf){
-
+    var glasses = [];
+    var drawSceneGl = function(index,buf,skipGlass){
         for (var mat in buf){
             
             gl.bindBuffer(gl.ARRAY_BUFFER, buf[mat].vec);
@@ -428,13 +428,16 @@ function drawScene() {
             gl.uniform1i(shaderProgram.samplerUniform, 0);
 
             if (mat == "glass") {
+                glasses[glasses.length] = {index: index, buf: buf };
+                if(skipGlass)
+                continue;
               gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
               gl.enable(gl.BLEND);
               //gl.disable(gl.DEPTH_TEST);
               gl.uniform1f(shaderProgram.alphaUniform, 0.2);
             }
             else if (index == "arrow"){
-            
+                
                gl.disable(gl.BLEND);
               gl.enable(gl.DEPTH_TEST);
               gl.uniform1f(shaderProgram.alphaUniform, 1);
@@ -450,7 +453,14 @@ function drawScene() {
             gl.drawElements(gl.TRIANGLES, buf[mat].fac.numItems, gl.UNSIGNED_SHORT, vertexIndices[mat]);
             mvPopMatrix();
         }
+    };
+    $.each(buffers, function(index, buf){
+        drawSceneGl(index,buf,true);        
     });
+    for(var i in glasses){
+        drawSceneGl(glasses[i].index,glasses[i].buf,false);
+    }
+    console.log(glasses);
 
 }
 

@@ -72,6 +72,13 @@ for l in f:
 
 # Return json
 json.dump(obj, open(sys.argv[2], 'w'), indent=4)
+
+# Prepend object name
+import fileinput
+for n,line in enumerate(fileinput.FileInput(sys.argv[2],inplace=1)):
+    if n == 0: print sys.argv[2][:-3] + " = "
+    print line
+
 print "Done"
     
 

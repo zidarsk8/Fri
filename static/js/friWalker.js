@@ -506,7 +506,7 @@ function animate() {
 		yPos = newy;
 		zPos -= newz;
 	}else{
-		console.log(coll.normal);
+		//console.log(coll.normal);
 		xPos -= newx*(1-Math.abs(coll.normal.x));
 		yPos = newy;
 		zPos -= newz*(1-Math.abs(coll.normal.z));
@@ -538,11 +538,15 @@ function testCollision(newx,newy,newz){
 		console.log();
 		console.log(newx,newy,newz);
 		console.log(Math.floor(newx),Math.floor(newy),Math.floor(newz));
-		console.log(faksBoxes[Math.floor(newx)][Math.floor(newy)][Math.floor(newz)]);
+		console.log("boxes ",faksBoxes[Math.floor(newx)][Math.floor(newy)][Math.floor(newz)]);
 	}
 	
-	for (var i in faks.data.faces){
-//	for (var i in faksBoxes[Math.floor(newx)][Math.floor(newy)][Math.floor(newz)]){
+//	for (var i in faks.data.faces){
+	var fx = Math.floor(newx);
+	var fy = Math.floor(newy);
+	var fz = Math.floor(newz);
+	for (var f in faksBoxes[fx][fy][fz]){
+		var i = faksBoxes[fx][fy][fz][f];
 		if (faks.data.faces[i].vertices.length==3 &&
 			faks.data.vertices[faks.data.faces[i].vertices[0]] != faks.data.vertices[faks.data.faces[i].vertices[1]] &&
 			faks.data.vertices[faks.data.faces[i].vertices[0]] != faks.data.vertices[faks.data.faces[i].vertices[2]]
@@ -565,7 +569,7 @@ function testCollision(newx,newy,newz){
 			}
 			if (Math.abs(curFace.normal.x+curFace.normal.y+curFace.normal.z) >0.0 && 
 				(triangleIntersectionTest(face1, curFace ) || triangleIntersectionTest(face2, curFace ))){
-				
+				console.log(i);
 				coll.collision = true;
 				coll.normal.x = Math.min (1, coll.normal.x+curFace.normal.x);
 				coll.normal.y = Math.min (1, coll.normal.y+curFace.normal.y);
@@ -636,15 +640,16 @@ function splitBoxes(){
 							faks.data.vertices[faks.data.faces[i].vertices[1]].z,
 							faks.data.vertices[faks.data.faces[i].vertices[2]].z));
 			
-			for (x = minx ; x< maxx ; x++){
-				for (y = miny ; y< maxy ; y++){
-					for (z = minz ; z< maxz ; z++){
+			for (x = minx ; x<= maxx ; x++){
+				for (y = miny ; y<= maxy ; y++){
+					for (z = minz ; z<= maxz ; z++){
 						faksBoxes[x][y][z].push(i);
 					}
 				}
 			}
 		}
 	}
+	console.log(faksBoxes);
 }
 
 function webGLStart() {
@@ -683,7 +688,7 @@ $.getJSON('static/faks.js', function(data){
   faks.addObject(data);
   
 //  for (var i in faks.data.faces){
-//	  if (i!= 6){
+//	  if (i> 6){
 //		  delete faks.data.faces[i];
 //	  }
 //  }

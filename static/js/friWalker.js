@@ -507,9 +507,9 @@ function animate() {
 		zPos -= newz;
 	}else{
 		//console.log(coll.normal);
-		xPos -= newx*(1-Math.abs(coll.normal.x));
-		yPos = newy;
-		zPos -= newz*(1-Math.abs(coll.normal.z));
+//		xPos -= newx*(1-Math.abs(coll.normal.x));
+//		yPos = newy;
+//		zPos -= newz*(1-Math.abs(coll.normal.z));
 	}
 }
 
@@ -518,19 +518,28 @@ function testCollision(newx,newy,newz){
 	var face1 = {
 			'normal' : {x: 0 ,y:1 ,z:0},
 			'vertices' : [
-				{x: -0.2 + newx , y:0.0 + newy ,z:-0.2 + newz},
-				{x: -0.2 + newx, y:0.0 + newy ,z:0.2 + newz},
-				{x: 0.2 + newx, y:0.0 + newy ,z:0.2+ newz}
+				{x: -0.1 + newx , y:0.0 + newy ,z:-0.1 + newz},
+				{x: -0.1 + newx, y:0.0 + newy ,z:0.1 + newz},
+				{x: 0.1 + newx, y:0.0 + newy ,z:0.1+ newz}
 			]
 		};
 	var face2 = {
 			'normal' : {x:0 ,y:1 ,z:0},
 			'vertices' : [
-				{x: -0.2 + newx , y:0.0 + newy ,z:-0.2 + newz},
-				{x: 0.2 + newx, y:0.0 + newy ,z:-0.2 + newz},
-				{x: 0.2 + newx, y:0.0 + newy ,z:0.2+ newz}
+				{x: -0.1 + newx , y:0.0 + newy ,z:-0.1 + newz},
+				{x: 0.1 + newx, y:0.0 + newy ,z:-0.1 + newz},
+				{x: 0.1 + newx, y:0.0 + newy ,z:0.1+ newz}
 			]
 		};
+	var face3 = {
+			'normal' : {x:1 ,y:0 ,z:0},
+			'vertices' : [
+				{x: 0.0 + newx , y:-0.15 + newy ,z:-0.15 + newz},
+				{x: 0.0 + newx, y:0.15 + newy ,z:-0.15 + newz},
+				{x: 0.0 + newx, y:0.15 + newy ,z:0.15+ newz}
+			]
+		};
+		
 	if (debigCapture){
 		console.log();
 		console.log();
@@ -568,7 +577,9 @@ function testCollision(newx,newy,newz){
 				console.log("compare face ",face1);
 			}
 			if (Math.abs(curFace.normal.x+curFace.normal.y+curFace.normal.z) >0.0 && 
-				(triangleIntersectionTest(face1, curFace ) || triangleIntersectionTest(face2, curFace ))){
+				(triangleIntersectionTest(face1, curFace ) || 
+				triangleIntersectionTest(face2, curFace ) ||
+				triangleIntersectionTest(face3, curFace ))){
 				console.log(i);
 				coll.collision = true;
 				coll.normal.x = Math.min (1, coll.normal.x+curFace.normal.x);

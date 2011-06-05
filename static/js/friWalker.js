@@ -57,8 +57,30 @@ var object = {
 			}
 		}
 	},
+	drawScene : function(){
+	    mat4.identity(mvMatrix);
+        mat4.rotate(mvMatrix, degToRad(-pitch), [1, 0, 0]);
+        mat4.rotate(mvMatrix, degToRad(-yaw), [0, 1, 0]);
+        mat4.translate(mvMatrix, [-xPos, -yPos, -zPos]);
+	},
 	setTranslate : function(vec){
 		this.translateVector = vec;
+	},
+	calculateCenter : function(){
+	    
+	    //console.log(this.vertices);
+	    var ver_max = {x: Number.MIN_VALUE,y: Number.MIN_VALUE,z: Number.MIN_VALUE};
+	    var ver_min = {x: Number.MAX_VALUE,y: Number.MAX_VALUE,z: Number.MAX_VALUE};
+	    console.log(ver_min);
+	    $.each(this.vertices, function(index, ver){
+	        $.each(ver, function(i, v){
+	      //  console.log(i,v)
+	            if(v < ver_min[i]) ver_min[i] = v;
+	            if(v > ver_max[i]) ver_max[i] = v;
+	        });
+	    });
+	    // There will be rounding erros:
+	    return [Math.round((ver_max.x+ver_min.x)*1000)/1000,Math.round((ver_max.z+ver_min.z)*1000)/1000,Math.round((ver_max.z+ver_min.z)*1000)/1000]
 	},
 	data: {
 		faces: [],
@@ -82,9 +104,9 @@ var object = {
 					if (! this.vertices[curentFace.vertices[i]]) {
 						continue;
 					}
-					ro.vec[vecCounter*3]= this.vertices[curentFace.vertices[i]].x;
-					ro.vec[vecCounter*3+1]= this.vertices[curentFace.vertices[i]].y;
-					ro.vec[vecCounter*3+2]= this.vertices[curentFace.vertices[i]].z;
+					ro.vec[vecCounter*3]= this.vertices[curentFace.vertices[i]].x-this.translateVector[0];
+					ro.vec[vecCounter*3+1]= this.vertices[curentFace.vertices[i]].y-this.translateVector[1];
+					ro.vec[vecCounter*3+2]= this.vertices[curentFace.vertices[i]].z-this.translateVector[2];
 					//add distinct normal
 					if(curentFace.normals.length > 0){
 
@@ -352,7 +374,7 @@ function drawScene() {
     gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    mat4.perspective(35, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, pMatrix);
+    mat4.perspective(35, gl.viewportWidth / gl.viewportHeight, 0.1, 1000.0, pMatrix);
 
 
 
@@ -371,7 +393,7 @@ function drawScene() {
 
     gl.uniform3f( shaderProgram.directionalColorUniform, 0.4, 0.4, 0.4 );
     $.each(buffers, function(index, buf){
-    
+
         for (var mat in buf){
             
             gl.bindBuffer(gl.ARRAY_BUFFER, buf[mat].vec);
@@ -382,22 +404,9 @@ function drawScene() {
 
             gl.bindBuffer(gl.ARRAY_BUFFER, buf[mat].tex);
             gl.vertexAttribPointer(shaderProgram.textureCoordAttribute, buf[mat].tex.itemSize, gl.FLOAT, false, 0, 0);
-
-            if(index == "star"){
-              mat4.identity(mvMatrix);
-              mat4.rotate(mvMatrix, degToRad(-pitch), [1, 0, 0]);
-              mat4.rotate(mvMatrix, degToRad(-yaw), [0, 1, 0]);
-              mat4.translate(mvMatrix, [-xPos, -yPos, -zPos]);
-              mat4.translate(mvMatrix, starPosition);
-              mat4.rotate(mvMatrix, degToRad(rTri), [0, 1, 0]);          
-            }
-            else{
-                mat4.identity(mvMatrix);
-                mat4.rotate(mvMatrix, degToRad(-pitch), [1, 0, 0]);
-                mat4.rotate(mvMatrix, degToRad(-yaw), [0, 1, 0]);
-                mat4.translate(mvMatrix, [-xPos, -yPos, -zPos]);
-            }
-
+            
+            mvPushMatrix();
+            objects[index].drawScene();
             setMatrixUniforms();
             gl.activeTexture(gl.TEXTURE0);
 
@@ -414,7 +423,14 @@ function drawScene() {
               gl.enable(gl.BLEND);
               //gl.disable(gl.DEPTH_TEST);
               gl.uniform1f(shaderProgram.alphaUniform, 0.2);
-            } else {
+            }
+            else if (index == "arrow"){
+            
+               gl.disable(gl.BLEND);
+              gl.enable(gl.DEPTH_TEST);
+              gl.uniform1f(shaderProgram.alphaUniform, 1);
+            }
+            else {
               gl.disable(gl.BLEND);
               gl.enable(gl.DEPTH_TEST);
               gl.uniform1f(shaderProgram.alphaUniform, 1);
@@ -423,7 +439,7 @@ function drawScene() {
             gl.bindTexture(gl.TEXTURE_2D, mat_textures[index][mat]);
             //console.log(mat_textures[mat]);
             gl.drawElements(gl.TRIANGLES, buf[mat].fac.numItems, gl.UNSIGNED_SHORT, vertexIndices[mat]);
-
+            mvPopMatrix();
         }
     });
 
@@ -534,16 +550,46 @@ function webGLStart() {
     
     objects = {
         faks: jQuery.extend(faks, object),
-        star: jQuery.extend(star, object),
-        arrow: jQuery.extend(arrow, object)        
+        arrow: jQuery.extend(true,arrow, object),       
+        star: jQuery.extend(true,star, object)
     };
-
     
+    objects.arrow.translateVector = objects.arrow.calculateCenter();
+    //console.log(objects.star.translateVector);
 	var canvas = document.getElementById("fri_walker_canvas");
 	faks.setTextureScale("Material", 4);
 	faks.setTextureScale("wood-floor", 2);
 	faks.setTextureScale("horizon", 0.06);
 	faks.setTextureOfset("horizon", 0, -5.33);
+	
+	
+	
+	objects.star.drawScene = function(){	
+	    
+        mat4.identity(mvMatrix);
+
+        
+        mat4.rotate(mvMatrix, degToRad(-pitch), [1, 0, 0]);
+        mat4.rotate(mvMatrix, degToRad(-yaw), [0, 1, 0]);
+        mat4.translate(mvMatrix, [-xPos, -yPos, -zPos]);
+        mat4.translate(mvMatrix, starPosition);
+        mat4.rotate(mvMatrix, degToRad(rTri), [1, 0, 1]);   
+	}
+	
+	objects.arrow.drawScene = function(){	
+        mat4.identity(mvMatrix);
+
+        
+        mat4.rotate(mvMatrix, degToRad(-pitch), [1, 0, 0]);
+        mat4.rotate(mvMatrix, degToRad(-yaw), [0, 1, 0]);
+        mat4.translate(mvMatrix, [-xPos, -yPos, -zPos]);
+        mat4.translate(mvMatrix, starPosition);
+        mat4.rotate(mvMatrix, degToRad(rTri), [1, 1, 1]);   
+  
+	}
+	//star.rotate([1,0,0],90)
+	//arrow.rotate([1,0,0], 90);
+
 
 	initGL(canvas);
 	initShaders();

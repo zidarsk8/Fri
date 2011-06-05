@@ -57,7 +57,7 @@
     varying vec3 vLightWeighting;
 
     void main(void) {
-      gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+      gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1);
       vTextureCoord = aTextureCoord;
 
       if (!uUseLighting) {

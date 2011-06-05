@@ -40,6 +40,13 @@ var vertexIndices = {};
 var buffers = {};
 var faksBoxes;
 var debigCapture = false;
+var doorToggleL = false;
+var doorToggleD = false;
+var doorPosD = 0;
+var doorPosL = 0;
+var timeOutD = true;
+var timeOutL = true;
+
 
 
 var object = {
@@ -452,6 +459,7 @@ function handleKeys() {
   pitchRate = 0;
   yawRate = 0;
   fly = 0;
+  
   if (currentlyPressedKeys[33]) { // Page Up
     pitchRate = 0.1;
   } else if (currentlyPressedKeys[34]) { // Page Down
@@ -470,11 +478,26 @@ function handleKeys() {
   if (currentlyPressedKeys[70] ) { // F
     debigCapture = true;
   }  
+  if (currentlyPressedKeys[71] ) { // G
+    if(timeOutD){
+        doorToggleD = !doorToggleD;
+        timeOutD = false;
+        setTimeout(function(){timeOutD = true;}, 1000);
+    }
+  }  
+  if (currentlyPressedKeys[72] ) { // H
+    if(timeOutL){
+        doorToggleL = !doorToggleL;
+        timeOutL = false;
+        setTimeout(function(){timeOutL = true;}, 1000);
+    }
+  } 
   if (currentlyPressedKeys[16]) { // Shift
     fly = movingSpeed;
   } else if (currentlyPressedKeys[32]) { // Space
     fly = -movingSpeed;
   }
+  
 }
 
 function handleMouseDown(event) {
@@ -523,6 +546,19 @@ function animate() {
 		pitch += pitchRate * elapsed;
 		rTri += (90 * elapsed) / 1000.0;
 
+        if(doorToggleD && doorPosD < 0.4){
+            doorPosD += elapsed/1000;
+        }
+        if(!doorToggleD && doorPosD > 0.0){
+            doorPosD -= elapsed/1000;
+        }
+        if(doorToggleL && doorPosL < 0.4){
+            doorPosL += elapsed/1000;
+        }
+        if(!doorToggleL && doorPosL > 0.0){
+            doorPosL -= elapsed/1000;
+        }
+        console.log(doorPosL)
 		if(starAnimation > 0.6) incStarAnim = false;
 		if(starAnimation < 0) incStarAnim = true;
 		if(incStarAnim) starAnimation = Math.sin(starAnimation + elapsed/1000);
@@ -703,8 +739,8 @@ function webGLStart() {
         star: jQuery.extend(true,star, object),
         vrata_desno1: jQuery.extend(vrata_desno1, object),
         vrata_desno2: jQuery.extend(vrata_desno2, object),
+        vrata_levo2: jQuery.extend(vrata_levo2, object),
         vrata_levo1: jQuery.extend(vrata_levo1, object),
-        vrata_levo2: jQuery.extend(vrata_levo2, object)
     };
     splitBoxes();
     objects.arrow.translateVector = objects.arrow.calculateCenter();
@@ -740,6 +776,43 @@ function webGLStart() {
         mat4.rotate(mvMatrix, degToRad(rTri), [1, 1, 1]);   
   
 	}
+	objects.vrata_desno1.drawScene = function(){
+	    mat4.identity(mvMatrix);        
+        mat4.rotate(mvMatrix, degToRad(-pitch), [1, 0, 0]);
+        mat4.rotate(mvMatrix, degToRad(-yaw), [0, 1, 0]);
+        mat4.translate(mvMatrix, [-xPos, -yPos, -zPos]);
+        mat4.translate(mvMatrix, [0, 0, doorPosL]);
+        //mat4.rotate(mvMatrix, degToRad(rTri), [1, 1, 1]);  
+	
+	}
+	objects.vrata_desno2.drawScene = function(){
+	    mat4.identity(mvMatrix);        
+        mat4.rotate(mvMatrix, degToRad(-pitch), [1, 0, 0]);
+        mat4.rotate(mvMatrix, degToRad(-yaw), [0, 1, 0]);
+        mat4.translate(mvMatrix, [-xPos, -yPos, -zPos]);
+        mat4.translate(mvMatrix, [0, 0, -doorPosL]);
+        //mat4.rotate(mvMatrix, degToRad(rTri), [1, 1, 1]);  
+	
+	}
+	objects.vrata_levo1.drawScene = function(){
+	    mat4.identity(mvMatrix);        
+        mat4.rotate(mvMatrix, degToRad(-pitch), [1, 0, 0]);
+        mat4.rotate(mvMatrix, degToRad(-yaw), [0, 1, 0]);
+        mat4.translate(mvMatrix, [-xPos, -yPos, -zPos]);
+        mat4.translate(mvMatrix, [0, 0, doorPosD]);
+        //mat4.rotate(mvMatrix, degToRad(rTri), [1, 1, 1]);  
+	
+	}
+	objects.vrata_levo2.drawScene = function(){
+	    mat4.identity(mvMatrix);        
+        mat4.rotate(mvMatrix, degToRad(-pitch), [1, 0, 0]);
+        mat4.rotate(mvMatrix, degToRad(-yaw), [0, 1, 0]);
+        mat4.translate(mvMatrix, [-xPos, -yPos, -zPos]);
+        mat4.translate(mvMatrix, [0, 0, -doorPosD]);
+        //mat4.rotate(mvMatrix, degToRad(rTri), [1, 1, 1]);  
+	
+	}
+	
 	//star.rotate([1,0,0],90)
 	//arrow.rotate([1,0,0], 90);
 

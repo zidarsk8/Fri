@@ -384,7 +384,7 @@ function drawScene() {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     mat4.perspective(35, gl.viewportWidth / gl.viewportHeight, 0.1, 1000.0, pMatrix);
-
+    
 
 
     //lightning stuff:
@@ -401,8 +401,8 @@ function drawScene() {
     gl.uniform3fv(shaderProgram.lightingDirectionUniform, adjustedLD);
 
     gl.uniform3f( shaderProgram.directionalColorUniform, 0.4, 0.4, 0.4 );
-    $.each(buffers, function(index, buf){
-
+    var glasses = [];
+    var drawSceneGl = function(index,buf,skipGlass){
         for (var mat in buf){
             
             gl.bindBuffer(gl.ARRAY_BUFFER, buf[mat].vec);
@@ -428,13 +428,16 @@ function drawScene() {
             gl.uniform1i(shaderProgram.samplerUniform, 0);
 
             if (mat == "glass") {
+                glasses[glasses.length] = {index: index, buf: buf };
+                if(skipGlass)
+                continue;
               gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
               gl.enable(gl.BLEND);
               //gl.disable(gl.DEPTH_TEST);
               gl.uniform1f(shaderProgram.alphaUniform, 0.2);
             }
             else if (index == "arrow"){
-            
+                
                gl.disable(gl.BLEND);
               gl.enable(gl.DEPTH_TEST);
               gl.uniform1f(shaderProgram.alphaUniform, 1);
@@ -450,7 +453,14 @@ function drawScene() {
             gl.drawElements(gl.TRIANGLES, buf[mat].fac.numItems, gl.UNSIGNED_SHORT, vertexIndices[mat]);
             mvPopMatrix();
         }
+    };
+    $.each(buffers, function(index, buf){
+        drawSceneGl(index,buf,true);        
     });
+    for(var i in glasses){
+        drawSceneGl(glasses[i].index,glasses[i].buf,false);
+    }
+    console.log(glasses);
 
 }
 
@@ -475,8 +485,9 @@ function handleKeys() {
   } else if (currentlyPressedKeys[40] || currentlyPressedKeys[83]) { // Down cursor key
     speed = -movingSpeed;
   }
-  if (currentlyPressedKeys[70] ) { // F
+  if (currentlyPressedKeys[73] ) { // F
     debigCapture = true;
+    $('#lesson05-canvas').toggleClass('fullscreen');
   }  
   if (currentlyPressedKeys[71] ) { // G
     if(timeOutD){
@@ -558,7 +569,7 @@ function animate() {
         if(!doorToggleL && doorPosL > 0.0){
             doorPosL -= elapsed/1000;
         }
-        console.log(doorPosL)
+        //console.log(doorPosL)
 		if(starAnimation > 0.6) incStarAnim = false;
 		if(starAnimation < 0) incStarAnim = true;
 		if(incStarAnim) starAnimation = Math.sin(starAnimation + elapsed/1000);
@@ -783,12 +794,14 @@ function webGLStart() {
         mat4.rotate(mvMatrix, degToRad(-yaw), [0, 1, 0]);
         mat4.translate(mvMatrix, [-xPos, -yPos, -zPos]);
         mat4.translate(mvMatrix, starPosition);
-        mat4.rotate(mvMatrix, degToRad(rTri), [1, 0, 1]);   
+        mat4.rotate(mvMatrix, degToRad(rTri), [0, 1, 0]);   
 	}
 	
 	objects.arrow.drawScene = function(){	
+        
+        if(!document.getElementById("tag-arrow").checked) return;
         mat4.identity(mvMatrix);
-
+        
         
 //mat4.translate(mvMatrix, [-1, -5.8, -8]);
         mat4.translate(mvMatrix, [0,0.2,-1.6]);
@@ -799,8 +812,8 @@ function webGLStart() {
                             [0,0,1]
                         )
                       );
-                        
-        mat4.rotate(mvMatrix, my_yaw-3.14, [0, 1, 0]);   
+                 
+        mat4.rotate(mvMatrix, my_yaw-degToRad(yaw)-3.14, [0, 1, 0]);   
   
 	}
 	objects.vrata_desno1.drawScene = function(){
@@ -858,7 +871,7 @@ function webGLStart() {
 	if (debug) setInterval("tick()", debugtimeout);
 	tick();
 	setInterval(function(){
-	document.getElementById("fps").innerHTML="<b>FPS:</b> "+fps+" <b>x:</b> "+xPos+" <b>y:</b> "+yPos+" <b>z:</b> "+zPos+" <b>pitch:</b> "+pitch+" <b>yaw:</b> "+yaw;
+	if(debug)document.getElementById("fps").innerHTML="<b>FPS:</b> "+fps+" <b>x:</b> "+xPos+" <b>y:</b> "+yPos+" <b>z:</b> "+zPos+" <b>pitch:</b> "+pitch+" <b>yaw:</b> "+yaw;
 	fps = 0;
 	}, 1000);
 }

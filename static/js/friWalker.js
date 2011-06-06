@@ -782,6 +782,8 @@ function webGLStart() {
 	faks.setTextureScale("wood-floor", 2);
 	faks.setTextureScale("horizon", 0.06);
 	faks.setTextureOfset("horizon", 0, -5.33);
+	faks.setTextureScale("linux-screen", 9);
+	faks.setTextureOfset("linux-screen", 0, -0.05);
 	
 	objects.faks.drawScene = function(){
 	     mat4.identity(mvMatrix);

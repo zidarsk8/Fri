@@ -783,8 +783,15 @@ function webGLStart() {
 	faks.setTextureScale("horizon", 0.06);
 	faks.setTextureOfset("horizon", 0, -5.33);
 	
-	
-	
+	objects.faks.drawScene = function(){
+	     mat4.identity(mvMatrix);
+
+        
+        mat4.rotate(mvMatrix, degToRad(-pitch), [1, 0, 0]);
+        mat4.rotate(mvMatrix, degToRad(-yaw), [0, 1, 0]);
+        mat4.translate(mvMatrix, [-xPos, -yPos, -zPos]);
+        
+	};	
 	objects.star.drawScene = function(){	
 	    
         mat4.identity(mvMatrix);

@@ -785,6 +785,16 @@ function webGLStart() {
 	faks.setTextureScale("linux-screen", 9);
 	faks.setTextureOfset("linux-screen", 0, -0.05);
 	
+	faks.setTextureScale("avtomat1", 1.2);
+	faks.setTextureOfset("avtomat1", 0, -0.5);
+	
+	faks.setTextureScale("avtomat2", 1.2);
+	faks.setTextureOfset("avtomat2", 0, -0.5);
+	faks.setTextureScale("avtomat3", 1.2);
+	faks.setTextureOfset("avtomat3", 0, -0.5);
+	faks.setTextureScale("avtomat4", 1.2);
+	faks.setTextureOfset("avtomat4", 0, -0.5);
+	
 	objects.faks.drawScene = function(){
 	     mat4.identity(mvMatrix);
 

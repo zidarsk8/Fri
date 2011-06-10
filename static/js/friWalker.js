@@ -763,8 +763,14 @@ function normalize(vec){
 	}
 	return vec2;
 }
-function webGLStart() {
-    
+function webGLStart(){
+    $.getJSON('static/faks.js', function(data){
+        faks = data;
+        $('#loader').hide();
+        webGLStartLoaded();
+    });
+}
+function webGLStartLoaded() {
     objects = {
         faks: jQuery.extend(faks, object),
         arrow: jQuery.extend(true,arrow, object),       

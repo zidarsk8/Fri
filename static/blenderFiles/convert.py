@@ -71,7 +71,7 @@ for l in f:
 #obj['faces'] = sorted(obj['faces'], key=lambda face: obj['materials'][face['material']]['alpha'], reverse=True)
 
 # Return json
-json.dump(obj, open(sys.argv[2], 'w'), indent=4)
+json.dump(obj, open(sys.argv[2], 'w'))#, indent=4)
 
 # Prepend object name
 import fileinput
